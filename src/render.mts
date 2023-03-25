@@ -135,8 +135,8 @@ let buildCommandBuffer = (info: LagopusObjectData): GPUCommandBuffer => {
   let rightward = vCross(forward, atomViewerUpward.deref());
   // 👔 Uniform Data
   const uniformData = new Float32Array([
-    window.innerHeight * window.devicePixelRatio,
     window.innerWidth * window.devicePixelRatio,
+    window.innerHeight * window.devicePixelRatio,
     // alignment
     0,
     0,

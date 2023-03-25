@@ -1,10 +1,11 @@
 ## WebGPU SDF example
 
-> based on https://github.com/Triadica/sapium .
+Live demo https://r.tiye.me/Triadica/soluble/ .
 
 Resources:
 
-- https://gist.github.com/munrocket/f247155fc22ecb8edf974d905c677de1
+- reused code from https://github.com/Triadica/sapium and lagopus,
+- shapes https://gist.github.com/munrocket/f247155fc22ecb8edf974d905c677de1
 
 ### License
 

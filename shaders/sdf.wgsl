@@ -10,14 +10,6 @@ struct UBO {
 @group(0) @binding(0)
 var<uniform> uniforms: UBO;
 
-
-// ??
-// uniform vec2 u_screen_resolution;
-// ??
-// uniform float u_time;
-// ?
-// varying vec2 v_uv;
-
 fn ndot(a: vec2<f32>, b: vec2<f32>) -> f32 {
   return a.x * b.x - a.y * b.y;
 }
@@ -42,7 +34,6 @@ fn sd_box_frame(p: vec3<f32>, b: vec3<f32>, e: f32) -> f32 {
       length(max(vec3<f32>(w.x, q.y, w.z), vec3<f32>(0.))) + min(max(w.x, max(q.y, w.z)), 0.)),
       length(max(vec3<f32>(w.x, w.y, q.z), vec3<f32>(0.))) + min(max(w.x, max(w.y, q.z)), 0.));
 }
-
 
 fn sd_sphere(p: vec3<f32>, r: f32) -> f32 {
   return length(p) - r;
@@ -75,7 +66,9 @@ fn fake_round(a: f32) -> f32 {
 }
 
 fn map_2(pos: vec3<f32>) -> f32 {
-  return sd_sphere(pos, 500.);
+  // return sd_sphere(pos, 200.);
+  // return sd_box(pos, vec3(200.,200.,200.));
+  return sd_box_frame(pos, vec3(100.0,100.0,100.0), 10.);
 }
 
 fn map_old(pos: vec3<f32>) -> f32 {
@@ -96,7 +89,7 @@ fn map_old(pos: vec3<f32>) -> f32 {
   // let q: vec3<f32> = pos - c * clamp(mp, -l, l);
   let q: vec3<f32> = pos - c * mp;
   // vec3 replicated_position = fract(pos * 10.0) * 0.1;
-  return sd_sphere(q, 0.001);
+  return sd_sphere(q, 0.01);
   // return sd_sphere(pos, 1.0);
   // return sd_octahedron(q, 0.22);
 }
@@ -203,7 +196,7 @@ fn map(pos: vec3<f32>) -> f32 {
 // }
 
 fn calc_normal_direction(p: vec3<f32>) -> vec3<f32> {
-  let eps: f32 = 0.006;
+  let eps: f32 = 0.002;
   let v1: vec3<f32> = vec3(1.0, -1.0, -1.0);
   let v2: vec3<f32> = vec3(-1.0, -1.0, 1.0);
   let v3: vec3<f32> = vec3(-1.0, 1.0, -1.0);
@@ -211,9 +204,6 @@ fn calc_normal_direction(p: vec3<f32>) -> vec3<f32> {
   return normalize(v1 * map(p + v1 * eps) + v2 * map(p + v2 * eps) +
                    v3 * map(p + v3 * eps) + v4 * map(p + v4 * eps));
 }
-
-// turn down for my pad
-const AA: u32 = 2;
 
 @vertex
 fn vertex_main(
@@ -256,52 +246,46 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   var total: vec3<f32> = vec3(0,0.0,0.0);
 
-  for (var m: u32 = 0; m < AA; m++) {
-    for (var n: u32 = 0; n < AA; n++) {
-      // pixel coordinates
-      let coord: vec2<f32> = uv * screen_wh;
-      let o: vec2<f32> = vec2(f32(m), f32(n)) / f32(AA) - 0.5;
-      let p: vec2<f32> = (-screen_wh + 2.0 * (coord + o)) / screen_wh.y;
+  // pixel coordinates
+  let coord: vec2<f32> = uv * screen_wh;
+  let p: vec2<f32> = coord / 2000.0;
 
-      // create view ray
-      let ray_direction = normalize(p.x * rightward + p.y * upward + 1.5 * forward);
+  // create view ray
+  let ray_direction = normalize(p.x * rightward + p.y * upward + 1.5 * forward);
 
-      // raymarch
-      var tmax: f32 = 120.0;
-      var t: f32 = 0.0;
-      var nearest: f32 = 1000.0;
-      for (var i: u32 = 0; i < 256; i++) {
-        let pos: vec3<f32> = viewer_position + t * ray_direction;
-        let h: f32 = map_2(pos);
-        if (h < nearest) {
-          nearest = h;
-        }
-        if (h < 0.001 || t > tmax) {
-          break;
-        }
-        t += h;
-      }
-
-      // shading/lighting
-      var color: vec3<f32> = vec3(0.0);
-      if (t < tmax) {
-        let position: vec3<f32> = viewer_position + t * ray_direction;
-        let normal: vec3<f32> = calc_normal_direction(position);
-        let dif: f32 = clamp(dot(normal, vec3(0.57703)), 0.0, 1.0);
-        let ambient: f32 = 0.6 + 0.4 * dot(normal, vec3(0.0, 1.0, 0.0));
-        color = vec3(0.6, 0.5, 0.2) * ambient + vec3(0.4, 0.5, 0.2) * dif;
-        // total = vec3(1.0, 1.0, 1.0);
-      } else {
-        // let l: f32 = 0.1 / (nearest + 0.01);
-        // color = vec3(l*0.4, l*0.2, l);
-      }
-
-      // gamma
-      color = sqrt(color);
-      total += color;
+  // raymarch
+  var tmax: f32 = 2000.0;
+  var t: f32 = 0.0;
+  var nearest: f32 = 1000.0;
+  for (var i: u32 = 0; i < 400; i++) {
+    let pos: vec3<f32> = viewer_position + t * ray_direction;
+    let h: f32 = map_2(pos); // <---- map
+    if (h < nearest) {
+      nearest = h;
     }
+    if (h < 0.01 || t > tmax) {
+      break;
+    }
+    t += h;
   }
-  total /= f32(AA * AA);
+
+  // shading/lighting
+  var color: vec3<f32> = vec3(0.0);
+  if (t < tmax) {
+    let position: vec3<f32> = viewer_position + t * ray_direction;
+    let normal: vec3<f32> = calc_normal_direction(position);
+    let dif: f32 = clamp(dot(normal, vec3(0.57703)), 0.0, 1.0);
+    let ambient: f32 = 0.6 + 0.4 * dot(normal, vec3(0.0, 1.0, 0.0));
+    color = vec3(0.3, 0.2, 0.1) * ambient + vec3(0.4, 0.5, 0.2) * dif;
+  } else {
+    let l: f32 = 0.1 / (nearest + 0.01);
+    color = vec3(l*0.3, l*0.2, l*0.8);
+  }
+
+  // gamma
+  color = sqrt(color);
+  total += color;
+
   return vec4(total, 1.0);
   // return vec4(uv.y/1000.0,0,0.0,1.0);
   // return vec4(viewer_position/1000.0, 1.0);
