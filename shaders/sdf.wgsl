@@ -1,6 +1,5 @@
 struct UBO {
-  inner_width: f32,
-  inner_height: f32,
+  screen_wh: vec2<f32>,
   forward: vec3<f32>,
   // direction up overhead, better unit vector
   upward: vec3<f32>,
@@ -73,6 +72,10 @@ fn fake_round(a: f32) -> f32 {
   } else {
     return floor(a) + 1.0;
   }
+}
+
+fn map_2(pos: vec3<f32>) -> f32 {
+  return sd_sphere(pos, 500.);
 }
 
 fn map_old(pos: vec3<f32>) -> f32 {
@@ -189,10 +192,10 @@ fn map(pos: vec3<f32>) -> f32 {
   return sd_sphere(qqq, 0.01);
 }
 
-// // https://iquilezles.org/articles/normalsSDF
-// vec3 calc_normal_direction(in vec3 pos) {
-//   vec2 e = vec2(1.0,-1.0)*0.5773;
-//   const float eps = 0.05;
+// https://iquilezles.org/articles/normalsSDF
+// fn calc_normal_direction(pos: vec3<f32>) -> vec3<f32> {
+//   let e: vec2<f32> = vec2(1.0,-1.0)*0.5773;
+//   let eps: f32 = 0.05;
 //   return normalize( e.xyy*map( pos + e.xyy*eps ) +
 //           e.yyx*map( pos + e.yyx*eps ) +
 //           e.yxy*map( pos + e.yxy*eps ) +
@@ -210,7 +213,7 @@ fn calc_normal_direction(p: vec3<f32>) -> vec3<f32> {
 }
 
 // turn down for my pad
-const AA: u32 = 1;
+const AA: u32 = 2;
 
 @vertex
 fn vertex_main(
@@ -219,47 +222,57 @@ fn vertex_main(
   var output: VertexOut;
   output.position = vec4(position, 0.0, 1.0);
   output.uv = vec2<f32>(position.x, position.y);
+  output.screen_wh = uniforms.screen_wh;
+  output.viewer_position = uniforms.viewer_position;
+  output.forward = uniforms.forward;
+  output.upward = uniforms.upward;
   return output;
 }
 
 struct VertexOut {
     @builtin(position) position: vec4<f32>,
     @location(0) uv: vec2<f32>,
+    @location(1) viewer_position: vec3<f32>,
+    @location(2) forward: vec3<f32>,
+    @location(3) upward: vec3<f32>,
+    @location(4) screen_wh: vec2<f32>,
 };
 
 @fragment
-fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
+fn fragment_main_1(vx_out: VertexOut) -> @location(0) vec4<f32> {
   return vec4(1,1,1,1);
 }
 
 @fragment
-fn fragment_main_color(vx_out: VertexOut) -> @location(0) vec4<f32> {
+fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
-  let ro: vec3<f32> = uniforms.viewer_position;
-  let ww: vec3<f32> = uniforms.forward;
-  let vv: vec3<f32> = uniforms.upward;
-  let uu: vec3<f32> = normalize(cross(ww, vv)); // rightward
+  let viewer_position: vec3<f32> = vx_out.viewer_position;
+  let forward: vec3<f32> = vx_out.forward;
+  let upward: vec3<f32> = vx_out.upward;
+  let uv = vx_out.uv;
+  let screen_wh= vx_out.screen_wh;
 
-  var total: vec3<f32> = vec3(0.0);
+  let rightward: vec3<f32> = normalize(cross(forward, upward)); // rightward
+
+  var total: vec3<f32> = vec3(0,0.0,0.0);
 
   for (var m: u32 = 0; m < AA; m++) {
     for (var n: u32 = 0; n < AA; n++) {
       // pixel coordinates
-      let coord: vec2<f32> = vx_out.uv * vec2(uniforms.inner_width, uniforms.inner_height);
+      let coord: vec2<f32> = uv * screen_wh;
       let o: vec2<f32> = vec2(f32(m), f32(n)) / f32(AA) - 0.5;
-      let p: vec2<f32> =
-          (-vec2(uniforms.inner_width, uniforms.inner_width) + 2.0 * (coord + o)) / uniforms.inner_height;
+      let p: vec2<f32> = (-screen_wh + 2.0 * (coord + o)) / screen_wh.y;
 
       // create view ray
-      let ray_direction = normalize(p.x * uu + p.y * vv + 1.5 * ww);
+      let ray_direction = normalize(p.x * rightward + p.y * upward + 1.5 * forward);
 
       // raymarch
       var tmax: f32 = 120.0;
       var t: f32 = 0.0;
       var nearest: f32 = 1000.0;
       for (var i: u32 = 0; i < 256; i++) {
-        let pos: vec3<f32> = ro + t * ray_direction;
-        let h: f32 = map(pos);
+        let pos: vec3<f32> = viewer_position + t * ray_direction;
+        let h: f32 = map_2(pos);
         if (h < nearest) {
           nearest = h;
         }
@@ -272,14 +285,15 @@ fn fragment_main_color(vx_out: VertexOut) -> @location(0) vec4<f32> {
       // shading/lighting
       var color: vec3<f32> = vec3(0.0);
       if (t < tmax) {
-        let position: vec3<f32> = ro + t * ray_direction;
+        let position: vec3<f32> = viewer_position + t * ray_direction;
         let normal: vec3<f32> = calc_normal_direction(position);
         let dif: f32 = clamp(dot(normal, vec3(0.57703)), 0.0, 1.0);
         let ambient: f32 = 0.6 + 0.4 * dot(normal, vec3(0.0, 1.0, 0.0));
         color = vec3(0.6, 0.5, 0.2) * ambient + vec3(0.4, 0.5, 0.2) * dif;
+        // total = vec3(1.0, 1.0, 1.0);
       } else {
-        let l: f32 = 0.1 / (nearest + 0.01);
-        color = vec3(l*0.4, l*0.2, l);
+        // let l: f32 = 0.1 / (nearest + 0.01);
+        // color = vec3(l*0.4, l*0.2, l);
       }
 
       // gamma
@@ -288,6 +302,7 @@ fn fragment_main_color(vx_out: VertexOut) -> @location(0) vec4<f32> {
     }
   }
   total /= f32(AA * AA);
-  // return vec4(total, 1.0);
-  return vec4(1,1,1,1);
+  return vec4(total, 1.0);
+  // return vec4(uv.y/1000.0,0,0.0,1.0);
+  // return vec4(viewer_position/1000.0, 1.0);
 }

@@ -1,5 +1,5 @@
 import { LagopusElement, LagopusHitRegion, LagopusObjectData } from "./primes.mjs";
-import { atomDepthTexture, atomContext, atomDevice, atomBufferNeedClear, atomLagopusTree, atomProxiedDispatch, atomObjectsTree } from "./global.mjs";
+import { atomDepthTexture, atomContext, atomDevice, atomBufferNeedClear, atomLagopusTree, atomProxiedDispatch, atomObjectsTree, wLog } from "./global.mjs";
 import { coneBackScale } from "./config.mjs";
 import { atomViewerPosition, atomViewerUpward, newLookatPoint } from "./perspective.mjs";
 import { vNormalize, vCross, vLength } from "./quaternion.mjs";
@@ -157,9 +157,9 @@ let buildCommandBuffer = (info: LagopusObjectData): GPUCommandBuffer => {
     0,
   ]);
 
-  let uniformBuffer: GPUBuffer = null;
+  // console.log("uniformData", uniformData);
 
-  uniformBuffer = createBuffer(uniformData, GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST);
+  let uniformBuffer = createBuffer(uniformData, GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST);
 
   let uniformBindGroupLayout = device.createBindGroupLayout({
     entries: [
@@ -293,6 +293,7 @@ const createBuffer = (arr: Float32Array | Uint32Array, usage: number) => {
 
 /** send command buffer to device and render */
 export function paintLagopusTree() {
+  // console.log("paint");
   atomBufferNeedClear.reset(true);
   let tree = atomLagopusTree.deref();
   let bufferList: GPUCommandBuffer[] = [];
