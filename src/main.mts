@@ -1,4 +1,4 @@
-import { initializeContext, paintLagopusTree, renderLagopusTree } from "./render.mjs";
+import { initializeContext, paintLagopusTree, renderLagopusTree, resetCanvasHeight } from "./render.mjs";
 
 import { compContainer } from "./app/container.mjs";
 import { renderControl, startControlLoop } from "@triadica/touch-control";
@@ -34,16 +34,19 @@ window.onload = async () => {
   renderControl();
   startControlLoop(10, onControlEvent);
 
+  let canvas = document.querySelector("canvas");
+
   window.onresize = () => {
+    resetCanvasHeight(canvas);
     paintLagopusTree();
   };
+  resetCanvasHeight(canvas);
 
   window.__lagopusHandleCompilationInfo = (e, code) => {
     if (e.messages.length) {
       console.error(e);
     }
   };
-  let canvas = document.querySelector("canvas");
   setupMouseEvents(canvas);
 };
 

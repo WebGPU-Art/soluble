@@ -304,6 +304,11 @@ export function paintLagopusTree() {
   device.queue.submit(bufferList);
 }
 
+export function resetCanvasHeight(canvas: HTMLCanvasElement) {
+  // canvas height not accurate on Android Pad, use innerHeight
+  canvas.style.height = `${window.innerHeight}px`;
+}
+
 /** track tree, internally it calls `paintLagopusTree` to render */
 export function renderLagopusTree(tree: LagopusElement, dispatch: (op: any, data: any) => void) {
   atomLagopusTree.reset(tree);
