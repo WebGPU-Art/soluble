@@ -12,9 +12,9 @@
     "target": "es2015",
     "jsx": "react",
     "lib": ["es2019", "dom"],
-    "types": ["@webgpu/types"],
+    "types": ["@webgpu/types", "vite"],
     "baseUrl": "./src/",
-    "importsNotUsedAsValues": "preserve"
+    "verbatimModuleSyntax": false
   },
   "include": ["./src/*"]
 }

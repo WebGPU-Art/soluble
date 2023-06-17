@@ -1,3 +1,7 @@
+/// <reference types="vite/client" />
+
+import queryString from "query-string";
+
 import { initializeContext, paintLagopusTree, renderLagopusTree, resetCanvasHeight } from "./render.mjs";
 
 import { compContainer } from "./app/container.mjs";
@@ -6,6 +10,7 @@ import { onControlEvent } from "./control.mjs";
 import { setupMouseEvents } from "./events.mjs";
 import { Atom } from "./atom.mjs";
 import { V3 } from "./primes.mjs";
+import { setupRemoteControl } from "./remote-control.mjs";
 
 let store = new Atom({
   position: [180, 80, 80] as V3,
@@ -20,8 +25,11 @@ let dispatch = (op: string, data: any) => {
   }
 };
 
+/** for HMR */
+let mainComponent = compContainer;
+
 function renderApp() {
-  let tree = compContainer(store.deref());
+  let tree = mainComponent(store.deref());
 
   renderLagopusTree(tree, dispatch);
 }
@@ -48,9 +56,21 @@ window.onload = async () => {
     }
   };
   setupMouseEvents(canvas);
+
+  const parsed = queryString.parse(location.search);
+
+  if (parsed["remote-control"]) {
+    setupRemoteControl();
+  }
 };
 
 declare global {
   /** dirty hook for extracting error messages */
   var __lagopusHandleCompilationInfo: (info: GPUCompilationInfo, code: string) => void;
 }
+
+import.meta.hot.accept("./app/container", (container) => {
+  console.log("reloading");
+  mainComponent = container.compContainer;
+  renderApp();
+});
