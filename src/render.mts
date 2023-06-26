@@ -1,7 +1,6 @@
 import { LagopusElement, LagopusHitRegion, LagopusObjectData } from "./primes.mjs";
 import { atomDepthTexture, atomContext, atomDevice, atomBufferNeedClear, atomLagopusTree, atomProxiedDispatch, atomObjectsTree, wLog } from "./global.mjs";
-import { coneBackScale } from "./config.mjs";
-import { atomViewerPosition, atomViewerUpward, newLookatPoint } from "./perspective.mjs";
+import { atomViewerPosition, atomViewerScale, atomViewerUpward, newLookatPoint } from "./perspective.mjs";
 import { vNormalize, vCross, vLength } from "./quaternion.mjs";
 
 /** init canvas context */
@@ -137,8 +136,8 @@ let buildCommandBuffer = (info: LagopusObjectData): GPUCommandBuffer => {
   const uniformData = new Float32Array([
     window.innerWidth * window.devicePixelRatio,
     window.innerHeight * window.devicePixelRatio,
+    atomViewerScale.deref(),
     // alignment
-    0,
     0,
     // lookpoint
     ...forward,
@@ -198,11 +197,7 @@ let buildCommandBuffer = (info: LagopusObjectData): GPUCommandBuffer => {
     fragment: {
       module: shaderModule,
       entryPoint: "fragment_main",
-      targets: [
-        {
-          format: presentationFormat,
-        },
-      ],
+      targets: [{ format: presentationFormat }],
     },
     primitive: {
       topology,

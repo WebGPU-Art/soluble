@@ -25,3 +25,5 @@ export function wLog<T extends any>(message: string, a: T): T {
   console.warn(message, a);
   return a;
 }
+
+console.log("called");

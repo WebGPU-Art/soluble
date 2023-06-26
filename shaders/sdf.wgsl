@@ -1,5 +1,6 @@
 struct UBO {
   screen_wh: vec2<f32>,
+  scale: f32,
   forward: vec3<f32>,
   // direction up overhead, better unit vector
   upward: vec3<f32>,
@@ -57,12 +58,7 @@ fn sd_octahedron(p: vec3<f32>, s: f32) -> f32 {
 
 
 fn fake_round(a: f32) -> f32 {
-  let b: f32 = fract(a);
-  if (b < 0.5) {
-    return floor(a);
-  } else {
-    return floor(a) + 1.0;
-  }
+  return floor(a + 0.5);
 }
 
 fn map_2(pos: vec3<f32>) -> f32 {
@@ -79,17 +75,17 @@ fn map_old(pos: vec3<f32>) -> f32 {
   //   sdBox(pos - vec3(4.0, 0.0, 0.0), vec3(0.4, 0.2, 0.2))
   // );
   // return sdBoxFrame(pos, vec3(0.6, 0.2, 0.02), 0.02);
-  let c: f32 = 4.0;
+  let c: f32 = 40.0;
   // let l: vec3<f32> = vec3(20.0, 0.0, 0.0);
-  let limit: f32 = 60.0;
-  let pos_c: vec3<f32> = pos / c;
-  let mp: vec3<f32> = vec3(clamp(fake_round(pos_c.x), -limit, limit),
+  let limit: f32 = 120.0;
+  var pos_c: vec3<f32> = pos / c;
+  pos_c = vec3(clamp(fake_round(pos_c.x), -limit, limit),
                  clamp(fake_round(pos_c.y), -limit, limit),
                  clamp(fake_round(pos_c.z), -limit, limit));
   // let q: vec3<f32> = pos - c * clamp(mp, -l, l);
-  let q: vec3<f32> = pos - c * mp;
+  let q: vec3<f32> = pos - c * pos_c;
   // vec3 replicated_position = fract(pos * 10.0) * 0.1;
-  return sd_sphere(q, 0.01);
+  return sd_sphere(q, 0.4);
   // return sd_sphere(pos, 1.0);
   // return sd_octahedron(q, 0.22);
 }
@@ -216,22 +212,19 @@ fn vertex_main(
   output.viewer_position = uniforms.viewer_position;
   output.forward = uniforms.forward;
   output.upward = uniforms.upward;
+  output.scale = uniforms.scale;
   return output;
 }
 
 struct VertexOut {
     @builtin(position) position: vec4<f32>,
-    @location(0) uv: vec2<f32>,
-    @location(1) viewer_position: vec3<f32>,
+    @location(0) viewer_position: vec3<f32>,
+    @location(1) scale: f32,
     @location(2) forward: vec3<f32>,
     @location(3) upward: vec3<f32>,
-    @location(4) screen_wh: vec2<f32>,
+    @location(4) uv: vec2<f32>,
+    @location(5) screen_wh: vec2<f32>,
 };
-
-@fragment
-fn fragment_main_1(vx_out: VertexOut) -> @location(0) vec4<f32> {
-  return vec4(1,1,1,1);
-}
 
 @fragment
 fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
@@ -244,11 +237,11 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   let rightward: vec3<f32> = normalize(cross(forward, upward)); // rightward
 
-  var total: vec3<f32> = vec3(0,0.0,0.0);
+  var total: vec3<f32> = vec3(0.0,0.0,0.0);
 
   // pixel coordinates
   let coord: vec2<f32> = uv * screen_wh;
-  let p: vec2<f32> = coord / 2000.0;
+  let p: vec2<f32> = coord * 0.0005 / vx_out.scale;
 
   // create view ray
   let ray_direction = normalize(p.x * rightward + p.y * upward + 1.5 * forward);
@@ -256,14 +249,14 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   // raymarch
   var tmax: f32 = 2000.0;
   var t: f32 = 0.0;
-  var nearest: f32 = 1000.0;
-  for (var i: u32 = 0; i < 400; i++) {
+  var nearest: f32 = 100.0;
+  for (var i: u32 = 0u; i < 320u; i++) {
     let pos: vec3<f32> = viewer_position + t * ray_direction;
-    let h: f32 = map_2(pos); // <---- map
+    let h: f32 = map_old(pos); // <---- map
     if (h < nearest) {
       nearest = h;
     }
-    if (h < 0.01 || t > tmax) {
+    if (h < 1.2 || t > tmax) {
       break;
     }
     t += h;
@@ -272,14 +265,15 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   // shading/lighting
   var color: vec3<f32> = vec3(0.0);
   if (t < tmax) {
-    let position: vec3<f32> = viewer_position + t * ray_direction;
-    let normal: vec3<f32> = calc_normal_direction(position);
-    let dif: f32 = clamp(dot(normal, vec3(0.57703)), 0.0, 1.0);
-    let ambient: f32 = 0.6 + 0.4 * dot(normal, vec3(0.0, 1.0, 0.0));
-    color = vec3(0.3, 0.2, 0.1) * ambient + vec3(0.4, 0.5, 0.2) * dif;
+    // let position: vec3<f32> = viewer_position + t * ray_direction;
+    // let normal: vec3<f32> = calc_normal_direction(position);
+    // let dif: f32 = clamp(dot(normal, vec3(0.57703)), 0.0, 1.0);
+    // let ambient: f32 = 0.6 + 0.4 * dot(normal, vec3(0.0, 1.0, 0.0));
+    // color = vec3(0.6, 0.4, 0.2) * ambient + vec3(0.5, 0.8, 0.3) * dif;
+    color = vec3(0.9, 0.1, 0.6);
   } else {
-    let l: f32 = 0.1 / (nearest + 0.01);
-    color = vec3(l*0.3, l*0.2, l*0.8);
+    let l: f32 = 0.6 / (nearest + 0.01);
+    color = vec3(l*0.9, l*0.1, l*0.6);
   }
 
   // gamma
