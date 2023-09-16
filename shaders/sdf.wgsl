@@ -75,9 +75,9 @@ fn map_old(pos: vec3<f32>) -> f32 {
   //   sdBox(pos - vec3(4.0, 0.0, 0.0), vec3(0.4, 0.2, 0.2))
   // );
   // return sdBoxFrame(pos, vec3(0.6, 0.2, 0.02), 0.02);
-  let c: f32 = 40.0;
+  let c: f32 = 4.0;
   // let l: vec3<f32> = vec3(20.0, 0.0, 0.0);
-  let limit: f32 = 120.0;
+  let limit: f32 = 40.0;
   var pos_c: vec3<f32> = pos / c;
   pos_c = vec3(clamp(fake_round(pos_c.x), -limit, limit),
                  clamp(fake_round(pos_c.y), -limit, limit),
@@ -85,7 +85,7 @@ fn map_old(pos: vec3<f32>) -> f32 {
   // let q: vec3<f32> = pos - c * clamp(mp, -l, l);
   let q: vec3<f32> = pos - c * pos_c;
   // vec3 replicated_position = fract(pos * 10.0) * 0.1;
-  return sd_sphere(q, 0.4);
+  return sd_sphere(q, 0.1);
   // return sd_sphere(pos, 1.0);
   // return sd_octahedron(q, 0.22);
 }
@@ -256,7 +256,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     if (h < nearest) {
       nearest = h;
     }
-    if (h < 1.2 || t > tmax) {
+    if (h < 0.2 || t > tmax) {
       break;
     }
     t += h;
@@ -270,11 +270,10 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     // let dif: f32 = clamp(dot(normal, vec3(0.57703)), 0.0, 1.0);
     // let ambient: f32 = 0.6 + 0.4 * dot(normal, vec3(0.0, 1.0, 0.0));
     // color = vec3(0.6, 0.4, 0.2) * ambient + vec3(0.5, 0.8, 0.3) * dif;
-    color = vec3(0.9, 0.1, 0.6);
-  } else {
-    let l: f32 = 0.6 / (nearest + 0.01);
-    color = vec3(l*0.9, l*0.1, l*0.6);
+    color = vec3(0.8, 0.1, 0.8);
   }
+  let l: f32 = 0.3 / (nearest + 0.01);
+  color += vec3(l*0.8, l*0.1, l*0.8);
 
   // gamma
   color = sqrt(color);
