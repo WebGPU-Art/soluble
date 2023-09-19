@@ -69,7 +69,7 @@ declare global {
   var __lagopusHandleCompilationInfo: (info: GPUCompilationInfo, code: string) => void;
 }
 
-import.meta.hot.accept("./app/container", (container) => {
+import.meta.hot?.accept("./app/container", (container) => {
   console.log("reloading");
   mainComponent = container.compContainer;
   renderApp();
