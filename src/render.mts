@@ -1,7 +1,18 @@
 import { LagopusElement, LagopusHitRegion, LagopusObjectData } from "./primes.mjs";
-import { atomDepthTexture, atomContext, atomDevice, atomBufferNeedClear, atomLagopusTree, atomProxiedDispatch, atomObjectsTree, wLog } from "./global.mjs";
+import {
+  atomDepthTexture,
+  atomContext,
+  atomDevice,
+  atomBufferNeedClear,
+  atomLagopusTree,
+  atomProxiedDispatch,
+  atomObjectsTree,
+  wLog,
+  getPointsBuffer,
+} from "./global.mjs";
 import { atomViewerPosition, atomViewerScale, atomViewerUpward, newLookatPoint } from "./perspective.mjs";
 import { vNormalize, vCross, vLength } from "./quaternion.mjs";
+import { createBuffer } from "./utils.mjs";
 
 /** init canvas context */
 export const initializeContext = async (): Promise<any> => {
@@ -79,8 +90,8 @@ export let createRenderer = (
   // load shared device
   let device = atomDevice.deref();
 
-  let vertexBuffers = vertices.map((v) => createBuffer(v, GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST));
-  let indecesBuffer = indices ? createBuffer(indices, GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST) : null;
+  let vertexBuffers = vertices.map((v) => createBuffer(v, GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST, device));
+  let indecesBuffer = indices ? createBuffer(indices, GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST, device) : null;
 
   const vertexBuffersDescriptors = attrsList.map((info, idx) => {
     let stride = info.size * (info.unitSize || 4);
@@ -158,7 +169,7 @@ let buildCommandBuffer = (info: LagopusObjectData): GPUCommandBuffer => {
 
   // console.log("uniformData", uniformData);
 
-  let uniformBuffer = createBuffer(uniformData, GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST);
+  let uniformBuffer = createBuffer(uniformData, GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST, device);
 
   let uniformBindGroupLayout = device.createBindGroupLayout({
     entries: [
@@ -166,6 +177,13 @@ let buildCommandBuffer = (info: LagopusObjectData): GPUCommandBuffer => {
         binding: 0,
         visibility: GPUShaderStage.VERTEX,
         buffer: {}, // TODO don't know why, but fixes, https://programmer.ink/think/several-best-practices-of-webgpu.html
+      },
+      {
+        binding: 1,
+        visibility: GPUShaderStage.FRAGMENT,
+        buffer: {
+          type: "storage",
+        }, // TODO don't know why, but fixes, https://programmer.ink/think/several-best-practices-of-webgpu.html
       },
     ],
   });
@@ -177,6 +195,12 @@ let buildCommandBuffer = (info: LagopusObjectData): GPUCommandBuffer => {
         binding: 0,
         resource: {
           buffer: uniformBuffer,
+        },
+      },
+      {
+        binding: 1,
+        resource: {
+          buffer: getPointsBuffer(),
         },
       },
     ],
@@ -266,24 +290,6 @@ export let collectBuffers = (el: LagopusElement, buffers: GPUCommandBuffer[]) =>
   } else {
     el.children.forEach((child) => collectBuffers(child, buffers));
   }
-};
-
-// 👋 Helper function for creating GPUBuffer(s) out of Typed Arrays
-const createBuffer = (arr: Float32Array | Uint32Array, usage: number) => {
-  // 📏 Align to 4 bytes (thanks @chrimsonite)
-  let desc = {
-    size: (arr.byteLength + 3) & ~3,
-    // size: 64,
-    usage,
-    mappedAtCreation: true,
-  };
-  let device = atomDevice.deref();
-  let buffer = device.createBuffer(desc);
-
-  const writeArray = arr instanceof Uint32Array ? new Uint32Array(buffer.getMappedRange()) : new Float32Array(buffer.getMappedRange());
-  writeArray.set(arr);
-  buffer.unmap();
-  return buffer;
 };
 
 /** send command buffer to device and render */

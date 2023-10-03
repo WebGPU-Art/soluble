@@ -11,6 +11,7 @@ import { setupMouseEvents } from "./events.mjs";
 import { Atom } from "./atom.mjs";
 import { V3 } from "./primes.mjs";
 import { setupRemoteControl } from "./remote-control.mjs";
+import { computeBasePoints } from "./compute.mjs";
 
 let store = new Atom({
   position: [180, 80, 80] as V3,
@@ -19,7 +20,6 @@ let store = new Atom({
 let dispatch = (op: string, data: any) => {
   if (op === "drag") {
     store.deref().position = data;
-    renderApp();
   } else {
     console.warn("dispatch", op, data);
   }
@@ -29,14 +29,25 @@ let dispatch = (op: string, data: any) => {
 let mainComponent = compContainer;
 
 function renderApp() {
+  console.log("render");
   let tree = mainComponent(store.deref());
-
   renderLagopusTree(tree, dispatch);
+}
+
+let timeoutState: NodeJS.Timeout;
+let rafState = 0;
+
+function loopPaint() {
+  computeBasePoints();
+  paintLagopusTree();
+  // timeoutState = setTimeout(loopPaint, 40);
+  rafState = requestAnimationFrame(loopPaint);
 }
 
 window.onload = async () => {
   await initializeContext();
   renderApp();
+  loopPaint();
   console.log("loaded");
 
   renderControl();
@@ -70,7 +81,9 @@ declare global {
 }
 
 import.meta.hot?.accept("./app/container", (container) => {
+  clearTimeout(timeoutState);
+  cancelAnimationFrame(rafState);
+
   console.log("reloading");
   mainComponent = container.compContainer;
-  renderApp();
 });

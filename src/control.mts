@@ -30,9 +30,9 @@ export let onControlEvent = (elapsed: number, states: ControlStates, delta: Cont
   if (!rightA && rightB && rMove[0] !== 0) {
     changeScaleBy(0.01 * elapsed * rMove[0]);
   }
-  if (!isZero(lMove) || !isZero(rMove)) {
-    paintLagopusTree();
-  }
+  // if (!isZero(lMove) || !isZero(rMove)) {
+  //   paintLagopusTree();
+  // }
 };
 
 let isZero = (v: V2): boolean => {

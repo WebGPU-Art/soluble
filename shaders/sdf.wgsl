@@ -11,6 +11,18 @@ struct UBO {
 @group(0) @binding(0)
 var<uniform> uniforms: UBO;
 
+
+struct BaseCell {
+  position: vec4<f32>,
+  velocity: vec4<f32>,
+  p1: f32,
+  p2: f32,
+  p3: f32,
+  p4: f32,
+};
+@group(0) @binding(1)
+var<storage, read_write> base_points: array<BaseCell>;
+
 fn ndot(a: vec2<f32>, b: vec2<f32>) -> f32 {
   return a.x * b.x - a.y * b.y;
 }
@@ -252,7 +264,15 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   var nearest: f32 = 100.0;
   for (var i: u32 = 0u; i < 320u; i++) {
     let pos: vec3<f32> = viewer_position + t * ray_direction;
-    let h: f32 = map_old(pos); // <---- map
+    // let h: f32 = map_old(pos); // <---- map
+    var h: f32 = 1000000.0;
+    for (var j: u32 = 0u; j < arrayLength(&base_points); j++) {
+      let base_point = base_points[j];
+      let h1 = sd_sphere(pos - base_point.position.xyz, 10.);
+      if (h1 < h) {
+        h = h1;
+      }
+    }
     if (h < nearest) {
       nearest = h;
     }
