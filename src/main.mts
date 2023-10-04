@@ -40,8 +40,8 @@ let rafState = 0;
 function loopPaint() {
   computeBasePoints();
   paintLagopusTree();
-  // timeoutState = setTimeout(loopPaint, 40);
-  rafState = requestAnimationFrame(loopPaint);
+  timeoutState = setTimeout(loopPaint, 100);
+  // rafState = requestAnimationFrame(loopPaint);
 }
 
 window.onload = async () => {
@@ -86,4 +86,7 @@ import.meta.hot?.accept("./app/container", (container) => {
 
   console.log("reloading");
   mainComponent = container.compContainer;
+
+  renderApp();
+  loopPaint();
 });

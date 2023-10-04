@@ -77,7 +77,7 @@ export function computeBasePoints() {
 
   passEncoder.setPipeline(computePipeline);
   passEncoder.setBindGroup(0, bindGroup);
-  passEncoder.dispatchWorkgroups(8, 8, 8);
+  passEncoder.dispatchWorkgroups(8, 8);
   passEncoder.end();
 
   device.queue.submit([commandEncoder.finish()]);

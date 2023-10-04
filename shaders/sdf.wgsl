@@ -262,13 +262,15 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   var tmax: f32 = 2000.0;
   var t: f32 = 0.0;
   var nearest: f32 = 100.0;
-  for (var i: u32 = 0u; i < 320u; i++) {
+  var base_size = arrayLength(&base_points);
+  for (var i: u32 = 0u; i < 200u; i++) {
     let pos: vec3<f32> = viewer_position + t * ray_direction;
     // let h: f32 = map_old(pos); // <---- map
     var h: f32 = 1000000.0;
-    for (var j: u32 = 0u; j < arrayLength(&base_points); j++) {
+    for (var j: u32 = 0u; j < base_size; j++) {
       let base_point = base_points[j];
-      let h1 = sd_sphere(pos - base_point.position.xyz, 10.);
+      let relative = pos - base_point.position.xyz;
+      let h1 = sd_sphere(relative, 6.);
       if (h1 < h) {
         h = h1;
       }
@@ -276,7 +278,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     if (h < nearest) {
       nearest = h;
     }
-    if (h < 0.2 || t > tmax) {
+    if (h < 0.02 || t > tmax) {
       break;
     }
     t += h;
@@ -292,7 +294,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     // color = vec3(0.6, 0.4, 0.2) * ambient + vec3(0.5, 0.8, 0.3) * dif;
     color = vec3(0.8, 0.1, 0.8);
   }
-  let l: f32 = 0.3 / (nearest + 0.01);
+  let l: f32 = 0.1 / (nearest * 0.1 + 0.001);
   color += vec3(l*0.8, l*0.1, l*0.8);
 
   // gamma

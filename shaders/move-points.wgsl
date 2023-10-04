@@ -21,7 +21,7 @@ struct Params {
 @group(0) @binding(1)
 var<uniform> params: Params;
 
-@compute @workgroup_size(8, 8)
+@compute @workgroup_size(256, 1, 1)
 fn main(@builtin(global_invocation_id) global_id : vec3u) {
   var index = global_id.x + global_id.y * 8u;
   base_points[index].position.x = base_points[index].position.x;

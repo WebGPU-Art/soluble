@@ -170,21 +170,12 @@ let buildCommandBuffer = (info: LagopusObjectData): GPUCommandBuffer => {
   // console.log("uniformData", uniformData);
 
   let uniformBuffer = createBuffer(uniformData, GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST, device);
-
+  /** don't know why, but fixes, https://programmer.ink/think/several-best-practices-of-webgpu.html */
+  let emptyBuffer = {};
   let uniformBindGroupLayout = device.createBindGroupLayout({
     entries: [
-      {
-        binding: 0,
-        visibility: GPUShaderStage.VERTEX,
-        buffer: {}, // TODO don't know why, but fixes, https://programmer.ink/think/several-best-practices-of-webgpu.html
-      },
-      {
-        binding: 1,
-        visibility: GPUShaderStage.FRAGMENT,
-        buffer: {
-          type: "storage",
-        }, // TODO don't know why, but fixes, https://programmer.ink/think/several-best-practices-of-webgpu.html
-      },
+      { binding: 0, visibility: GPUShaderStage.VERTEX, buffer: emptyBuffer },
+      { binding: 1, visibility: GPUShaderStage.FRAGMENT, buffer: { type: "storage" } },
     ],
   });
 
