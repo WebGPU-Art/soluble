@@ -50,63 +50,46 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   var base_size = arrayLength(&base_points);
 
   // create view ray
-  let ray_direction = normalize(
+  let ray_unit = normalize(
     p.x * uniforms.rightward
     + p.y * uniforms.upward
     + 2.0 * uniforms.forward
   );
 
   // raymarch
-  var tmax: f32 = 2000.0;
-  var min_t: f32 = 2000.0;
-  var nearest: f32 = 100.0;
+  var nearest: f32 = 10000.0;
   var total: vec3<f32> = vec3(0.0,0.0,0.0);
 
   for (var j: u32 = 0u; j < base_size; j++) {
     let base_point = base_points[j];
-    var break_again = false;
-    var t: f32 = 0.0;
+    let base_position = base_point.position.xyz;
 
-    for (var i: u32 = 0u; i < 200u; i++) {
-      let pos: vec3<f32> = uniforms.viewer_position + t * ray_direction;
-      // let h: f32 = map_old(pos); // <---- map
-      var h: f32 = 1000000.0;
-        let relative = pos - base_point.position.xyz;
-        let h1 = sd_sphere(relative, 6.);
-        if (h1 < h) {
-          h = h1;
-        }
-      if (h < nearest) {
-        nearest = h;
-      }
-      if (h < 0.02) {
-        break_again = true;
-        break;
-      }
-      if (t > tmax) {
-        break;
-      }
-      t += h;
+    let view = base_position - uniforms.viewer_position;
+    let view_unit = normalize(view);
+    let view_length = length(view);
+    let cos_value = dot(view_unit, ray_unit);
+    if (cos_value < 0.0) {
+      continue;
     }
-    if (t < min_t) {
-      min_t = t;
+    let sin_value = sqrt(1.0 - cos_value * cos_value);
+    if (abs(view_length * sin_value) > 6.0) {
+      continue;
     }
-    if (break_again) {
-      break;
-    }
+
+    let near_point = uniforms.viewer_position + ray_unit * view_length * cos_value;
+    let near_offset = near_point - base_position;
+    let near_unit = normalize(near_offset);
+    let a = abs(dot(near_unit, uniforms.upward));
+    let b = abs(dot(near_unit, uniforms.rightward));
+    var ratio = pow((1. - a), 3.0) + pow((1. - b), 3.0);
+
+    nearest = abs(view_length * sin_value);
+    var l: f32 = 100.1 / (pow(nearest * 1.6, 2.4) * 2.0 + 1.1) * ratio;
+    let color = vec3(l*0.8, l*0.8, l*0.1);
+    total = max(total, color);
   }
 
-  // shading/lighting
-  var color: vec3<f32> = vec3(0.0);
-  if (min_t < tmax) {
-    color = vec3(0.8, 0.1, 0.8);
-  }
-  let l: f32 = 0.1 / (nearest * 0.1 + 0.001);
-  color += vec3(l*0.8, l*0.1, l*0.8);
 
-  // gamma
-  color = sqrt(color);
-  total += color;
 
   return vec4(total, 1.0);
 }
