@@ -14,3 +14,18 @@ export const createBuffer = (arr: Float32Array | Uint32Array, usage: number, dev
   buffer.unmap();
   return buffer;
 };
+
+let shaderModule: GPUShaderModule;
+let cacgedShaderCode: string;
+
+export function getComputeShaderModule(device: GPUDevice, shaderCode: string) {
+  if (shaderModule && shaderCode === cacgedShaderCode) {
+    return shaderModule;
+  }
+  cacgedShaderCode = shaderCode;
+
+  shaderModule = device.createShaderModule({
+    code: shaderCode,
+  });
+  return shaderModule;
+}

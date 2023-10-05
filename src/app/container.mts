@@ -1,9 +1,9 @@
 import sdfWgsl from "../../shaders/sdf.wgsl";
 
-import { flattenData, group, object } from "../alias.mjs";
-import { LagopusElement, V3 } from "../primes.mjs";
+import { group, object } from "../alias.mjs";
+import { LagopusElement } from "../primes.mjs";
 
-export let compContainer = (store: { position: V3 }): LagopusElement => {
+export let compContainer = (): LagopusElement => {
   return group(
     null,
     object({

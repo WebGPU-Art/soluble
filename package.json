@@ -1,6 +1,6 @@
 {
   "name": "@triadica/soluble",
-  "version": "0.0.1-a1",
+  "version": "0.0.1-a2",
   "type": "module",
   "main": "./lib/index.mjs",
   "scripts": {

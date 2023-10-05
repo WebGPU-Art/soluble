@@ -17,3 +17,5 @@ declare module "*.frag" {
   const value: string;
   export default value;
 }
+
+declare var __lagopusHandleCompilationInfo: (info: GPUCompilationInfo, code: string) => void;

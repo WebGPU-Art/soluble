@@ -1,15 +1,5 @@
 import { LagopusElement, LagopusHitRegion, LagopusObjectData } from "./primes.mjs";
-import {
-  atomDepthTexture,
-  atomContext,
-  atomDevice,
-  atomBufferNeedClear,
-  atomLagopusTree,
-  atomProxiedDispatch,
-  atomObjectsTree,
-  wLog,
-  getPointsBuffer,
-} from "./global.mjs";
+import { atomDepthTexture, atomContext, atomDevice, atomBufferNeedClear, atomLagopusTree, atomObjectsTree, wLog, atomPointsBuffer } from "./global.mjs";
 import { atomViewerPosition, atomViewerScale, atomViewerUpward, newLookatPoint } from "./perspective.mjs";
 import { vNormalize, vCross, vLength } from "./quaternion.mjs";
 import { createBuffer } from "./utils.mjs";
@@ -191,7 +181,7 @@ let buildCommandBuffer = (info: LagopusObjectData): GPUCommandBuffer => {
       {
         binding: 1,
         resource: {
-          buffer: getPointsBuffer(),
+          buffer: atomPointsBuffer.deref(),
         },
       },
     ],
@@ -302,9 +292,8 @@ export function resetCanvasHeight(canvas: HTMLCanvasElement) {
 }
 
 /** track tree, internally it calls `paintLagopusTree` to render */
-export function renderLagopusTree(tree: LagopusElement, dispatch: (op: any, data: any) => void) {
+export function renderLagopusTree(tree: LagopusElement) {
   atomLagopusTree.reset(tree);
-  atomProxiedDispatch.reset(dispatch);
   atomObjectsTree.reset(tree);
   paintLagopusTree();
 }

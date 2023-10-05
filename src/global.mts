@@ -1,6 +1,7 @@
 import { LagopusElement, LagopusObjectBuffer } from "./primes.mjs";
 import { Atom } from "./atom.mjs";
 import { createBuffer } from "./utils.mjs";
+import { rand } from "./math.mjs";
 
 export var atomDevice: Atom<GPUDevice> = new Atom(null);
 export var atomContext: Atom<GPUCanvasContext> = new Atom(null);
@@ -10,9 +11,6 @@ export var atomDepthTexture: Atom<GPUTexture> = new Atom(null);
 export var atomBufferNeedClear: Atom<boolean> = new Atom(true);
 
 export var atomLagopusTree: Atom<LagopusElement> = new Atom(null);
-
-// proxy it for hot reloading
-export let atomProxiedDispatch = new Atom<(op: string, data: any) => void>(null);
 
 // touch events
 
@@ -29,25 +27,5 @@ export function wLog<T extends any>(message: string, a: T): T {
 
 // prepare shared array called `base_points`
 
-let sharedPointsBuffer: GPUBuffer;
-
-function rand(n: number) {
-  return (Math.random() - 0.5) * n;
-}
-export const getPointsBuffer = () => {
-  if (sharedPointsBuffer) {
-    return sharedPointsBuffer;
-  }
-  let device = atomDevice.deref();
-  let items: number[] = [];
-  let offset = 800;
-  for (let i = 0; i < 40; i++) {
-    items.push(rand(offset), rand(offset), rand(offset), 1);
-    items.push(0, 0, 0, 0);
-    items.push(0, 0, 0, 0);
-  }
-  sharedPointsBuffer = createBuffer(new Float32Array(items), GPUBufferUsage.STORAGE, device);
-  return sharedPointsBuffer;
-};
-
-console.log("called");
+export let atomPointsSize: Atom<number> = new Atom(0);
+export let atomPointsBuffer: Atom<GPUBuffer> = new Atom(null);
