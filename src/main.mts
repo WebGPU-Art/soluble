@@ -48,6 +48,7 @@ window.onload = async () => {
 };
 
 import.meta.hot?.accept("./app/container", (container) => {
+  createGlobalPointsBuffer(useBaseSize, 800);
   clearTimeout(timeoutState);
   cancelAnimationFrame(rafState);
 
