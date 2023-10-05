@@ -53,39 +53,52 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   let ray_direction = normalize(
     p.x * uniforms.rightward
     + p.y * uniforms.upward
-    + 1.5 * uniforms.forward
+    + 2.0 * uniforms.forward
   );
 
   // raymarch
   var tmax: f32 = 2000.0;
-  var t: f32 = 0.0;
+  var min_t: f32 = 2000.0;
   var nearest: f32 = 100.0;
   var total: vec3<f32> = vec3(0.0,0.0,0.0);
 
-  for (var i: u32 = 0u; i < 200u; i++) {
-    let pos: vec3<f32> = uniforms.viewer_position + t * ray_direction;
-    // let h: f32 = map_old(pos); // <---- map
-    var h: f32 = 1000000.0;
-    for (var j: u32 = 0u; j < base_size; j++) {
-      let base_point = base_points[j];
-      let relative = pos - base_point.position.xyz;
-      let h1 = sd_sphere(relative, 6.);
-      if (h1 < h) {
-        h = h1;
+  for (var j: u32 = 0u; j < base_size; j++) {
+    let base_point = base_points[j];
+    var break_again = false;
+    var t: f32 = 0.0;
+
+    for (var i: u32 = 0u; i < 200u; i++) {
+      let pos: vec3<f32> = uniforms.viewer_position + t * ray_direction;
+      // let h: f32 = map_old(pos); // <---- map
+      var h: f32 = 1000000.0;
+        let relative = pos - base_point.position.xyz;
+        let h1 = sd_sphere(relative, 6.);
+        if (h1 < h) {
+          h = h1;
+        }
+      if (h < nearest) {
+        nearest = h;
       }
+      if (h < 0.02) {
+        break_again = true;
+        break;
+      }
+      if (t > tmax) {
+        break;
+      }
+      t += h;
     }
-    if (h < nearest) {
-      nearest = h;
+    if (t < min_t) {
+      min_t = t;
     }
-    if (h < 0.02 || t > tmax) {
+    if (break_again) {
       break;
     }
-    t += h;
   }
 
   // shading/lighting
   var color: vec3<f32> = vec3(0.0);
-  if (t < tmax) {
+  if (min_t < tmax) {
     color = vec3(0.8, 0.1, 0.8);
   }
   let l: f32 = 0.1 / (nearest * 0.1 + 0.001);

@@ -4,8 +4,14 @@ import { createBuffer, getComputeShaderModule } from "./utils.mjs";
 
 let prevTime = Date.now();
 
+export type BaseCellParams = {
+  position: number[];
+  velocity: number[];
+  params: number[];
+};
+
 let cachedBaseSize = 0;
-export const createGlobalPointsBuffer = (baseSize: number, offset: 800): GPUBuffer => {
+export const createGlobalPointsBuffer = (baseSize: number, f: (idx: number) => BaseCellParams): GPUBuffer => {
   if (atomPointsBuffer.deref() || baseSize === cachedBaseSize) {
     return atomPointsBuffer.deref();
   }
@@ -13,9 +19,10 @@ export const createGlobalPointsBuffer = (baseSize: number, offset: 800): GPUBuff
   let device = atomDevice.deref();
   let items: number[] = [];
   for (let i = 0; i < baseSize; i++) {
-    items.push(rand(offset), rand(offset), rand(offset), 1);
-    items.push(0, 0, 0, 0);
-    items.push(0, 0, 0, 0);
+    let info = f(i);
+    items.push(...info.position);
+    items.push(...info.velocity);
+    items.push(...info.params);
   }
   atomPointsBuffer.reset(createBuffer(new Float32Array(items), GPUBufferUsage.STORAGE, device));
   return atomPointsBuffer.deref();

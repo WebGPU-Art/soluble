@@ -6,4 +6,4 @@ export { onControlEvent, registerShaderResult, loadTouchControl } from "./contro
 
 export { setupRemoteControl } from "./remote-control.mjs";
 
-export { computeBasePoints, createGlobalPointsBuffer } from "./compute.mjs";
+export { computeBasePoints, createGlobalPointsBuffer, type BaseCellParams } from "./compute.mjs";

@@ -9,11 +9,13 @@ import {
   resetCanvasHeight,
   computeBasePoints,
   createGlobalPointsBuffer,
+  BaseCellParams,
 } from "./index.mjs";
 
 import movePoints from "../shaders/move-points.wgsl";
 import { compContainer } from "./app/container.mjs";
 import { useBaseSize, useRemoteControl } from "./config.mjs";
+import { rand } from "./math.mjs";
 
 let canvas = document.querySelector("canvas");
 let timeoutState: NodeJS.Timeout;
@@ -24,13 +26,21 @@ let loopPaint = () => {
   paintLagopusTree();
   timeoutState = setTimeout(() => {
     requestAnimationFrame(loopPaint);
-  }, 50);
+  }, 40);
   // rafState = requestAnimationFrame(loopPaint);
+};
+
+let createBasePoint = (idx: number): BaseCellParams => {
+  let offset = 800;
+  let position = [rand(offset), rand(offset), rand(offset), 1];
+  let velocity = [0, 0, 0, 0];
+  let params = [0, 0, 0, 0];
+  return { position, velocity, params };
 };
 
 window.onload = async () => {
   await initializeContext();
-  createGlobalPointsBuffer(useBaseSize, 800);
+  createGlobalPointsBuffer(useBaseSize, createBasePoint);
   renderLagopusTree(compContainer());
   loadTouchControl();
 
@@ -48,7 +58,7 @@ window.onload = async () => {
 };
 
 import.meta.hot?.accept("./app/container", (container) => {
-  createGlobalPointsBuffer(useBaseSize, 800);
+  createGlobalPointsBuffer(useBaseSize, createBasePoint);
   clearTimeout(timeoutState);
   cancelAnimationFrame(rafState);
 
