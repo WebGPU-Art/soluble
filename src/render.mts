@@ -164,7 +164,7 @@ let buildCommandBuffer = (info: LagopusObjectData): GPUCommandBuffer => {
   let emptyBuffer = {};
   let uniformBindGroupLayout = device.createBindGroupLayout({
     entries: [
-      { binding: 0, visibility: GPUShaderStage.VERTEX, buffer: emptyBuffer },
+      { binding: 0, visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: emptyBuffer },
       { binding: 1, visibility: GPUShaderStage.FRAGMENT, buffer: { type: "storage" } },
     ],
   });

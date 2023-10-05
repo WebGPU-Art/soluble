@@ -51,7 +51,7 @@ import.meta.hot?.accept("./app/container", (container) => {
   clearTimeout(timeoutState);
   cancelAnimationFrame(rafState);
 
-  renderLagopusTree(container.compContainer);
+  renderLagopusTree(container.compContainer());
   loopPaint();
 
   console.log("reloaded");
