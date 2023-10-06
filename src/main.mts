@@ -31,10 +31,10 @@ let loopPaint = () => {
 };
 
 let createBasePoint = (idx: number): BaseCellParams => {
-  let offset = 800;
+  let offset = 600;
   let position = [rand(offset), rand(offset), rand(offset), 1];
   let velocity = [0, 0, 0, 0];
-  let params = [0, 0, 0, 0];
+  let params = [rand(10), 2 + rand(2), 0, 0];
   return { position, velocity, params };
 };
 

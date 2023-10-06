@@ -120,6 +120,31 @@ export let createRenderer = (
   };
 };
 
+const presentationFormat = window.navigator.gpu.getPreferredCanvasFormat();
+
+// ~~ CREATE RENDER PASS DESCRIPTOR ~~
+const renderPassDescriptor = {
+  colorAttachments: [
+    {
+      clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 1.0 },
+      loadOp: "clear" as GPULoadOp,
+      storeOp: "store" as GPUStoreOp,
+      view: null as GPUTextureView,
+    },
+  ],
+  depthStencilAttachment: {
+    view: null as GPUTextureView,
+    depthClearValue: 1,
+    depthLoadOp: "clear" as GPULoadOp,
+    depthStoreOp: "store" as GPUStoreOp,
+    stentialClearValue: 0,
+    stencilLoadOp: "clear" as GPULoadOp,
+    stencilStoreOp: "store" as GPUStoreOp,
+  },
+};
+
+let cachedPipeline: GPURenderPipeline;
+
 let buildCommandBuffer = (info: LagopusObjectData): GPUCommandBuffer => {
   let { topology, shaderModule, vertexBuffersDescriptors, vertexBuffers, indices } = info;
 
@@ -132,7 +157,9 @@ let buildCommandBuffer = (info: LagopusObjectData): GPUCommandBuffer => {
 
   let lookAt = newLookatPoint();
   let forward = vNormalize(lookAt);
+  let upward = atomViewerUpward.deref();
   let rightward = vCross(forward, atomViewerUpward.deref());
+  let viewerPosition = atomViewerPosition.deref();
   // 👔 Uniform Data
   const uniformData = new Float32Array([
     window.innerWidth * window.devicePixelRatio,
@@ -145,14 +172,14 @@ let buildCommandBuffer = (info: LagopusObjectData): GPUCommandBuffer => {
     // alignment
     0,
     // upwardDirection
-    ...atomViewerUpward.deref(),
+    ...upward,
     // alignment
     0,
     ...rightward,
     // alignment
     0,
     // cameraPosition
-    ...atomViewerPosition.deref(),
+    ...viewerPosition,
     // alignment
     0,
   ]);
@@ -172,77 +199,44 @@ let buildCommandBuffer = (info: LagopusObjectData): GPUCommandBuffer => {
   let uniformBindGroup = device.createBindGroup({
     layout: uniformBindGroupLayout,
     entries: [
-      {
-        binding: 0,
-        resource: {
-          buffer: uniformBuffer,
-        },
-      },
-      {
-        binding: 1,
-        resource: {
-          buffer: atomPointsBuffer.deref(),
-        },
-      },
+      { binding: 0, resource: { buffer: uniformBuffer } },
+      { binding: 1, resource: { buffer: atomPointsBuffer.deref() } },
     ],
   });
-
-  const pipelineLayoutDesc = { bindGroupLayouts: [uniformBindGroupLayout] };
-  let renderLayout = device.createPipelineLayout(pipelineLayoutDesc);
 
   // ~~ CREATE RENDER PIPELINE ~~
-  const presentationFormat = window.navigator.gpu.getPreferredCanvasFormat();
-  const pipeline = device.createRenderPipeline({
-    layout: renderLayout,
-    vertex: {
-      module: shaderModule,
-      entryPoint: "vertex_main",
-      buffers: vertexBuffersDescriptors,
-    },
-    fragment: {
-      module: shaderModule,
-      entryPoint: "fragment_main",
-      targets: [{ format: presentationFormat }],
-    },
-    primitive: {
-      topology,
-      // pick uint32 for general usages
-      stripIndexFormat: topology === "line-strip" || topology === "triangle-strip" ? "uint32" : undefined,
-    },
-    depthStencil: {
-      depthWriteEnabled: true,
-      depthCompare: "less",
-      format: "depth24plus-stencil8",
-    },
-  });
+
+  let pipeline: GPURenderPipeline;
+  if (cachedPipeline) {
+    pipeline = cachedPipeline;
+  } else {
+    const pipelineLayoutDesc = { bindGroupLayouts: [uniformBindGroupLayout] };
+    let renderLayout = device.createPipelineLayout(pipelineLayoutDesc);
+
+    pipeline = device.createRenderPipeline({
+      layout: renderLayout,
+      vertex: { module: shaderModule, entryPoint: "vertex_main", buffers: vertexBuffersDescriptors },
+      fragment: { module: shaderModule, entryPoint: "fragment_main", targets: [{ format: presentationFormat }] },
+      primitive: {
+        topology,
+        // pick uint32 for general usages
+        stripIndexFormat: topology === "line-strip" || topology === "triangle-strip" ? "uint32" : undefined,
+      },
+      depthStencil: { depthWriteEnabled: true, depthCompare: "less", format: "depth24plus-stencil8" },
+    });
+    cachedPipeline = pipeline;
+  }
 
   let needClear = atomBufferNeedClear.deref();
-
-  // ~~ CREATE RENDER PASS DESCRIPTOR ~~
-  const renderPassDescriptor = {
-    colorAttachments: [
-      {
-        clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 1.0 },
-        loadOp: (needClear ? "clear" : "load") as GPULoadOp,
-        storeOp: "store" as GPUStoreOp,
-        view: null as GPUTextureView,
-      },
-    ],
-    depthStencilAttachment: {
-      view: null as GPUTextureView,
-      depthClearValue: 1,
-      depthLoadOp: (needClear ? "clear" : "load") as GPULoadOp,
-      depthStoreOp: "store" as GPUStoreOp,
-      stentialClearValue: 0,
-      stencilLoadOp: "clear" as GPULoadOp,
-      stencilStoreOp: "store" as GPUStoreOp,
-    },
-  };
-
   atomBufferNeedClear.reset(false);
 
+  let loadOpValue = (needClear ? "clear" : "load") as GPULoadOp;
+
+  renderPassDescriptor.colorAttachments[0].loadOp = loadOpValue;
+  renderPassDescriptor.depthStencilAttachment.depthLoadOp = loadOpValue;
   renderPassDescriptor.colorAttachments[0].view = context.getCurrentTexture().createView();
   renderPassDescriptor.depthStencilAttachment.view = depthTexture.createView();
+
   const commandEncoder = device.createCommandEncoder();
   const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
 

@@ -28,6 +28,8 @@ export const createGlobalPointsBuffer = (baseSize: number, f: (idx: number) => B
   return atomPointsBuffer.deref();
 };
 
+let time0 = Date.now();
+
 export function computeBasePoints(shaderCode: string) {
   let device = atomDevice.deref();
   const commandEncoder = device.createCommandEncoder();
@@ -36,7 +38,7 @@ export function computeBasePoints(shaderCode: string) {
   const shaderModule = getComputeShaderModule(device, shaderCode);
 
   let basePointsBuffer = atomPointsBuffer.deref();
-  let now = Date.now();
+  let now = Date.now() - time0;
   let uniformBuffer = createBuffer(new Float32Array([now, now - prevTime, 0, 0]), GPUBufferUsage.UNIFORM, device);
   prevTime = now;
 

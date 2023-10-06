@@ -40,6 +40,8 @@ fn vertex_main(
   return output;
 }
 
+const PI = 3.14159265368932374;
+
 @fragment
 fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
@@ -62,17 +64,18 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   for (var j: u32 = 0u; j < base_size; j++) {
     let base_point = base_points[j];
-    let base_position = base_point.position.xyz;
+    let dh = sin(base_point.p4 * base_point.p1 * 0.000008) * 100.0;
+    let base_position = base_point.position.xyz + vec3(0., dh, 0.);
 
     let view = base_position - uniforms.viewer_position;
     let view_unit = normalize(view);
     let view_length = length(view);
     let cos_value = dot(view_unit, ray_unit);
-    if (cos_value < 0.0) {
+    if (cos_value < 0.9) {
       continue;
     }
     let sin_value = sqrt(1.0 - cos_value * cos_value);
-    if (abs(view_length * sin_value) > 6.0) {
+    if (abs(view_length * sin_value) > 10.0) {
       continue;
     }
 
@@ -81,15 +84,26 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     let near_unit = normalize(near_offset);
     let a = abs(dot(near_unit, uniforms.upward));
     let b = abs(dot(near_unit, uniforms.rightward));
-    var ratio = pow((1. - a), 3.0) + pow((1. - b), 3.0);
+    let t = b / a;
+    let y = (t + 1. - sqrt(2. * t)) / (t * t + 1.);
+    let x = t * y;
+    let ll = sqrt(x * x + y * y);
+    // var ratio = pow((1. - a), 3.0) + pow((1. - b), 3.0);
+
+    // let theta = PI * 0.25 - acos(a);
+    // ratio = 1.0 / (sqrt(2.0) * cos(theta));
+    let ratio = ll;
 
     nearest = abs(view_length * sin_value);
-    var l: f32 = 100.1 / (pow(nearest * 1.6, 2.4) * 2.0 + 1.1) * ratio;
-    let color = vec3(l*0.8, l*0.8, l*0.1);
-    total = max(total, color);
+    // var l: f32 = 100.1 / (pow(nearest * 1.0, 2.0) * 2.0 + 0.1) * ratio;
+    // l = 0.3 / ratio;
+    // let color = vec3(l*0.8, l*0.8, l*0.1);
+    // total = max(total, color);
+
+    if (10.0 * pow(ratio, 1.5) * base_point.p3 > nearest) {
+      total = vec3(1.0, 1.0, 0.5);
+    }
   }
 
-
-
-  return vec4(total, 1.0);
+  return vec4(total, 0.9);
 }
