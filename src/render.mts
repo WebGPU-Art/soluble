@@ -1,7 +1,8 @@
 import { LagopusElement, LagopusHitRegion, LagopusObjectData } from "./primes.mjs";
-import { atomDepthTexture, atomContext, atomDevice, atomBufferNeedClear, atomLagopusTree, atomProxiedDispatch, atomObjectsTree, wLog } from "./global.mjs";
+import { atomDepthTexture, atomContext, atomDevice, atomBufferNeedClear, atomLagopusTree, atomObjectsTree, wLog, atomPointsBuffer } from "./global.mjs";
 import { atomViewerPosition, atomViewerScale, atomViewerUpward, newLookatPoint } from "./perspective.mjs";
 import { vNormalize, vCross, vLength } from "./quaternion.mjs";
+import { createBuffer } from "./utils.mjs";
 
 /** init canvas context */
 export const initializeContext = async (): Promise<any> => {
@@ -79,8 +80,8 @@ export let createRenderer = (
   // load shared device
   let device = atomDevice.deref();
 
-  let vertexBuffers = vertices.map((v) => createBuffer(v, GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST));
-  let indecesBuffer = indices ? createBuffer(indices, GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST) : null;
+  let vertexBuffers = vertices.map((v) => createBuffer(v, GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST, device));
+  let indecesBuffer = indices ? createBuffer(indices, GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST, device) : null;
 
   const vertexBuffersDescriptors = attrsList.map((info, idx) => {
     let stride = info.size * (info.unitSize || 4);
@@ -119,6 +120,31 @@ export let createRenderer = (
   };
 };
 
+const presentationFormat = window.navigator.gpu.getPreferredCanvasFormat();
+
+// ~~ CREATE RENDER PASS DESCRIPTOR ~~
+const renderPassDescriptor = {
+  colorAttachments: [
+    {
+      clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 1.0 },
+      loadOp: "clear" as GPULoadOp,
+      storeOp: "store" as GPUStoreOp,
+      view: null as GPUTextureView,
+    },
+  ],
+  depthStencilAttachment: {
+    view: null as GPUTextureView,
+    depthClearValue: 1,
+    depthLoadOp: "clear" as GPULoadOp,
+    depthStoreOp: "store" as GPUStoreOp,
+    stentialClearValue: 0,
+    stencilLoadOp: "clear" as GPULoadOp,
+    stencilStoreOp: "store" as GPUStoreOp,
+  },
+};
+
+let cachedPipeline: GPURenderPipeline;
+
 let buildCommandBuffer = (info: LagopusObjectData): GPUCommandBuffer => {
   let { topology, shaderModule, vertexBuffersDescriptors, vertexBuffers, indices } = info;
 
@@ -131,7 +157,9 @@ let buildCommandBuffer = (info: LagopusObjectData): GPUCommandBuffer => {
 
   let lookAt = newLookatPoint();
   let forward = vNormalize(lookAt);
+  let upward = atomViewerUpward.deref();
   let rightward = vCross(forward, atomViewerUpward.deref());
+  let viewerPosition = atomViewerPosition.deref();
   // 👔 Uniform Data
   const uniformData = new Float32Array([
     window.innerWidth * window.devicePixelRatio,
@@ -144,100 +172,71 @@ let buildCommandBuffer = (info: LagopusObjectData): GPUCommandBuffer => {
     // alignment
     0,
     // upwardDirection
-    ...atomViewerUpward.deref(),
+    ...upward,
     // alignment
     0,
     ...rightward,
     // alignment
     0,
     // cameraPosition
-    ...atomViewerPosition.deref(),
+    ...viewerPosition,
     // alignment
     0,
   ]);
 
   // console.log("uniformData", uniformData);
 
-  let uniformBuffer = createBuffer(uniformData, GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST);
-
+  let uniformBuffer = createBuffer(uniformData, GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST, device);
+  /** don't know why, but fixes, https://programmer.ink/think/several-best-practices-of-webgpu.html */
+  let emptyBuffer = {};
   let uniformBindGroupLayout = device.createBindGroupLayout({
     entries: [
-      {
-        binding: 0,
-        visibility: GPUShaderStage.VERTEX,
-        buffer: {}, // TODO don't know why, but fixes, https://programmer.ink/think/several-best-practices-of-webgpu.html
-      },
+      { binding: 0, visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: emptyBuffer },
+      { binding: 1, visibility: GPUShaderStage.FRAGMENT, buffer: { type: "storage" } },
     ],
   });
 
   let uniformBindGroup = device.createBindGroup({
     layout: uniformBindGroupLayout,
     entries: [
-      {
-        binding: 0,
-        resource: {
-          buffer: uniformBuffer,
-        },
-      },
+      { binding: 0, resource: { buffer: uniformBuffer } },
+      { binding: 1, resource: { buffer: atomPointsBuffer.deref() } },
     ],
   });
-
-  const pipelineLayoutDesc = { bindGroupLayouts: [uniformBindGroupLayout] };
-  let renderLayout = device.createPipelineLayout(pipelineLayoutDesc);
 
   // ~~ CREATE RENDER PIPELINE ~~
-  const presentationFormat = window.navigator.gpu.getPreferredCanvasFormat();
-  const pipeline = device.createRenderPipeline({
-    layout: renderLayout,
-    vertex: {
-      module: shaderModule,
-      entryPoint: "vertex_main",
-      buffers: vertexBuffersDescriptors,
-    },
-    fragment: {
-      module: shaderModule,
-      entryPoint: "fragment_main",
-      targets: [{ format: presentationFormat }],
-    },
-    primitive: {
-      topology,
-      // pick uint32 for general usages
-      stripIndexFormat: topology === "line-strip" || topology === "triangle-strip" ? "uint32" : undefined,
-    },
-    depthStencil: {
-      depthWriteEnabled: true,
-      depthCompare: "less",
-      format: "depth24plus-stencil8",
-    },
-  });
+
+  let pipeline: GPURenderPipeline;
+  if (cachedPipeline) {
+    pipeline = cachedPipeline;
+  } else {
+    const pipelineLayoutDesc = { bindGroupLayouts: [uniformBindGroupLayout] };
+    let renderLayout = device.createPipelineLayout(pipelineLayoutDesc);
+
+    pipeline = device.createRenderPipeline({
+      layout: renderLayout,
+      vertex: { module: shaderModule, entryPoint: "vertex_main", buffers: vertexBuffersDescriptors },
+      fragment: { module: shaderModule, entryPoint: "fragment_main", targets: [{ format: presentationFormat }] },
+      primitive: {
+        topology,
+        // pick uint32 for general usages
+        stripIndexFormat: topology === "line-strip" || topology === "triangle-strip" ? "uint32" : undefined,
+      },
+      depthStencil: { depthWriteEnabled: true, depthCompare: "less", format: "depth24plus-stencil8" },
+    });
+    cachedPipeline = pipeline;
+  }
 
   let needClear = atomBufferNeedClear.deref();
-
-  // ~~ CREATE RENDER PASS DESCRIPTOR ~~
-  const renderPassDescriptor = {
-    colorAttachments: [
-      {
-        clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 1.0 },
-        loadOp: (needClear ? "clear" : "load") as GPULoadOp,
-        storeOp: "store" as GPUStoreOp,
-        view: null as GPUTextureView,
-      },
-    ],
-    depthStencilAttachment: {
-      view: null as GPUTextureView,
-      depthClearValue: 1,
-      depthLoadOp: (needClear ? "clear" : "load") as GPULoadOp,
-      depthStoreOp: "store" as GPUStoreOp,
-      stentialClearValue: 0,
-      stencilLoadOp: "clear" as GPULoadOp,
-      stencilStoreOp: "store" as GPUStoreOp,
-    },
-  };
-
   atomBufferNeedClear.reset(false);
 
+  let loadOpValue = (needClear ? "clear" : "load") as GPULoadOp;
+
+  renderPassDescriptor.colorAttachments[0].loadOp = loadOpValue;
+  renderPassDescriptor.depthStencilAttachment.depthLoadOp = loadOpValue;
   renderPassDescriptor.colorAttachments[0].view = context.getCurrentTexture().createView();
   renderPassDescriptor.depthStencilAttachment.view = depthTexture.createView();
+
   const commandEncoder = device.createCommandEncoder();
   const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
 
@@ -268,24 +267,6 @@ export let collectBuffers = (el: LagopusElement, buffers: GPUCommandBuffer[]) =>
   }
 };
 
-// 👋 Helper function for creating GPUBuffer(s) out of Typed Arrays
-const createBuffer = (arr: Float32Array | Uint32Array, usage: number) => {
-  // 📏 Align to 4 bytes (thanks @chrimsonite)
-  let desc = {
-    size: (arr.byteLength + 3) & ~3,
-    // size: 64,
-    usage,
-    mappedAtCreation: true,
-  };
-  let device = atomDevice.deref();
-  let buffer = device.createBuffer(desc);
-
-  const writeArray = arr instanceof Uint32Array ? new Uint32Array(buffer.getMappedRange()) : new Float32Array(buffer.getMappedRange());
-  writeArray.set(arr);
-  buffer.unmap();
-  return buffer;
-};
-
 /** send command buffer to device and render */
 export function paintLagopusTree() {
   // console.log("paint");
@@ -305,9 +286,8 @@ export function resetCanvasHeight(canvas: HTMLCanvasElement) {
 }
 
 /** track tree, internally it calls `paintLagopusTree` to render */
-export function renderLagopusTree(tree: LagopusElement, dispatch: (op: any, data: any) => void) {
+export function renderLagopusTree(tree: LagopusElement) {
   atomLagopusTree.reset(tree);
-  atomProxiedDispatch.reset(dispatch);
   atomObjectsTree.reset(tree);
   paintLagopusTree();
 }

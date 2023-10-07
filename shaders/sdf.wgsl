@@ -8,12 +8,68 @@ struct UBO {
   viewer_position: vec3<f32>,
 };
 
-@group(0) @binding(0)
-var<uniform> uniforms: UBO;
+struct BaseCell {
+  position: vec4<f32>,
+  velocity: vec4<f32>,
+  p1: f32,
+  p2: f32,
+  p3: f32,
+  p4: f32,
+};
+
+@group(0) @binding(0) var<uniform> uniforms: UBO;
+@group(0) @binding(1) var<storage, read_write> base_points: array<BaseCell>;
 
 fn ndot(a: vec2<f32>, b: vec2<f32>) -> f32 {
   return a.x * b.x - a.y * b.y;
 }
+
+// utils
+
+// https://iquilezles.org/articles/normalsSDF
+// fn calc_normal_direction(pos: vec3<f32>) -> vec3<f32> {
+//   let e: vec2<f32> = vec2(1.0,-1.0)*0.5773;
+//   let eps: f32 = 0.05;
+//   return normalize( e.xyy*map( pos + e.xyy*eps ) +
+//           e.yyx*map( pos + e.yyx*eps ) +
+//           e.yxy*map( pos + e.yxy*eps ) +
+//           e.xxx*map( pos + e.xxx*eps ) );
+// }
+
+fn calc_normal_direction(p: vec3<f32>) -> vec3<f32> {
+  let eps: f32 = 0.002;
+  let v1: vec3<f32> = vec3(1.0, -1.0, -1.0);
+  let v2: vec3<f32> = vec3(-1.0, -1.0, 1.0);
+  let v3: vec3<f32> = vec3(-1.0, 1.0, -1.0);
+  let v4: vec3<f32> = vec3(1.0, 1.0, 1.0);
+  return normalize(v1 * map(p + v1 * eps) + v2 * map(p + v2 * eps) +
+                   v3 * map(p + v3 * eps) + v4 * map(p + v4 * eps));
+}
+
+const sqrt2: f32 = 1.4142135623730950488016887242096980785696718753769480731766797379;
+const sqrt3: f32 = 1.7320508075688772935274463415058723669428052538103806280558069794;
+
+/// turn xyz into compact abc
+fn resolve_axis(p: vec3<f32>) -> vec3<f32> {
+  let b: f32 = sqrt3 * p.y / sqrt2;
+  let c: f32 = (p.z - 0.5 * b / sqrt3) * 2.0 / sqrt3;
+  let a: f32 = p.x - 0.5 * c - 0.5 * b;
+  return vec3(a, b, c);
+}
+
+/// turn compact abc into compact xyz
+fn transform_axis(p: vec3<f32>) -> vec3<f32> {
+  let x: f32 = p.x + 0.5 * p.y + 0.5 * p.z;
+  let y: f32 = p.y * sqrt2 / sqrt3;
+  let z: f32 = 0.5 * sqrt3 * p.z + 0.5 * p.y / sqrt3;
+  return vec3(x, y, z);
+}
+
+fn round_up(a: f32) -> f32 {
+  return floor(a + 0.5);
+}
+
+// shapes
 
 // la,lb=semi axis, h=height, ra=corner
 fn sd_rhombus(p0: vec3<f32>, la: f32, lb: f32, h: f32, ra: f32) -> f32 {
@@ -57,10 +113,6 @@ fn sd_octahedron(p: vec3<f32>, s: f32) -> f32 {
 }
 
 
-fn fake_round(a: f32) -> f32 {
-  return floor(a + 0.5);
-}
-
 fn map_2(pos: vec3<f32>) -> f32 {
   // return sd_sphere(pos, 200.);
   // return sd_box(pos, vec3(200.,200.,200.));
@@ -79,9 +131,9 @@ fn map_old(pos: vec3<f32>) -> f32 {
   // let l: vec3<f32> = vec3(20.0, 0.0, 0.0);
   let limit: f32 = 40.0;
   var pos_c: vec3<f32> = pos / c;
-  pos_c = vec3(clamp(fake_round(pos_c.x), -limit, limit),
-                 clamp(fake_round(pos_c.y), -limit, limit),
-                 clamp(fake_round(pos_c.z), -limit, limit));
+  pos_c = vec3(clamp(round_up(pos_c.x), -limit, limit),
+                 clamp(round_up(pos_c.y), -limit, limit),
+                 clamp(round_up(pos_c.z), -limit, limit));
   // let q: vec3<f32> = pos - c * clamp(mp, -l, l);
   let q: vec3<f32> = pos - c * pos_c;
   // vec3 replicated_position = fract(pos * 10.0) * 0.1;
@@ -90,24 +142,6 @@ fn map_old(pos: vec3<f32>) -> f32 {
   // return sd_octahedron(q, 0.22);
 }
 
-const sqrt2: f32 = 1.4142135623730950488016887242096980785696718753769480731766797379;
-const sqrt3: f32 = 1.7320508075688772935274463415058723669428052538103806280558069794;
-
-/// turn xyz into compact abc
-fn resolve_axis(p: vec3<f32>) -> vec3<f32> {
-  let b: f32 = sqrt3 * p.y / sqrt2;
-  let c: f32 = (p.z - 0.5 * b / sqrt3) * 2.0 / sqrt3;
-  let a: f32 = p.x - 0.5 * c - 0.5 * b;
-  return vec3(a, b, c);
-}
-
-/// turn compact abc into compact xyz
-fn transform_axis(p: vec3<f32>) -> vec3<f32> {
-  let x: f32 = p.x + 0.5 * p.y + 0.5 * p.z;
-  let y: f32 = p.y * sqrt2 / sqrt3;
-  let z: f32 = 0.5 * sqrt3 * p.z + 0.5 * p.y / sqrt3;
-  return vec3(x, y, z);
-}
 
 fn map(pos: vec3<f32>) -> f32 {
   let c: f32 = 2.0;
@@ -181,59 +215,31 @@ fn map(pos: vec3<f32>) -> f32 {
   return sd_sphere(qqq, 0.01);
 }
 
-// https://iquilezles.org/articles/normalsSDF
-// fn calc_normal_direction(pos: vec3<f32>) -> vec3<f32> {
-//   let e: vec2<f32> = vec2(1.0,-1.0)*0.5773;
-//   let eps: f32 = 0.05;
-//   return normalize( e.xyy*map( pos + e.xyy*eps ) +
-//           e.yyx*map( pos + e.yyx*eps ) +
-//           e.yxy*map( pos + e.yxy*eps ) +
-//           e.xxx*map( pos + e.xxx*eps ) );
-// }
+// Render Pass
 
-fn calc_normal_direction(p: vec3<f32>) -> vec3<f32> {
-  let eps: f32 = 0.002;
-  let v1: vec3<f32> = vec3(1.0, -1.0, -1.0);
-  let v2: vec3<f32> = vec3(-1.0, -1.0, 1.0);
-  let v3: vec3<f32> = vec3(-1.0, 1.0, -1.0);
-  let v4: vec3<f32> = vec3(1.0, 1.0, 1.0);
-  return normalize(v1 * map(p + v1 * eps) + v2 * map(p + v2 * eps) +
-                   v3 * map(p + v3 * eps) + v4 * map(p + v4 * eps));
-}
+struct VertexOut {
+  @builtin(position) position: vec4<f32>,
+  @location(1) uv: vec2<f32>,
+};
 
 @vertex
 fn vertex_main(
-    @location(0) position: vec2<f32>,
+  @location(0) position: vec2<f32>,
 ) -> VertexOut {
   var output: VertexOut;
   output.position = vec4(position, 0.0, 1.0);
   output.uv = vec2<f32>(position.x, position.y);
-  output.screen_wh = uniforms.screen_wh;
-  output.viewer_position = uniforms.viewer_position;
-  output.forward = uniforms.forward;
-  output.upward = uniforms.upward;
-  output.scale = uniforms.scale;
   return output;
 }
-
-struct VertexOut {
-    @builtin(position) position: vec4<f32>,
-    @location(0) viewer_position: vec3<f32>,
-    @location(1) scale: f32,
-    @location(2) forward: vec3<f32>,
-    @location(3) upward: vec3<f32>,
-    @location(4) uv: vec2<f32>,
-    @location(5) screen_wh: vec2<f32>,
-};
 
 @fragment
 fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
-  let viewer_position: vec3<f32> = vx_out.viewer_position;
-  let forward: vec3<f32> = vx_out.forward;
-  let upward: vec3<f32> = vx_out.upward;
+  let viewer_position: vec3<f32> = uniforms.viewer_position;
+  let forward: vec3<f32> = uniforms.forward;
+  let upward: vec3<f32> = uniforms.upward;
   let uv = vx_out.uv;
-  let screen_wh= vx_out.screen_wh;
+  let screen_wh= uniforms.screen_wh;
 
   let rightward: vec3<f32> = normalize(cross(forward, upward)); // rightward
 
@@ -241,7 +247,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   // pixel coordinates
   let coord: vec2<f32> = uv * screen_wh;
-  let p: vec2<f32> = coord * 0.0005 / vx_out.scale;
+  let p: vec2<f32> = coord * 0.0005 / uniforms.scale;
 
   // create view ray
   let ray_direction = normalize(p.x * rightward + p.y * upward + 1.5 * forward);
@@ -250,13 +256,23 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   var tmax: f32 = 2000.0;
   var t: f32 = 0.0;
   var nearest: f32 = 100.0;
-  for (var i: u32 = 0u; i < 320u; i++) {
+  var base_size = arrayLength(&base_points);
+  for (var i: u32 = 0u; i < 200u; i++) {
     let pos: vec3<f32> = viewer_position + t * ray_direction;
-    let h: f32 = map_old(pos); // <---- map
+    // let h: f32 = map_old(pos); // <---- map
+    var h: f32 = 1000000.0;
+    for (var j: u32 = 0u; j < base_size; j++) {
+      let base_point = base_points[j];
+      let relative = pos - base_point.position.xyz;
+      let h1 = sd_sphere(relative, 6.);
+      if (h1 < h) {
+        h = h1;
+      }
+    }
     if (h < nearest) {
       nearest = h;
     }
-    if (h < 0.2 || t > tmax) {
+    if (h < 0.02 || t > tmax) {
       break;
     }
     t += h;
@@ -272,7 +288,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     // color = vec3(0.6, 0.4, 0.2) * ambient + vec3(0.5, 0.8, 0.3) * dif;
     color = vec3(0.8, 0.1, 0.8);
   }
-  let l: f32 = 0.3 / (nearest + 0.01);
+  let l: f32 = 0.1 / (nearest * 0.1 + 0.001);
   color += vec3(l*0.8, l*0.1, l*0.8);
 
   // gamma

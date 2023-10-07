@@ -1,7 +1,9 @@
 export { group, object, u32buffer, newBufferFormatLength } from "./alias.mjs";
 
-export { createRenderer, initializeContext, paintLagopusTree, renderLagopusTree } from "./render.mjs";
+export { createRenderer, initializeContext, paintLagopusTree, renderLagopusTree, resetCanvasHeight } from "./render.mjs";
 
-export { onControlEvent, registerShaderResult } from "./control.mjs";
+export { onControlEvent, registerShaderResult, loadTouchControl } from "./control.mjs";
 
-export { setupMouseEvents } from "./events.mjs";
+export { setupRemoteControl } from "./remote-control.mjs";
+
+export { computeBasePoints, createGlobalPointsBuffer, type BaseCellParams } from "./compute.mjs";

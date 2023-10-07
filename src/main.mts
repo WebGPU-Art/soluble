@@ -1,76 +1,69 @@
 /// <reference types="vite/client" />
 
-import queryString from "query-string";
+import {
+  loadTouchControl,
+  setupRemoteControl,
+  initializeContext,
+  paintLagopusTree,
+  renderLagopusTree,
+  resetCanvasHeight,
+  computeBasePoints,
+  createGlobalPointsBuffer,
+  BaseCellParams,
+} from "./index.mjs";
 
-import { initializeContext, paintLagopusTree, renderLagopusTree, resetCanvasHeight } from "./render.mjs";
-
+import movePoints from "../shaders/move-points.wgsl";
 import { compContainer } from "./app/container.mjs";
-import { renderControl, startControlLoop } from "@triadica/touch-control";
-import { onControlEvent } from "./control.mjs";
-import { setupMouseEvents } from "./events.mjs";
-import { Atom } from "./atom.mjs";
-import { V3 } from "./primes.mjs";
-import { setupRemoteControl } from "./remote-control.mjs";
+import { useBaseSize, useRemoteControl } from "./config.mjs";
+import { rand } from "./math.mjs";
 
-let store = new Atom({
-  position: [180, 80, 80] as V3,
-});
+let canvas = document.querySelector("canvas");
+let timeoutState: NodeJS.Timeout;
+let rafState = 0;
 
-let dispatch = (op: string, data: any) => {
-  if (op === "drag") {
-    store.deref().position = data;
-    renderApp();
-  } else {
-    console.warn("dispatch", op, data);
-  }
+let loopPaint = () => {
+  computeBasePoints(movePoints);
+  paintLagopusTree();
+  timeoutState = setTimeout(() => {
+    requestAnimationFrame(loopPaint);
+  }, 40);
+  // rafState = requestAnimationFrame(loopPaint);
 };
 
-/** for HMR */
-let mainComponent = compContainer;
-
-function renderApp() {
-  let tree = mainComponent(store.deref());
-
-  renderLagopusTree(tree, dispatch);
-}
+let createBasePoint = (idx: number): BaseCellParams => {
+  let offset = 600;
+  let position = [rand(offset), rand(offset), rand(offset), 1];
+  let velocity = [0, 0, 0, 0];
+  let params = [rand(10), 2 + rand(2), 0, 0];
+  return { position, velocity, params };
+};
 
 window.onload = async () => {
   await initializeContext();
-  renderApp();
-  console.log("loaded");
+  createGlobalPointsBuffer(useBaseSize, createBasePoint);
+  renderLagopusTree(compContainer());
+  loadTouchControl();
 
-  renderControl();
-  startControlLoop(10, onControlEvent);
+  loopPaint();
 
-  let canvas = document.querySelector("canvas");
-
+  resetCanvasHeight(canvas);
   window.onresize = () => {
     resetCanvasHeight(canvas);
     paintLagopusTree();
   };
-  resetCanvasHeight(canvas);
 
-  window.__lagopusHandleCompilationInfo = (e, code) => {
-    if (e.messages.length) {
-      console.error(e);
-    }
-  };
-  setupMouseEvents(canvas);
-
-  const parsed = queryString.parse(location.search);
-
-  if (parsed["remote-control"]) {
+  if (useRemoteControl) {
     setupRemoteControl();
   }
 };
 
-declare global {
-  /** dirty hook for extracting error messages */
-  var __lagopusHandleCompilationInfo: (info: GPUCompilationInfo, code: string) => void;
-}
-
 import.meta.hot?.accept("./app/container", (container) => {
-  console.log("reloading");
-  mainComponent = container.compContainer;
-  renderApp();
+  createGlobalPointsBuffer(useBaseSize, createBasePoint);
+  clearTimeout(timeoutState);
+  cancelAnimationFrame(rafState);
+
+  renderLagopusTree(container.compContainer());
+  loopPaint();
+
+  console.log("reloaded");
 });

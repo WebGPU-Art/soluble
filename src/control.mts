@@ -1,6 +1,6 @@
 import { changeScaleBy, moveViewerBy, rotateGlanceBy, spinGlanceBy } from "./perspective.mjs";
 import { V2 } from "./primes.mjs";
-import { ControlStates } from "@triadica/touch-control";
+import { ControlStates, renderControl, startControlLoop } from "@triadica/touch-control";
 import { paintLagopusTree } from "./render.mjs";
 
 export let onControlEvent = (elapsed: number, states: ControlStates, delta: ControlStates) => {
@@ -30,9 +30,9 @@ export let onControlEvent = (elapsed: number, states: ControlStates, delta: Cont
   if (!rightA && rightB && rMove[0] !== 0) {
     changeScaleBy(0.01 * elapsed * rMove[0]);
   }
-  if (!isZero(lMove) || !isZero(rMove)) {
-    paintLagopusTree();
-  }
+  // if (!isZero(lMove) || !isZero(rMove)) {
+  //   paintLagopusTree();
+  // }
 };
 
 let isZero = (v: V2): boolean => {
@@ -46,4 +46,15 @@ let refineStrength = (x: number): number => {
 /** function to catch shader compilation errors */
 export function registerShaderResult(f: (e: GPUCompilationInfo, code: string) => void) {
   window.__lagopusHandleCompilationInfo = f;
+}
+
+export function loadTouchControl() {
+  renderControl();
+  startControlLoop(10, onControlEvent);
+
+  registerShaderResult((e, code) => {
+    if (e.messages.length) {
+      console.error(e);
+    }
+  });
 }
