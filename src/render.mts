@@ -143,8 +143,6 @@ const renderPassDescriptor = {
   },
 };
 
-let cachedPipeline: GPURenderPipeline;
-
 let buildCommandBuffer = (info: LagopusObjectData): GPUCommandBuffer => {
   let { topology, shaderModule, vertexBuffersDescriptors, vertexBuffers, indices } = info;
 
@@ -206,26 +204,20 @@ let buildCommandBuffer = (info: LagopusObjectData): GPUCommandBuffer => {
 
   // ~~ CREATE RENDER PIPELINE ~~
 
-  let pipeline: GPURenderPipeline;
-  if (cachedPipeline) {
-    pipeline = cachedPipeline;
-  } else {
-    const pipelineLayoutDesc = { bindGroupLayouts: [uniformBindGroupLayout] };
-    let renderLayout = device.createPipelineLayout(pipelineLayoutDesc);
+  const pipelineLayoutDesc = { bindGroupLayouts: [uniformBindGroupLayout] };
+  let renderLayout = device.createPipelineLayout(pipelineLayoutDesc);
 
-    pipeline = device.createRenderPipeline({
-      layout: renderLayout,
-      vertex: { module: shaderModule, entryPoint: "vertex_main", buffers: vertexBuffersDescriptors },
-      fragment: { module: shaderModule, entryPoint: "fragment_main", targets: [{ format: presentationFormat }] },
-      primitive: {
-        topology,
-        // pick uint32 for general usages
-        stripIndexFormat: topology === "line-strip" || topology === "triangle-strip" ? "uint32" : undefined,
-      },
-      depthStencil: { depthWriteEnabled: true, depthCompare: "less", format: "depth24plus-stencil8" },
-    });
-    cachedPipeline = pipeline;
-  }
+  let pipeline = device.createRenderPipeline({
+    layout: renderLayout,
+    vertex: { module: shaderModule, entryPoint: "vertex_main", buffers: vertexBuffersDescriptors },
+    fragment: { module: shaderModule, entryPoint: "fragment_main", targets: [{ format: presentationFormat }] },
+    primitive: {
+      topology,
+      // pick uint32 for general usages
+      stripIndexFormat: topology === "line-strip" || topology === "triangle-strip" ? "uint32" : undefined,
+    },
+    depthStencil: { depthWriteEnabled: true, depthCompare: "less", format: "depth24plus-stencil8" },
+  });
 
   let needClear = atomBufferNeedClear.deref();
   atomBufferNeedClear.reset(false);
@@ -287,6 +279,7 @@ export function resetCanvasHeight(canvas: HTMLCanvasElement) {
 
 /** track tree, internally it calls `paintLagopusTree` to render */
 export function renderLagopusTree(tree: LagopusElement) {
+  console.log("tree", tree);
   atomLagopusTree.reset(tree);
   atomObjectsTree.reset(tree);
   paintLagopusTree();

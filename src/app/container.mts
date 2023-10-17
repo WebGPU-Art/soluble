@@ -1,5 +1,6 @@
 import sdfWgsl from "../../shaders/sdf.wgsl";
 import starWgsl from "../../shaders/star.wgsl";
+import strokeWgsl from "../../shaders/stroke.wgsl";
 
 import { group, object } from "../alias.mjs";
 import { LagopusElement } from "../primes.mjs";
@@ -8,7 +9,7 @@ export let compContainer = (): LagopusElement => {
   return group(
     null,
     object({
-      shader: starWgsl,
+      shader: strokeWgsl,
       topology: "triangle-list",
       // topology: "line-strip",
       attrsList: [{ field: "position", format: "float32x2", size: 2 }],
@@ -24,3 +25,5 @@ export let compContainer = (): LagopusElement => {
     })
   );
 };
+
+console.log("Container");

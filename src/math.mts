@@ -25,3 +25,5 @@ export let range = (n: number): number[] => {
 export let rand = (n: number) => {
   return (Math.random() - 0.5) * n;
 };
+
+export type Number4 = [number, number, number, number];

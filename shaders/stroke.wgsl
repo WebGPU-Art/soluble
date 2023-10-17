@@ -60,7 +60,6 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   );
 
   // raymarch
-  var nearest: f32 = 10000.0;
   var total: vec3<f32> = vec3(0.0,0.0,0.0);
 
   for (var j: u32 = 0u; j < base_size; j++) {
@@ -83,19 +82,14 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     let near_point = uniforms.viewer_position + ray_unit * view_length * cos_value;
     let near_offset = near_point - base_position;
     let near_unit = normalize(near_offset);
-    let a = abs(dot(near_unit, uniforms.upward));
-    let b = abs(dot(near_unit, uniforms.rightward));
-    let t = b / a;
-    let y = (t + 1. - sqrt(2. * t)) / (t * t + 1.);
-    let x = t * y;
-    let ll = sqrt(x * x + y * y);
+
     // var ratio = pow((1. - a), 3.0) + pow((1. - b), 3.0);
 
     // let theta = PI * 0.25 - acos(a);
     // ratio = 1.0 / (sqrt(2.0) * cos(theta));
-    let ratio = ll;
+    let ratio = 1.;
 
-    nearest = abs(view_length * sin_value);
+    let nearest = abs(view_length * sin_value);
     // var l: f32 = 100.1 / (pow(nearest * 1.0, 2.0) * 2.0 + 0.1) * ratio;
     // l = 0.3 / ratio;
     // let color = vec3(l*0.8, l*0.8, l*0.1);

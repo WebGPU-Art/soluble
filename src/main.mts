@@ -15,7 +15,7 @@ import {
 import movePoints from "../shaders/move-points.wgsl";
 import { compContainer } from "./app/container.mjs";
 import { useBaseSize, useRemoteControl } from "./config.mjs";
-import { rand } from "./math.mjs";
+import { Number4, rand } from "./math.mjs";
 
 let canvas = document.querySelector("canvas");
 let timeoutState: NodeJS.Timeout;
@@ -32,10 +32,11 @@ let loopPaint = () => {
 
 let createBasePoint = (idx: number): BaseCellParams => {
   let offset = 600;
-  let position = [rand(offset), rand(offset), rand(offset), 1];
-  let velocity = [0, 0, 0, 0];
-  let params = [rand(10), 2 + rand(2), 0, 0];
-  return { position, velocity, params };
+  let position: Number4 = [rand(offset), rand(offset), rand(offset), 1];
+  let velocity: Number4 = [0, 0, 0, 0];
+  let arm: Number4 = [rand(offset), rand(offset), rand(offset), 1];
+  let params: Number4 = [rand(10), 2 + rand(2), 0, 0];
+  return { position, arm, velocity, params };
 };
 
 window.onload = async () => {
