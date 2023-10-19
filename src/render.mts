@@ -279,7 +279,6 @@ export function resetCanvasHeight(canvas: HTMLCanvasElement) {
 
 /** track tree, internally it calls `paintLagopusTree` to render */
 export function renderLagopusTree(tree: LagopusElement) {
-  console.log("tree", tree);
   atomLagopusTree.reset(tree);
   atomObjectsTree.reset(tree);
   paintLagopusTree();
