@@ -9,6 +9,12 @@ struct BaseCell {
   duration: f32,
   p3: f32,
   time: f32,
+
+  // extend params
+  p5: f32,
+  p6: f32,
+  p7: f32,
+  p8: f32,
 };
 
 @group(0) @binding(0)

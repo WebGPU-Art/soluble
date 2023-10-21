@@ -26,4 +26,8 @@ export let rand = (n: number) => {
   return (Math.random() - 0.5) * n;
 };
 
+export const randBalance = (max: number) => {
+  return Math.floor(Math.random() * max) - max / 2;
+};
+
 export type Number4 = [number, number, number, number];

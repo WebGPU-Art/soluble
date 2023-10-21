@@ -9,6 +9,7 @@ export type BaseCellParams = {
   velocity: Number4;
   arm: Number4;
   params: Number4;
+  extendParams: Number4;
 };
 
 let cachedBaseSize = 0;
@@ -25,6 +26,7 @@ export const createGlobalPointsBuffer = (baseSize: number, f: (idx: number) => B
     items.push(...info.velocity);
     items.push(...info.arm);
     items.push(...info.params);
+    items.push(...info.extendParams);
   }
   atomPointsBuffer.reset(createBuffer(new Float32Array(items), GPUBufferUsage.STORAGE, device));
   return atomPointsBuffer.deref();

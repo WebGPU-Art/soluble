@@ -13,6 +13,12 @@ struct BaseCell {
   velocity: vec4<f32>,
   arm: vec4<f32>,
   p1: f32, p2: f32, p3: f32, p4: f32,
+
+  // extend params
+  p5: f32,
+  p6: f32,
+  p7: f32,
+  p8: f32,
 };
 
 @group(0) @binding(0) var<uniform> uniforms: UBO;
@@ -64,40 +70,56 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   for (var j: u32 = 0u; j < base_size; j++) {
     let base_point = base_points[j];
-    let dh = sin(base_point.p4 * base_point.p1 * 0.000008) * 100.0;
-    let base_position = base_point.position.xyz + vec3(0., dh, 0.);
+    // let dh = sin(base_point.p4 * base_point.p1 * 0.000008) * 100.0;
+    let base_position = base_point.position.xyz + vec3(0., 0.0, 0.);
+    let arm_position = base_position + base_point.arm.xyz;
 
-    let view = base_position - uniforms.viewer_position;
-    let view_unit = normalize(view);
-    let view_length = length(view);
-    let cos_value = dot(view_unit, ray_unit);
-    if (cos_value < 0.9) {
+    /// from viewer to base
+    let a = base_position.xyz - uniforms.viewer_position;
+    /// from viewer to arm
+    let b = arm_position.xyz - uniforms.viewer_position;
+
+    if (dot(a, ray_unit) <= 0.0 || dot(b, ray_unit) <= 0.0) {
+      // outside of the view
       continue;
     }
-    let sin_value = sqrt(1.0 - cos_value * cos_value);
-    if (abs(view_length * sin_value) > 10.0) {
+
+    // find perp direction and projection length on it
+    let n = cross(base_point.arm.xyz, ray_unit);
+
+    let n0 = normalize(n);
+    let d_min = abs(dot(n0, a));
+
+    if (d_min > 8.0) {
+      // too far from ray, contribute no light
       continue;
     }
 
-    let near_point = uniforms.viewer_position + ray_unit * view_length * cos_value;
-    let near_offset = near_point - base_position;
-    let near_unit = normalize(near_offset);
+    // find projection of a of segment on ray direction, and use the Pythagorean theorem for another distance
+    let a_proj = dot(ray_unit, a);
+    let a_proj_at = ray_unit * a_proj;
+    let shadow_a = a - a_proj_at;
 
-    // var ratio = pow((1. - a), 3.0) + pow((1. - b), 3.0);
+    let b_proj = dot(ray_unit, b);
+    let b_proj_at = ray_unit * b_proj;
+    let shadow_b = b - b_proj_at;
 
-    // let theta = PI * 0.25 - acos(a);
-    // ratio = 1.0 / (sqrt(2.0) * cos(theta));
-    let ratio = 1.;
+    let direct_an = cross(shadow_a, n);
+    let direct_bn = cross(shadow_b, n);
+    // a and b on the same side of N
+    let same_side = dot(direct_an, direct_bn) >= 0.0;
 
-    let nearest = abs(view_length * sin_value);
-    // var l: f32 = 100.1 / (pow(nearest * 1.0, 2.0) * 2.0 + 0.1) * ratio;
-    // l = 0.3 / ratio;
-    // let color = vec3(l*0.8, l*0.8, l*0.1);
-    // total = max(total, color);
+    var nearest: f32;
+    if (same_side) {
+      let a_distance_min = sqrt(dot(a,a) - a_proj * a_proj);
+      let b_distance_min = sqrt(dot(b,b) - b_proj * b_proj);
+      nearest = min(a_distance_min, b_distance_min);
+    } else {
+      nearest = d_min;
+    };
 
-    if (10.0 * pow(ratio, 1.5) * base_point.p3 > nearest) {
-      total = vec3(1.0, 1.0, 0.5);
-    }
+    let idx = base_point.p5;
+    total += vec3<f32>(fract(idx * 0.011), fract(idx *0.037), fract(idx * 0.43)) * clamp(2.0 / pow(nearest, 1.2) - 0.1, 0.0, 2.0);
   }
 
   return vec4(total, 0.9);
