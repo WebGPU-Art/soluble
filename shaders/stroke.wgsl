@@ -70,8 +70,9 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   for (var j: u32 = 0u; j < base_size; j++) {
     let base_point = base_points[j];
-    // let dh = sin(base_point.p4 * base_point.p1 * 0.000008) * 100.0;
-    let base_position = base_point.position.xyz + vec3(0., 0.0, 0.);
+    let dh = sin(base_point.p4 * base_point.p1 * 0.00005) * 100.0;
+    let d2 = sin(base_point.p4 * base_point.p1 * 0.00007) * 100.0;
+    let base_position = base_point.position.xyz + vec3(0., dh + d2, 0.);
     let arm_position = base_position + base_point.arm.xyz;
 
     /// from viewer to base

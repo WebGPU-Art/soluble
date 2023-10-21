@@ -13,7 +13,7 @@ import {
 } from "./index.mjs";
 
 import movePoints from "../shaders/move-points.wgsl";
-import { compContainer } from "./app/container.mjs";
+import strokeWgsl from "../shaders/stroke.wgsl";
 import { useBaseSize, useRemoteControl } from "./config.mjs";
 import { Number4, rand, randBalance } from "./math.mjs";
 
@@ -45,7 +45,7 @@ let createBasePoint = (idx: number): BaseCellParams => {
 window.onload = async () => {
   await initializeContext();
   createGlobalPointsBuffer(useBaseSize, createBasePoint);
-  renderLagopusTree(compContainer());
+  renderLagopusTree(strokeWgsl);
   loadTouchControl();
 
   loopPaint();

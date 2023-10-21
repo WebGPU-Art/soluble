@@ -1,6 +1,6 @@
-export { group, object, u32buffer, newBufferFormatLength } from "./alias.mjs";
+export { createRenderer, initializeContext, renderLagopusTree } from "./render.mjs";
 
-export { createRenderer, initializeContext, paintLagopusTree, renderLagopusTree, resetCanvasHeight } from "./render.mjs";
+export { paintLagopusTree, resetCanvasHeight } from "./paint.mjs";
 
 export { onControlEvent, registerShaderResult, loadTouchControl } from "./control.mjs";
 

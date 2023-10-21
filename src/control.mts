@@ -1,7 +1,6 @@
 import { changeScaleBy, moveViewerBy, rotateGlanceBy, spinGlanceBy } from "./perspective.mjs";
 import { V2 } from "./primes.mjs";
 import { ControlStates, renderControl, startControlLoop } from "@triadica/touch-control";
-import { paintLagopusTree } from "./render.mjs";
 
 export let onControlEvent = (elapsed: number, states: ControlStates, delta: ControlStates) => {
   let lMove = states.leftMove.map(refineStrength) as V2;
