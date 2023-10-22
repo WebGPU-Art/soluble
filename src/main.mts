@@ -14,6 +14,7 @@ import {
 
 import movePoints from "../shaders/move-points.wgsl";
 import strokeWgsl from "../shaders/stroke.wgsl";
+import cubicFire from "../shaders/cubic-fire.wgsl";
 import { useBaseSize, useRemoteControl } from "./config.mjs";
 import { Number4, rand, randBalance } from "./math.mjs";
 
@@ -32,11 +33,12 @@ let loopPaint = () => {
 
 let createBasePoint = (idx: number): BaseCellParams => {
   let offset = 1200;
-  let armOffset = 1000;
+  let armOffset = 120;
   let position: Number4 = [randBalance(offset), randBalance(offset), randBalance(offset), 1];
   let velocity: Number4 = [0, 0, 0, 0];
-  let arm: Number4 = [randBalance(armOffset), randBalance(armOffset), randBalance(armOffset), 1];
+  // let arm: Number4 = [randBalance(armOffset), randBalance(armOffset), randBalance(armOffset), 1];
   // let arm: Number4 = [20, 20, 0, 1];
+  let arm: Number4 = [randBalance(armOffset), 0, randBalance(armOffset), 0];
   let params: Number4 = [rand(10), 2 + rand(2), 0, 0];
   let extendParams: Number4 = [idx, idx, idx, idx];
   return { position, arm, velocity, params, extendParams };
@@ -45,7 +47,8 @@ let createBasePoint = (idx: number): BaseCellParams => {
 window.onload = async () => {
   await initializeContext();
   createGlobalPointsBuffer(useBaseSize, createBasePoint);
-  renderLagopusTree(strokeWgsl);
+  // renderLagopusTree(strokeWgsl);
+  renderLagopusTree(cubicFire);
   loadTouchControl();
 
   loopPaint();
