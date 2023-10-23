@@ -30,10 +30,14 @@ struct Params {
 @group(0) @binding(1)
 var<uniform> params: Params;
 
-@compute @workgroup_size(256, 1, 1)
+@compute @workgroup_size(8, 8, 1)
 fn main(@builtin(global_invocation_id) global_id : vec3u) {
   var index = global_id.x + global_id.y * 8u;
-  // base_points[index].position.x = base_points[index].position.x;
-  base_points[index].p3 = sin(base_points[index].offset + base_points[index].duration * 0.001 * params.time) * 0.4 + 0.6;
-  base_points[index].time = params.time;
+  base_points[index].position.y += params.dt * 0.03 * base_points[index].velocity.y;
+  if (base_points[index].position.y > 200.)  {
+    base_points[index].position.y = -200.;
+  }
+  base_points[index].position.x = base_points[index].position.x;
+  // base_points[index].p3 = sin(base_points[index].offset + base_points[index].duration * 0.001 * params.time) * 0.4 + 0.6;
+  // base_points[index].time = params.time;
 }

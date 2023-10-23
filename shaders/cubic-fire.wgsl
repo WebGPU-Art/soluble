@@ -59,7 +59,7 @@ fn my_reflect(a: vec3<f32>, b: vec3<f32>) -> vec3<f32> {
 /// rotate 2/3*PI
 fn rotate_120(p: vec3<f32>) -> vec3<f32> {
   let a = my_reflect(p, vec3<f32>(0.,0.,-1.));
-  let b = my_reflect(a, vec3<f32>(-sqrt(3.), 0., -0.5));
+  let b = my_reflect(a, vec3<f32>(-0.5 * sqrt(3.), 0., -0.5));
   return b;
 }
 
@@ -89,8 +89,11 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   for (var j: u32 = 0u; j < base_size; j++) {
     let base_point = base_points[j];
-    let base_position = base_point.position.xyz; // + vec3(0., dh + d2, 0.);
-    let arm = base_point.arm.xyz;
+    var base_position = base_point.position.xyz; // + vec3(0., dh + d2, 0.);
+    let scale = 0.2 + 0.8 * (base_point.position.y + 200.) / 400.;
+    base_position.x *= scale;
+    base_position.z *= scale;
+    let arm = base_point.arm.xyz * scale;
     let l0 = length(arm);
     let arm0 = vec3(arm.x, 0.0, arm.z) + vec3<f32>(0.0,0.5 * sqrt(2.)*l0, 0.);
     let arm1 = rotate_120(arm0);
@@ -166,10 +169,12 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
       };
 
       let idx = base_point.p5;
-      total += vec3<f32>(fract(idx * 0.011), fract(idx *0.037), fract(idx * 0.43)) * clamp(2.0 / pow(nearest, 1.2) - 0.1, 0.0, 2.0);
-
+      let light = vec3<f32>(fract(idx * 0.011), fract(idx * 0.037)*0.3, fract(idx * 0.43)*0.1)
+        * clamp(4.0 / pow(nearest, 1.0) - 0.1, 0.0, 8.0) * pow((1. - scale), 0.6);
+      total = max(total, light);
+      // total += light;
     }
   }
 
-  return vec4(total, 0.9);
+  return vec4(total, 1.0);
 }
