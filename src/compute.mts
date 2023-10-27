@@ -1,13 +1,15 @@
-import { rand } from "./math.mjs";
+import { Number4, rand } from "./math.mjs";
 import { atomDevice, atomPointsBuffer } from "./global.mjs";
 import { createBuffer, getComputeShaderModule } from "./utils.mjs";
 
 let prevTime = Date.now();
 
 export type BaseCellParams = {
-  position: number[];
-  velocity: number[];
-  params: number[];
+  position: Number4;
+  velocity: Number4;
+  arm: Number4;
+  params: Number4;
+  extendParams: Number4;
 };
 
 let cachedBaseSize = 0;
@@ -22,13 +24,13 @@ export const createGlobalPointsBuffer = (baseSize: number, f: (idx: number) => B
     let info = f(i);
     items.push(...info.position);
     items.push(...info.velocity);
+    items.push(...info.arm);
     items.push(...info.params);
+    items.push(...info.extendParams);
   }
   atomPointsBuffer.reset(createBuffer(new Float32Array(items), GPUBufferUsage.STORAGE, device));
   return atomPointsBuffer.deref();
 };
-
-let time0 = Date.now();
 
 export function computeBasePoints(shaderCode: string) {
   let device = atomDevice.deref();
@@ -38,7 +40,7 @@ export function computeBasePoints(shaderCode: string) {
   const shaderModule = getComputeShaderModule(device, shaderCode);
 
   let basePointsBuffer = atomPointsBuffer.deref();
-  let now = Date.now() - time0;
+  let now = Date.now();
   let uniformBuffer = createBuffer(new Float32Array([now, now - prevTime, 0, 0]), GPUBufferUsage.UNIFORM, device);
   prevTime = now;
 

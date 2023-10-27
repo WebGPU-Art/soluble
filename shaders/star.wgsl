@@ -11,6 +11,7 @@ struct UBO {
 struct BaseCell {
   position: vec4<f32>,
   velocity: vec4<f32>,
+  arm: vec4<f32>,
   p1: f32, p2: f32, p3: f32, p4: f32,
 };
 

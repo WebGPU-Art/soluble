@@ -1,4 +1,4 @@
-import { LagopusElement, V2, V3 } from "./primes.mjs";
+import { V2, V3 } from "./primes.mjs";
 
 export let square = (x: number): number => {
   return x * x;
@@ -25,3 +25,9 @@ export let range = (n: number): number[] => {
 export let rand = (n: number) => {
   return (Math.random() - 0.5) * n;
 };
+
+export const randBalance = (max: number) => {
+  return Math.floor(Math.random() * max) - max / 2;
+};
+
+export type Number4 = [number, number, number, number];
