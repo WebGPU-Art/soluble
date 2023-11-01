@@ -1,12 +1,9 @@
 import { createGlobalPointsBuffer, BaseCellParams } from "../index.mjs";
 
-import movePoints from "../../shaders/move-points.wgsl";
-import strokeWgsl from "../../shaders/stroke.wgsl";
-
-import fireCompute from "../../shaders/fire-compute.wgsl";
-import cubicFire from "../../shaders/cubic-fire.wgsl";
-import { useBaseSize } from "../config.mjs";
+import fractalRender from "../../shaders/fractal.wgsl";
 import { Number4, rand, randBalance } from "../math.mjs";
+
+import { useBaseSize } from "../config.mjs";
 
 let createCubicFireBasePoint = (idx: number): BaseCellParams => {
   let offset = 200;
@@ -23,9 +20,8 @@ let createCubicFireBasePoint = (idx: number): BaseCellParams => {
 
 export const fractalConfigs = {
   initPointsBuffer: () => {
-    createGlobalPointsBuffer(20, createCubicFireBasePoint);
+    createGlobalPointsBuffer(10, createCubicFireBasePoint);
   },
-  computeShader: fireCompute,
-  // computeShader: undefined as string,
-  renderShader: cubicFire,
+  computeShader: undefined as string,
+  renderShader: fractalRender,
 };

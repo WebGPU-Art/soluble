@@ -30,7 +30,7 @@ var renderPassDescriptor = {
 /** don't know why, but fixes, https://programmer.ink/think/several-best-practices-of-webgpu.html */
 let emptyBuffer = {};
 
-let buildCommandBuffer = (info: SolubleObjectData): GPUCommandBuffer => {
+let buildCommandBuffer = (info: SolubleObjectData, t: number): GPUCommandBuffer => {
   let { topology, shaderModule, vertexBuffersDescriptors, vertexBuffers, indices } = info;
 
   // create uniforms
@@ -46,8 +46,7 @@ let buildCommandBuffer = (info: SolubleObjectData): GPUCommandBuffer => {
     window.innerWidth * window.devicePixelRatio,
     window.innerHeight * window.devicePixelRatio,
     atomViewerScale.deref(),
-    // alignment
-    0,
+    t,
     // lookpoint
     ...forward,
     // alignment
@@ -132,14 +131,17 @@ let buildCommandBuffer = (info: SolubleObjectData): GPUCommandBuffer => {
   return commandEncoder.finish();
 };
 
+let startTime = Date.now();
+
 /** send command buffer to device and render */
 export function paintLagopusTree() {
   // console.log("paint");
   atomBufferNeedClear.reset(true);
   let device = atomDevice.deref();
 
+  let lifetime = Date.now() - startTime;
   let tree = atomLagopusTree.deref();
-  let bufferList: GPUCommandBuffer[] = [buildCommandBuffer(tree as SolubleObjectData)];
+  let bufferList: GPUCommandBuffer[] = [buildCommandBuffer(tree as SolubleObjectData, lifetime)];
   device.queue.submit(bufferList);
 }
 

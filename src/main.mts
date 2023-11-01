@@ -28,7 +28,7 @@ let loopPaint = () => {
   paintLagopusTree();
   timeoutState = setTimeout(() => {
     rafState = requestAnimationFrame(loopPaint);
-  }, 40);
+  }, 10);
   // rafState = requestAnimationFrame(loopPaint);
 };
 
