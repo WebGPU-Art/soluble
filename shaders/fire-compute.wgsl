@@ -31,10 +31,10 @@ struct Params {
 var<uniform> params: Params;
 
 @compute @workgroup_size(8, 8, 1)
-fn main(@builtin(global_invocation_id) global_id : vec3u) {
+fn main(@builtin(global_invocation_id) global_id: vec3u) {
   var index = global_id.x + global_id.y * 8u;
   base_points[index].position.y += params.dt * 0.03 * base_points[index].velocity.y;
-  if (base_points[index].position.y > 200.)  {
+  if base_points[index].position.y > 200. {
     base_points[index].position.y = -200.;
   }
   base_points[index].position.x = base_points[index].position.x;

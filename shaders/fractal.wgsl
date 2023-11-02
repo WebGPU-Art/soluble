@@ -74,9 +74,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   // create view ray
   let ray_unit = normalize(
-    p.x * uniforms.rightward
-    + p.y * uniforms.upward
-    + 2.0 * uniforms.forward
+    p.x * uniforms.rightward + p.y * uniforms.upward + 2.0 * uniforms.forward
   );
 
   var total = vec4<f32>(0.0, 0.0, 0.0, 0.0);
@@ -90,13 +88,13 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     let connect = uniforms.viewer_position - p0;
     let distance_to_surface = abs(dot(connect, n));
     let look_direction = dot(ray_unit, -connect);
-    if (look_direction > 0.) {
+    if look_direction > 0. {
       let cos_value = abs(dot(ray_unit, n));
       let join_point = uniforms.viewer_position + ray_unit * distance_to_surface / cos_value;
       let arm = join_point - p0;
       let base_v1 = dot(arm, v1);
       let base_v2 = dot(arm, v2);
-      if (abs(base_v1) <= 2000. && abs(base_v2) <= 2000.) {
+      if abs(base_v1) <= 2000. && abs(base_v2) <= 2000. {
         // if (abs(fract(base_v1 * 0.0008)) < 0.01) {
         //   return vec4(0.4, 0.4, 0.4, 1.0);
         // }
@@ -105,7 +103,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
         // }
         let value = vec4(join_point * 0.002, 1.0);
         let q4_result = fold(value);
-        if (length(q4_result) < 100.0)  {
+        if length(q4_result) < 100.0 {
           total += vec4(1.0, 1.0, 0.0, 1.0);
         } else {
           total += vec4(0.0, 0.0, 0.0, 1.0);

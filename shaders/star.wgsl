@@ -54,14 +54,12 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   // create view ray
   let ray_unit = normalize(
-    p.x * uniforms.rightward
-    + p.y * uniforms.upward
-    + 2.0 * uniforms.forward
+    p.x * uniforms.rightward + p.y * uniforms.upward + 2.0 * uniforms.forward
   );
 
   // raymarch
   var nearest: f32 = 10000.0;
-  var total: vec3<f32> = vec3(0.0,0.0,0.0);
+  var total: vec3<f32> = vec3(0.0, 0.0, 0.0);
 
   for (var j: u32 = 0u; j < base_size; j++) {
     let base_point = base_points[j];
@@ -72,11 +70,11 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     let view_unit = normalize(view);
     let view_length = length(view);
     let cos_value = dot(view_unit, ray_unit);
-    if (cos_value < 0.9) {
+    if cos_value < 0.9 {
       continue;
     }
     let sin_value = sqrt(1.0 - cos_value * cos_value);
-    if (abs(view_length * sin_value) > 10.0) {
+    if abs(view_length * sin_value) > 10.0 {
       continue;
     }
 
@@ -101,7 +99,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     // let color = vec3(l*0.8, l*0.8, l*0.1);
     // total = max(total, color);
 
-    if (10.0 * pow(ratio, 1.5) * base_point.p3 > nearest) {
+    if 10.0 * pow(ratio, 1.5) * base_point.p3 > nearest {
       total = vec3(1.0, 1.0, 0.5);
     }
   }
