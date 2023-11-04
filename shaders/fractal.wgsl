@@ -85,12 +85,12 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     let v2 = normalize(vec3<f32>(cos(theta), 0.0, sin(theta)));
 
     let n = normalize(cross(v1, v2));
-    let connect = uniforms.viewer_position - p0;
-    let distance_to_surface = abs(dot(connect, n));
-    let look_direction = dot(ray_unit, -connect);
-    if look_direction > 0. {
-      let cos_value = abs(dot(ray_unit, n));
-      let join_point = uniforms.viewer_position + ray_unit * distance_to_surface / cos_value;
+    let cos_value = dot(ray_unit, n);
+    let connect = p0 - uniforms.viewer_position;
+    let distance_to_surface = dot(connect, n);
+    let join_point = uniforms.viewer_position + ray_unit * distance_to_surface / cos_value;
+    let view_direction = dot(ray_unit, join_point - uniforms.viewer_position);
+    if view_direction > 0. {
       let arm = join_point - p0;
       let base_v1 = dot(arm, v1);
       let base_v2 = dot(arm, v2);
