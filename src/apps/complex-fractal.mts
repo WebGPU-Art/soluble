@@ -1,6 +1,6 @@
 import { createGlobalPointsBuffer, BaseCellParams } from "../index.mjs";
 
-import fractalRender from "../../shaders/fractal.wgsl";
+import fractalRender from "../../shaders/complex-fractal.wgsl";
 import { Number4, rand, randBalance } from "../math.mjs";
 
 import { useBaseSize } from "../config.mjs";
@@ -18,7 +18,7 @@ let createCubicFireBasePoint = (idx: number): BaseCellParams => {
   return { position, arm, velocity, params, extendParams };
 };
 
-export const fractalConfigs = {
+export const complexFractalConfigs = {
   initPointsBuffer: () => {
     createGlobalPointsBuffer(10, createCubicFireBasePoint);
   },

@@ -1,7 +1,9 @@
 import { cubicFireConfigs } from "./apps/cubic-fire.mjs";
-import { fractalConfigs } from "./apps/fractal.mjs";
+import { quaternionFractalConfigs } from "./apps/quaternion-fractal.mjs";
+import { complexFractalConfigs } from "./apps/complex-fractal.mjs";
 
 // const appConfigs = cubicFireConfigs;
-const appConfigs = fractalConfigs;
+// const appConfigs = quaternionFractalConfigs;
+const appConfigs = complexFractalConfigs;
 
 export default appConfigs;

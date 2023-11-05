@@ -58,7 +58,7 @@ struct FoldRet {
 }
 
 fn fold(v0: vec4<f32>) -> FoldRet {
-  let offset = vec4<f32>(0.56, 0.0, 0.0, 0.6);
+  let offset = vec4<f32>(0.7, 0.0, 0.0, 0.5);
   var v = v0.wxyz * 0.4;
   for (var i = 0u; i < 200u; i = i + 1u) {
     v = quaternion_multiply(v, v) - offset;
