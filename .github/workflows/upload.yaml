@@ -17,6 +17,22 @@ jobs:
           node-version: 20
           cache: 'yarn'
 
+      - uses: supplypike/setup-bin@v3
+        with:
+          uri: 'https://github.com/calcit-lang/calcit/releases/download/0.8.9/cr'
+          name: 'cr'
+          version: '0.8.9'
+
+      - uses: supplypike/setup-bin@v3
+        with:
+          uri: 'https://github.com/calcit-lang/calcit/releases/download/0.8.9/caps'
+          name: 'caps'
+          version: '0.8.9'
+
+      - name: "compiles calcit to js"
+        run: >
+          caps --ci && cr --emit-js --once
+
       - run: yarn && yarn vite build --base=./
         name: Build web assets
 
