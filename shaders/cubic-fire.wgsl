@@ -51,14 +51,14 @@ const PI = 3.14159265368932374;
 
 fn my_reflect(a: vec3<f32>, b: vec3<f32>) -> vec3<f32> {
   let b0 = normalize(b);
-  let v_= dot(a, b0) * b0;
+  let v_ = dot(a, b0) * b0;
   let v_p = a - v_;
   return v_ - v_p;
 }
 
 /// rotate 2/3*PI
 fn rotate_120(p: vec3<f32>) -> vec3<f32> {
-  let a = my_reflect(p, vec3<f32>(0.,0.,-1.));
+  let a = my_reflect(p, vec3<f32>(0., 0., -1.));
   let b = my_reflect(a, vec3<f32>(-0.5 * sqrt(3.), 0., -0.5));
   return b;
 }
@@ -79,13 +79,11 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   // create view ray
   let ray_unit = normalize(
-    p.x * uniforms.rightward
-    + p.y * uniforms.upward
-    + 2.0 * uniforms.forward
+    p.x * uniforms.rightward + p.y * uniforms.upward + 2.0 * uniforms.forward
   );
 
   // raymarch
-  var total: vec3<f32> = vec3(0.0,0.0,0.0);
+  var total: vec3<f32> = vec3(0.0, 0.0, 0.0);
 
   for (var j: u32 = 0u; j < base_size; j++) {
     let base_point = base_points[j];
@@ -95,7 +93,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     base_position.z *= scale;
     let arm = base_point.arm.xyz * scale;
     let l0 = length(arm);
-    let arm0 = vec3(arm.x, 0.0, arm.z) + vec3<f32>(0.0,0.5 * sqrt(2.)*l0, 0.);
+    let arm0 = vec3(arm.x, 0.0, arm.z) + vec3<f32>(0.0, 0.5 * sqrt(2.) * l0, 0.);
     let arm1 = rotate_120(arm0);
     let arm2 = rotate_120(arm1);
 
@@ -110,7 +108,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     let p7 = p3 + arm2;
 
     var segments = array<Segment, 12>(
-      Segment(p0, p1,),
+      Segment(p0, p1),
       Segment(p1, p2),
       Segment(p2, p3),
       Segment(p3, p0),
@@ -129,7 +127,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
       let a = s.start - uniforms.viewer_position;
       let b = s.end - uniforms.viewer_position;
 
-      if (dot(a, ray_unit) <= 0.0 || dot(b, ray_unit) <= 0.0) {
+      if dot(a, ray_unit) <= 0.0 || dot(b, ray_unit) <= 0.0 {
         // outside of the view
         continue;
       }
@@ -140,7 +138,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
       let n0 = normalize(n);
       let d_min = abs(dot(n0, a));
 
-      if (d_min > 8.0) {
+      if d_min > 8.0 {
         // too far from ray, contribute no light
         continue;
       }
@@ -160,17 +158,16 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
       let same_side = dot(direct_an, direct_bn) >= 0.0;
 
       var nearest: f32;
-      if (same_side) {
-        let a_distance_min = sqrt(dot(a,a) - a_proj * a_proj);
-        let b_distance_min = sqrt(dot(b,b) - b_proj * b_proj);
+      if same_side {
+        let a_distance_min = sqrt(dot(a, a) - a_proj * a_proj);
+        let b_distance_min = sqrt(dot(b, b) - b_proj * b_proj);
         nearest = min(a_distance_min, b_distance_min);
       } else {
         nearest = d_min;
       };
 
       let idx = base_point.p5;
-      let light = vec3<f32>(fract(idx * 0.011), fract(idx * 0.037)*0.3, fract(idx * 0.43)*0.1)
-        * clamp(4.0 / pow(nearest, 1.0) - 0.1, 0.0, 8.0) * pow((1. - scale), 0.6);
+      let light = vec3<f32>(fract(idx * 0.011), fract(idx * 0.037) * 0.3, fract(idx * 0.43) * 0.1) * clamp(4.0 / pow(nearest, 1.0) - 0.1, 0.0, 8.0) * pow((1. - scale), 0.6);
       total = max(total, light);
       // total += light;
     }

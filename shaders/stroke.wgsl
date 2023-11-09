@@ -60,13 +60,11 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   // create view ray
   let ray_unit = normalize(
-    p.x * uniforms.rightward
-    + p.y * uniforms.upward
-    + 2.0 * uniforms.forward
+    p.x * uniforms.rightward + p.y * uniforms.upward + 2.0 * uniforms.forward
   );
 
   // raymarch
-  var total: vec3<f32> = vec3(0.0,0.0,0.0);
+  var total: vec3<f32> = vec3(0.0, 0.0, 0.0);
 
   for (var j: u32 = 0u; j < base_size; j++) {
     let base_point = base_points[j];
@@ -80,7 +78,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     /// from viewer to arm
     let b = arm_position.xyz - uniforms.viewer_position;
 
-    if (dot(a, ray_unit) <= 0.0 || dot(b, ray_unit) <= 0.0) {
+    if dot(a, ray_unit) <= 0.0 || dot(b, ray_unit) <= 0.0 {
       // outside of the view
       continue;
     }
@@ -91,7 +89,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     let n0 = normalize(n);
     let d_min = abs(dot(n0, a));
 
-    if (d_min > 8.0) {
+    if d_min > 8.0 {
       // too far from ray, contribute no light
       continue;
     }
@@ -111,16 +109,16 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     let same_side = dot(direct_an, direct_bn) >= 0.0;
 
     var nearest: f32;
-    if (same_side) {
-      let a_distance_min = sqrt(dot(a,a) - a_proj * a_proj);
-      let b_distance_min = sqrt(dot(b,b) - b_proj * b_proj);
+    if same_side {
+      let a_distance_min = sqrt(dot(a, a) - a_proj * a_proj);
+      let b_distance_min = sqrt(dot(b, b) - b_proj * b_proj);
       nearest = min(a_distance_min, b_distance_min);
     } else {
       nearest = d_min;
     };
 
     let idx = base_point.p5;
-    total += vec3<f32>(fract(idx * 0.011), fract(idx *0.037), fract(idx * 0.43)) * clamp(2.0 / pow(nearest, 1.2) - 0.1, 0.0, 2.0);
+    total += vec3<f32>(fract(idx * 0.011), fract(idx * 0.037), fract(idx * 0.43)) * clamp(2.0 / pow(nearest, 1.2) - 0.1, 0.0, 2.0);
   }
 
   return vec4(total, 0.9);

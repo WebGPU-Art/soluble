@@ -42,8 +42,7 @@ fn calc_normal_direction(p: vec3<f32>) -> vec3<f32> {
   let v2: vec3<f32> = vec3(-1.0, -1.0, 1.0);
   let v3: vec3<f32> = vec3(-1.0, 1.0, -1.0);
   let v4: vec3<f32> = vec3(1.0, 1.0, 1.0);
-  return normalize(v1 * map(p + v1 * eps) + v2 * map(p + v2 * eps) +
-                   v3 * map(p + v3 * eps) + v4 * map(p + v4 * eps));
+  return normalize(v1 * map(p + v1 * eps) + v2 * map(p + v2 * eps) + v3 * map(p + v3 * eps) + v4 * map(p + v4 * eps));
 }
 
 const sqrt2: f32 = 1.4142135623730950488016887242096980785696718753769480731766797379;
@@ -76,10 +75,7 @@ fn sd_rhombus(p0: vec3<f32>, la: f32, lb: f32, h: f32, ra: f32) -> f32 {
   let p = abs(p0);
   let b: vec2<f32> = vec2(la, lb);
   let f: f32 = clamp((ndot(b, b - 2.0 * p.xz)) / dot(b, b), -1.0, 1.0);
-  let q = vec2(length(p.xz - 0.5 * b * vec2(1.0 - f, 1.0 + f)) *
-                        sign(p.x * b.y + p.z * b.x - b.x * b.y) -
-                    ra,
-                p.y - h);
+  let q = vec2(length(p.xz - 0.5 * b * vec2(1.0 - f, 1.0 + f)) * sign(p.x * b.y + p.z * b.x - b.x * b.y) - ra, p.y - h);
   return min(max(q.x, q.y), 0.0) + length(max(q, vec2(0.0, 0.0)));
 }
 
@@ -87,9 +83,9 @@ fn sd_box_frame(p: vec3<f32>, b: vec3<f32>, e: f32) -> f32 {
   let q = abs(p) - b;
   let w = abs(q + e) - e;
   return min(min(
-      length(max(vec3<f32>(q.x, w.y, w.z), vec3<f32>(0.))) + min(max(q.x, max(w.y, w.z)), 0.),
-      length(max(vec3<f32>(w.x, q.y, w.z), vec3<f32>(0.))) + min(max(w.x, max(q.y, w.z)), 0.)),
-      length(max(vec3<f32>(w.x, w.y, q.z), vec3<f32>(0.))) + min(max(w.x, max(w.y, q.z)), 0.));
+    length(max(vec3<f32>(q.x, w.y, w.z), vec3<f32>(0.))) + min(max(q.x, max(w.y, w.z)), 0.),
+    length(max(vec3<f32>(w.x, q.y, w.z), vec3<f32>(0.))) + min(max(w.x, max(q.y, w.z)), 0.)
+  ), length(max(vec3<f32>(w.x, w.y, q.z), vec3<f32>(0.))) + min(max(w.x, max(w.y, q.z)), 0.));
 }
 
 fn sd_sphere(p: vec3<f32>, r: f32) -> f32 {
@@ -104,10 +100,7 @@ fn sd_box(p: vec3<f32>, b: vec3<f32>) -> f32 {
 fn sd_octahedron(p: vec3<f32>, s: f32) -> f32 {
   var q: vec3<f32> = abs(p);
   let m = q.x + q.y + q.z - s;
-  if (3. * q.x < m) {q = q.xyz;}
-  else {if (3. * q.y < m) {q = q.yzx;}
-        else {if (3. * q.z < m) {q = q.zxy;}
-              else {return m * 0.57735027;}}}
+  if 3. * q.x < m {q = q.xyz;} else {if 3. * q.y < m {q = q.yzx;} else {if 3. * q.z < m {q = q.zxy;} else {return m * 0.57735027;}}}
   let k = clamp(0.5 * (q.z - q.y + s), 0., s);
   return length(vec3<f32>(q.x, q.y - s + k, q.z - k));
 }
@@ -116,7 +109,7 @@ fn sd_octahedron(p: vec3<f32>, s: f32) -> f32 {
 fn map_2(pos: vec3<f32>) -> f32 {
   // return sd_sphere(pos, 200.);
   // return sd_box(pos, vec3(200.,200.,200.));
-  return sd_box_frame(pos, vec3(100.0,100.0,100.0), 10.);
+  return sd_box_frame(pos, vec3(100.0, 100.0, 100.0), 10.);
 }
 
 fn map_old(pos: vec3<f32>) -> f32 {
@@ -131,9 +124,7 @@ fn map_old(pos: vec3<f32>) -> f32 {
   // let l: vec3<f32> = vec3(20.0, 0.0, 0.0);
   let limit: f32 = 40.0;
   var pos_c: vec3<f32> = pos / c;
-  pos_c = vec3(clamp(round_up(pos_c.x), -limit, limit),
-                 clamp(round_up(pos_c.y), -limit, limit),
-                 clamp(round_up(pos_c.z), -limit, limit));
+  pos_c = vec3(clamp(round_up(pos_c.x), -limit, limit), clamp(round_up(pos_c.y), -limit, limit), clamp(round_up(pos_c.z), -limit, limit));
   // let q: vec3<f32> = pos - c * clamp(mp, -l, l);
   let q: vec3<f32> = pos - c * pos_c;
   // vec3 replicated_position = fract(pos * 10.0) * 0.1;
@@ -147,8 +138,8 @@ fn map(pos: vec3<f32>) -> f32 {
   let c: f32 = 2.0;
 
   let limit: f32 = 40.0 / c;
-  let low: vec3<f32> = vec3(-limit,-limit,-limit);
-  let high: vec3<f32> = vec3(limit,limit,limit);
+  let low: vec3<f32> = vec3(-limit, -limit, -limit);
+  let high: vec3<f32> = vec3(limit, limit, limit);
 
   let pos_c: vec3<f32> = pos / c;
 
@@ -191,25 +182,27 @@ fn map(pos: vec3<f32>) -> f32 {
   var qq: vec3<f32> = p1;
 
   var ll: f32 = distance(p2, pos_c);
-  if (ll < l) { qq = p2; l = ll; }
+  if ll < l {
+    qq = p2; l = ll;
+  }
 
   ll = distance(p3, pos_c);
-  if (ll < l) { qq = p3; l = ll; }
+  if ll < l { qq = p3; l = ll; }
 
   ll = distance(p4, pos_c);
-  if (ll < l) { qq = p4; l = ll; }
+  if ll < l { qq = p4; l = ll; }
 
   ll = distance(p5, pos_c);
-  if (ll < l) { qq = p5; l = ll; }
+  if ll < l { qq = p5; l = ll; }
 
   ll = distance(p6, pos_c);
-  if (ll < l) { qq = p6; l = ll; }
+  if ll < l { qq = p6; l = ll; }
 
   ll = distance(p7, pos_c);
-  if (ll < l) { qq = p7; l = ll; }
+  if ll < l { qq = p7; l = ll; }
 
   ll = distance(p8, pos_c);
-  if (ll < l) { qq = p8; l = ll; }
+  if ll < l { qq = p8; l = ll; }
 
   let qqq: vec3<f32> = pos - c * qq;
   return sd_sphere(qqq, 0.01);
@@ -239,11 +232,11 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   let forward: vec3<f32> = uniforms.forward;
   let upward: vec3<f32> = uniforms.upward;
   let uv = vx_out.uv;
-  let screen_wh= uniforms.screen_wh;
+  let screen_wh = uniforms.screen_wh;
 
   let rightward: vec3<f32> = normalize(cross(forward, upward)); // rightward
 
-  var total: vec3<f32> = vec3(0.0,0.0,0.0);
+  var total: vec3<f32> = vec3(0.0, 0.0, 0.0);
 
   // pixel coordinates
   let coord: vec2<f32> = uv * screen_wh;
@@ -265,14 +258,14 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
       let base_point = base_points[j];
       let relative = pos - base_point.position.xyz;
       let h1 = sd_sphere(relative, 6.);
-      if (h1 < h) {
+      if h1 < h {
         h = h1;
       }
     }
-    if (h < nearest) {
+    if h < nearest {
       nearest = h;
     }
-    if (h < 0.02 || t > tmax) {
+    if h < 0.02 || t > tmax {
       break;
     }
     t += h;
@@ -280,7 +273,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   // shading/lighting
   var color: vec3<f32> = vec3(0.0);
-  if (t < tmax) {
+  if t < tmax {
     // let position: vec3<f32> = viewer_position + t * ray_direction;
     // let normal: vec3<f32> = calc_normal_direction(position);
     // let dif: f32 = clamp(dot(normal, vec3(0.57703)), 0.0, 1.0);
@@ -289,7 +282,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     color = vec3(0.8, 0.1, 0.8);
   }
   let l: f32 = 0.1 / (nearest * 0.1 + 0.001);
-  color += vec3(l*0.8, l*0.1, l*0.8);
+  color += vec3(l * 0.8, l * 0.1, l * 0.8);
 
   // gamma
   color = sqrt(color);

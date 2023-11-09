@@ -14,7 +14,7 @@ export type BaseCellParams = {
 
 let cachedBaseSize = 0;
 export const createGlobalPointsBuffer = (baseSize: number, f: (idx: number) => BaseCellParams): GPUBuffer => {
-  if (atomPointsBuffer.deref() || baseSize === cachedBaseSize) {
+  if (atomPointsBuffer.deref() && baseSize === cachedBaseSize) {
     return atomPointsBuffer.deref();
   }
   cachedBaseSize = baseSize;
