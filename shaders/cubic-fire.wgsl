@@ -107,6 +107,15 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     let p6 = p2 + arm2;
     let p7 = p3 + arm2;
 
+    let center = (p0 + p7) * 0.5;
+    let direct = center - uniforms.viewer_position;
+    let reach_arm = dot(direct, ray_unit) * ray_unit;
+    let distance = center - (uniforms.viewer_position + reach_arm);
+    if length(distance) > (l0 * 2.4) {
+      // too far from ray, contribute no light
+      continue;
+    }
+
     var segments = array<Segment, 12>(
       Segment(p0, p1),
       Segment(p1, p2),
