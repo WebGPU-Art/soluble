@@ -132,6 +132,7 @@
               resetCanvasHeight canvas
               js/window.addEventListener "\"resize" $ fn (event) (resetCanvasHeight canvas) (paintLagopusTree)
               if useRemoteControl $ setupRemoteControl
+              if useGamepad $ loadGamepadControl
               add-watch *reel :changes $ fn (reel prev) (render-app!)
               listen-devtools! |k dispatch!
               js/window.addEventListener |beforeunload $ fn (event) (persist-storage!)
@@ -183,8 +184,8 @@
             app.config :as config
             "\"./calcit.build-errors" :default build-errors
             "\"bottom-tip" :default hud!
-            "\"../src/index" :refer $ initializeContext renderLagopusTree computeBasePoints paintLagopusTree loadTouchControl resetCanvasHeight paintLagopusTree setupRemoteControl
-            "\"../src/config" :refer $ useRemoteControl
+            "\"../src/index" :refer $ initializeContext renderLagopusTree computeBasePoints paintLagopusTree loadTouchControl resetCanvasHeight paintLagopusTree setupRemoteControl loadGamepadControl
+            "\"../src/config" :refer $ useRemoteControl useGamepad
             "\"../src/apps/cubic-fire" :refer $ cubicFireConfigs
             "\"../src/apps/quaternion-fractal" :refer $ quaternionFractalConfigs
             "\"../src/apps/complex-fractal" :refer $ complexFractalConfigs

@@ -2,7 +2,7 @@ export { createRenderer, initializeContext, renderLagopusTree } from "./render.m
 
 export { paintLagopusTree, resetCanvasHeight } from "./paint.mjs";
 
-export { onControlEvent, registerShaderResult, loadTouchControl } from "./control.mjs";
+export { onControlEvent, registerShaderResult, loadTouchControl, loadGamepadControl } from "./control.mjs";
 
 export { setupRemoteControl } from "./remote-control.mjs";
 
