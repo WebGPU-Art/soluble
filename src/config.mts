@@ -10,3 +10,7 @@ export let isMobile = isMobilejs(window.navigator).any; // TODO test
 export let useBaseSize = parseInt((parsed["base-size"] as string) || "60");
 
 export let useRemoteControl = parsed["remote-control"];
+
+export let useGamepad = parsed["gamepad"];
+
+export let threshold = parseFloat((parsed["threshold"] as string) || "0.016");

@@ -8,12 +8,14 @@ import {
   renderLagopusTree,
   resetCanvasHeight,
   computeBasePoints,
+  registerShaderResult,
 } from "./index.mjs";
 
-import { useRemoteControl } from "./config.mjs";
+import { useGamepad, useRemoteControl } from "./config.mjs";
 import { Atom } from "./atom.mjs";
 
 import appConfigs from "./app.mjs";
+import { loadGamepadControl } from "control.mjs";
 
 let canvas = document.querySelector("canvas");
 let timeoutState: NodeJS.Timeout;
@@ -28,7 +30,7 @@ let loopPaint = () => {
   paintLagopusTree();
   timeoutState = setTimeout(() => {
     rafState = requestAnimationFrame(loopPaint);
-  }, 80);
+  }, 40);
   // rafState = requestAnimationFrame(loopPaint);
 };
 
@@ -41,6 +43,12 @@ window.onload = async () => {
   loopPaint();
 
   resetCanvasHeight(canvas);
+  registerShaderResult((e, code) => {
+    if (e.messages.length) {
+      console.error(e);
+    }
+  });
+
   window.onresize = () => {
     resetCanvasHeight(canvas);
     paintLagopusTree();
@@ -48,6 +56,10 @@ window.onload = async () => {
 
   if (useRemoteControl) {
     setupRemoteControl();
+  }
+
+  if (useGamepad) {
+    loadGamepadControl();
   }
 };
 

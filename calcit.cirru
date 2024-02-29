@@ -765,6 +765,13 @@
                   |h $ %{} :Expr (:at 1699464355063) (:by |rJG4IHzWf)
                     :data $ {}
                       |T $ %{} :Leaf (:at 1699464355365) (:by |rJG4IHzWf) (:text |setupRemoteControl)
+              |xy $ %{} :Expr (:at 1709143930665) (:by |rJG4IHzWf)
+                :data $ {}
+                  |T $ %{} :Leaf (:at 1709143932140) (:by |rJG4IHzWf) (:text |if)
+                  |b $ %{} :Leaf (:at 1709143932678) (:by |rJG4IHzWf) (:text |useGamepad)
+                  |h $ %{} :Expr (:at 1709143935396) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1709143985483) (:by |rJG4IHzWf) (:text |loadGamepadControl)
               |y $ %{} :Expr (:at 1499755354983) (:by nil)
                 :data $ {}
                   |T $ %{} :Leaf (:at 1499755354983) (:by |root) (:text |add-watch)
@@ -1104,6 +1111,7 @@
                         |q $ %{} :Leaf (:at 1699464250168) (:by |rJG4IHzWf) (:text |resetCanvasHeight)
                         |s $ %{} :Leaf (:at 1699464326310) (:by |rJG4IHzWf) (:text |paintLagopusTree)
                         |u $ %{} :Leaf (:at 1699464357199) (:by |rJG4IHzWf) (:text |setupRemoteControl)
+                        |v $ %{} :Leaf (:at 1709143983810) (:by |rJG4IHzWf) (:text |loadGamepadControl)
                 |zD $ %{} :Expr (:at 1699464439366) (:by |rJG4IHzWf)
                   :data $ {}
                     |D $ %{} :Leaf (:at 1699464453203) (:by |rJG4IHzWf) (:text "|\"../src/config")
@@ -1111,6 +1119,7 @@
                     |T $ %{} :Expr (:at 1699464448619) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1699464439695) (:by |rJG4IHzWf) (:text |useRemoteControl)
+                        |b $ %{} :Leaf (:at 1709143919083) (:by |rJG4IHzWf) (:text |useGamepad)
                 |zP $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
                     |T $ %{} :Leaf (:at 1699464543817) (:by |rJG4IHzWf) (:text "|\"../src/apps/cubic-fire")
