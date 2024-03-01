@@ -60,7 +60,7 @@
                 :color :white
         |tabs $ %{} :CodeEntry (:doc |)
           :code $ quote
-            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark)
+            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
           ns app.comp.container $ :require (respo-ui.css :as css)
@@ -110,16 +110,19 @@
         |get-app $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn get-app (tab)
-              case-default tab cubicFireConfigs (:cubic-fire cubicFireConfigs) (:quaternion-fractal quaternionFractalConfigs) (:complex-fractal complexFractalConfigs) (:space-fractal spaceFractalConfigs) (:sphere-fractal sphereFractalConfigs) (:slow-fractal slowFractalConfigs)
+              case-default tab cubicFireConfigs (:cubic-fire cubicFireConfigs) (:quaternion-fractal quaternionFractalConfigs) (:complex-fractal complexFractalConfigs) (:space-fractal spaceFractalConfigs) (:sphere-fractal sphereFractalConfigs) (:slow-fractal slowFractalConfigs) (:orbits orbitsConfigs)
         |loop-paint! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn loop-paint! ()
               if (some? @*compute-shader) (computeBasePoints @*compute-shader)
               paintLagopusTree
-              reset! *timeout $ js/setTimeout
-                fn () $ reset! *raf
-                  js/requestAnimationFrame $ fn (t) (loop-paint!)
-                , config/interval
+              if (> config/interval 10)
+                reset! *timeout $ js/setTimeout
+                  fn () $ reset! *raf
+                    js/requestAnimationFrame $ fn (t) (loop-paint!)
+                  , config/interval
+                reset! *raf $ js/requestAnimationFrame
+                  fn (t) (loop-paint!)
         |main! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn main! () (hint-fn async)
@@ -192,6 +195,7 @@
             "\"../src/apps/space-fractal" :refer $ spaceFractalConfigs
             "\"../src/apps/sphere-fractal" :refer $ sphereFractalConfigs
             "\"../src/apps/slow-fractal" :refer $ slowFractalConfigs
+            "\"../src/apps/orbits" :refer $ orbitsConfigs
     |app.schema $ %{} :FileEntry
       :defs $ {}
         |store $ %{} :CodeEntry (:doc |)

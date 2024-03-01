@@ -4,6 +4,7 @@ import { complexFractalConfigs } from "./apps/complex-fractal.mjs";
 import { spaceFractalConfigs } from "./apps/space-fractal.mjs";
 import { sphereFractalConfigs } from "./apps/sphere-fractal.mjs";
 import { slowFractalConfigs } from "./apps/slow-fractal.mjs";
+import { orbitsConfigs } from "./apps/orbits.mjs";
 
 // const appConfigs = cubicFireConfigs;
 // const appConfigs = quaternionFractalConfigs;

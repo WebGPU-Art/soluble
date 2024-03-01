@@ -28,9 +28,9 @@ let loopPaint = () => {
     computeBasePoints(computeShaderState.value);
   }
   paintLagopusTree();
-  timeoutState = setTimeout(() => {
-    rafState = requestAnimationFrame(loopPaint);
-  }, 40);
+  // timeoutState = setTimeout(() => {
+  rafState = requestAnimationFrame(loopPaint);
+  // }, 40);
   // rafState = requestAnimationFrame(loopPaint);
 };
 
