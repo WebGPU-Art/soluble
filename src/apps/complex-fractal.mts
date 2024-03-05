@@ -22,6 +22,6 @@ export const complexFractalConfigs = {
   initPointsBuffer: () => {
     createGlobalPointsBuffer(10, createCubicFireBasePoint);
   },
-  computeShader: undefined as string,
+  useCompute: false,
   renderShader: fractalRender,
 };

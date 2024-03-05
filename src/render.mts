@@ -74,7 +74,8 @@ export let createRenderer = (
   }[],
   verticesLength: number,
   vertices: (Float32Array | Uint32Array)[],
-  indices: Uint32Array
+  indices: Uint32Array,
+  useCompute: boolean
 ): SolubleObjectData => {
   // load shared device
   let device = atomDevice.deref();
@@ -102,18 +103,18 @@ export let createRenderer = (
   });
 
   return {
-    type: "object",
     topology: topology,
     shaderModule: shaderModule,
     vertexBuffersDescriptors: vertexBuffersDescriptors,
     vertexBuffers,
     length: verticesLength,
     indices: indecesBuffer,
+    useCompute: useCompute,
   };
 };
 
 /** track tree, internally it calls `paintLagopusTree` to render */
-export function renderLagopusTree(strokeWgsl: string) {
+export function renderLagopusTree(strokeWgsl: string, useCompute: boolean) {
   let data: Record<string, number[]>[] = [
     {
       position: [-1, -1],
@@ -142,6 +143,6 @@ export function renderLagopusTree(strokeWgsl: string) {
   let indices = u32buffer([0, 1, 2, 1, 2, 3]);
 
   /** create a render object */
-  let tree = createRenderer(strokeWgsl, "triangle-list", attrsList, data.length, buffers, indices);
+  let tree = createRenderer(strokeWgsl, "triangle-list", attrsList, data.length, buffers, indices, useCompute);
   atomLagopusTree.reset(tree);
 }

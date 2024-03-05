@@ -13,11 +13,11 @@ export interface SolubleAttribute {
 }
 
 export interface SolubleObjectData {
-  type: "object";
   topology: GPUPrimitiveTopology;
   vertexBuffersDescriptors: Iterable<GPUVertexBufferLayout | null>;
   shaderModule: GPUShaderModule;
   vertexBuffers: GPUBuffer[];
   length: number;
   indices?: GPUBuffer;
+  useCompute: boolean;
 }

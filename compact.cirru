@@ -114,7 +114,9 @@
         |loop-paint! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn loop-paint! ()
-              if (some? @*compute-shader) (computeBasePoints @*compute-shader)
+              if
+                .-useCompute $ .!deref atomLagopusTree
+                computeBasePoints
               paintLagopusTree
               if (> config/interval 10)
                 reset! *timeout $ js/setTimeout
@@ -171,7 +173,7 @@
                   tab $ :tab (:store @*reel)
                   app-config $ get-app tab
                 .!initPointsBuffer app-config
-                renderLagopusTree $ .-renderShader app-config
+                renderLagopusTree (.-renderShader app-config) (.-useCompute app-config)
                 reset! *compute-shader $ .-computeShader app-config
               render! mount-target (comp-container @*reel) dispatch!
       :ns $ %{} :CodeEntry (:doc |)
@@ -196,6 +198,7 @@
             "\"../src/apps/sphere-fractal" :refer $ sphereFractalConfigs
             "\"../src/apps/slow-fractal" :refer $ slowFractalConfigs
             "\"../src/apps/orbits" :refer $ orbitsConfigs
+            "\"../src/global" :refer $ atomLagopusTree
     |app.schema $ %{} :FileEntry
       :defs $ {}
         |store $ %{} :CodeEntry (:doc |)

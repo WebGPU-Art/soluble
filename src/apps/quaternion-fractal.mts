@@ -22,6 +22,6 @@ export const quaternionFractalConfigs = {
   initPointsBuffer: () => {
     createGlobalPointsBuffer(10, createCubicFireBasePoint);
   },
-  computeShader: undefined as string,
+  useCompute: false,
   renderShader: fractalRender,
 };

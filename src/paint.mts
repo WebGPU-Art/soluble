@@ -37,12 +37,11 @@ export const createGlobalPointsBuffer = (baseSize: number, f: (idx: number) => B
   return atomPointsBuffer.deref();
 };
 
-export function computeBasePoints(shaderCode: string) {
+export function computeBasePoints() {
   let device = atomDevice.deref();
   const commandEncoder = device.createCommandEncoder();
   const passEncoder = commandEncoder.beginComputePass();
-
-  const shaderModule = getComputeShaderModule(device, interpolateShader(shaderCode));
+  let { shaderModule } = atomLagopusTree.deref();
 
   let basePointsBuffer = atomPointsBuffer.deref();
   let now = Date.now();
@@ -79,7 +78,7 @@ export function computeBasePoints(shaderCode: string) {
     }),
     compute: {
       module: shaderModule,
-      entryPoint: "main",
+      entryPoint: "compute_main",
     },
   });
 
@@ -153,8 +152,8 @@ let getUniformBuffer = (t: number): GPUBuffer => {
   return uniformBuffer;
 };
 
-let buildCommandBuffer = (info: SolubleObjectData, t: number): GPUCommandBuffer => {
-  let { topology, shaderModule, vertexBuffersDescriptors, vertexBuffers, indices } = info;
+let buildCommandBuffer = (t: number): GPUCommandBuffer => {
+  let { topology, shaderModule, vertexBuffersDescriptors, vertexBuffers, indices } = atomLagopusTree.deref();
 
   // console.log("uniformData", uniformData);
 
@@ -245,8 +244,8 @@ export function paintLagopusTree() {
   let device = atomDevice.deref();
 
   let lifetime = Date.now() - startTime;
-  let tree = atomLagopusTree.deref();
-  let bufferList: GPUCommandBuffer[] = [buildCommandBuffer(tree as SolubleObjectData, lifetime)];
+
+  let bufferList: GPUCommandBuffer[] = [buildCommandBuffer(lifetime)];
   device.queue.submit(bufferList);
 }
 

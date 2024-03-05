@@ -3,7 +3,6 @@ import { createGlobalPointsBuffer, BaseCellParams } from "../index.mjs";
 import movePoints from "../../shaders/move-points.wgsl";
 import strokeWgsl from "../../shaders/stroke.wgsl";
 
-import fireCompute from "../../shaders/fire-compute.wgsl";
 import cubicFire from "../../shaders/cubic-fire.wgsl";
 import { useBaseSize } from "../config.mjs";
 import { Number4, rand, randBalance } from "../math.mjs";
@@ -25,6 +24,6 @@ export const cubicFireConfigs = {
   initPointsBuffer: () => {
     createGlobalPointsBuffer(useBaseSize, createCubicFireBasePoint);
   },
-  computeShader: fireCompute,
+  useCompute: true,
   renderShader: cubicFire,
 };

@@ -24,6 +24,6 @@ export const sphereFractalConfigs = {
   initPointsBuffer: () => {
     createGlobalPointsBuffer(20, createCubicFireBasePoint);
   },
-  computeShader: undefined as string,
+  useCompute: false,
   renderShader: sphereFractalRender,
 };

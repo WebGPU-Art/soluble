@@ -666,12 +666,14 @@
                   |T $ %{} :Leaf (:at 1699464120234) (:by |rJG4IHzWf) (:text |if)
                   |b $ %{} :Expr (:at 1699464120520) (:by |rJG4IHzWf)
                     :data $ {}
-                      |T $ %{} :Leaf (:at 1699464125211) (:by |rJG4IHzWf) (:text |some?)
-                      |b $ %{} :Leaf (:at 1699464133800) (:by |rJG4IHzWf) (:text |@*compute-shader)
+                      |T $ %{} :Leaf (:at 1709657339990) (:by |rJG4IHzWf) (:text |.-useCompute)
+                      |b $ %{} :Expr (:at 1709657330974) (:by |rJG4IHzWf)
+                        :data $ {}
+                          |T $ %{} :Leaf (:at 1709657332542) (:by |rJG4IHzWf) (:text |.!deref)
+                          |b $ %{} :Leaf (:at 1709657332972) (:by |rJG4IHzWf) (:text |atomLagopusTree)
                   |h $ %{} :Expr (:at 1699464139498) (:by |rJG4IHzWf)
                     :data $ {}
                       |T $ %{} :Leaf (:at 1699464139846) (:by |rJG4IHzWf) (:text |computeBasePoints)
-                      |b $ %{} :Leaf (:at 1699464142842) (:by |rJG4IHzWf) (:text |@*compute-shader)
               |o $ %{} :Expr (:at 1699464150007) (:by |rJG4IHzWf)
                 :data $ {}
                   |T $ %{} :Leaf (:at 1699464159985) (:by |rJG4IHzWf) (:text |paintLagopusTree)
@@ -1044,6 +1046,10 @@
                         :data $ {}
                           |T $ %{} :Leaf (:at 1699464015203) (:by |rJG4IHzWf) (:text |.-renderShader)
                           |b $ %{} :Leaf (:at 1699464020571) (:by |rJG4IHzWf) (:text |app-config)
+                      |h $ %{} :Expr (:at 1709657372358) (:by |rJG4IHzWf)
+                        :data $ {}
+                          |D $ %{} :Leaf (:at 1709657375321) (:by |rJG4IHzWf) (:text |.-useCompute)
+                          |T $ %{} :Leaf (:at 1709657372021) (:by |rJG4IHzWf) (:text |app-config)
                   |j $ %{} :Expr (:at 1699464050720) (:by |rJG4IHzWf)
                     :data $ {}
                       |D $ %{} :Leaf (:at 1699464078513) (:by |rJG4IHzWf) (:text |reset!)
@@ -1203,6 +1209,13 @@
                     |h $ %{} :Expr (:at 1699464561369) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1709313859906) (:by |rJG4IHzWf) (:text |orbitsConfigs)
+                |zt $ %{} :Expr (:at 1709657313552) (:by |rJG4IHzWf)
+                  :data $ {}
+                    |T $ %{} :Leaf (:at 1709657319126) (:by |rJG4IHzWf) (:text "|\"../src/global")
+                    |b $ %{} :Leaf (:at 1709657320182) (:by |rJG4IHzWf) (:text |:refer)
+                    |h $ %{} :Expr (:at 1709657320531) (:by |rJG4IHzWf)
+                      :data $ {}
+                        |T $ %{} :Leaf (:at 1709657320770) (:by |rJG4IHzWf) (:text |atomLagopusTree)
     |app.schema $ %{} :FileEntry
       :defs $ {}
         |store $ %{} :CodeEntry (:doc |)
