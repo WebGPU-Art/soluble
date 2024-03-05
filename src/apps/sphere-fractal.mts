@@ -1,6 +1,6 @@
 import { createGlobalPointsBuffer, BaseCellParams } from "../index.mjs";
 
-import sphereFractalRender from "../../shaders/sphere-fractal.wgsl";
+import sphereFractalRender from "./sphere-fractal.wgsl";
 import { Number4, rand, randBalance } from "../math.mjs";
 
 import { useBaseSize } from "../config.mjs";

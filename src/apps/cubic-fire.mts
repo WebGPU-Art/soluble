@@ -1,9 +1,6 @@
 import { createGlobalPointsBuffer, BaseCellParams } from "../index.mjs";
 
-import movePoints from "../../shaders/move-points.wgsl";
-import strokeWgsl from "../../shaders/stroke.wgsl";
-
-import cubicFire from "../../shaders/cubic-fire.wgsl";
+import cubicFire from "./cubic-fire.wgsl";
 import { useBaseSize } from "../config.mjs";
 import { Number4, rand, randBalance } from "../math.mjs";
 
