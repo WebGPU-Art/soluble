@@ -11,10 +11,10 @@ let prevTime = Date.now();
 
 export type BaseCellParams = {
   position: Number4;
-  velocity: Number4;
-  arm: Number4;
-  params: Number4;
-  extendParams: Number4;
+  velocity?: Number4;
+  arm?: Number4;
+  params?: Number4;
+  extendParams?: Number4;
 };
 
 let cachedBaseSize = 0;
@@ -28,14 +28,26 @@ export const createGlobalPointsBuffer = (baseSize: number, f: (idx: number) => B
   for (let i = 0; i < baseSize; i++) {
     let info = f(i);
     items.push(...info.position);
-    items.push(...info.velocity);
-    items.push(...info.arm);
-    items.push(...info.params);
-    items.push(...info.extendParams);
+    if (info.velocity) {
+      items.push(...info.velocity);
+    }
+    if (info.arm) {
+      items.push(...info.arm);
+    }
+    if (info.params) {
+      items.push(...info.params);
+    }
+    if (info.extendParams) {
+      items.push(...info.extendParams);
+    }
   }
   atomPointsBuffer.reset(createBuffer(new Float32Array(items), GPUBufferUsage.STORAGE, device));
   return atomPointsBuffer.deref();
 };
+
+export function clearPointsBuffer() {
+  atomPointsBuffer.reset(null);
+}
 
 export function computeBasePoints() {
   let device = atomDevice.deref();

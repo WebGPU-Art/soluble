@@ -60,7 +60,7 @@
                 :color :white
         |tabs $ %{} :CodeEntry (:doc |)
           :code $ quote
-            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark)
+            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
           ns app.comp.container $ :require (respo-ui.css :as css)
@@ -106,11 +106,12 @@
               when
                 and config/dev? $ not= op :states
                 js/console.log "\"Dispatch:" op
+              clearPointsBuffer
               reset! *reel $ reel-updater updater @*reel op
         |get-app $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn get-app (tab)
-              case-default tab cubicFireConfigs (:cubic-fire cubicFireConfigs) (:quaternion-fractal quaternionFractalConfigs) (:complex-fractal complexFractalConfigs) (:space-fractal spaceFractalConfigs) (:sphere-fractal sphereFractalConfigs) (:slow-fractal slowFractalConfigs) (:orbits orbitsConfigs)
+              case-default tab (js/console.warn "\"Unknown tab" tab cubicFireConfigs) (:cubic-fire cubicFireConfigs) (:quaternion-fractal quaternionFractalConfigs) (:complex-fractal complexFractalConfigs) (:space-fractal spaceFractalConfigs) (:sphere-fractal sphereFractalConfigs) (:slow-fractal slowFractalConfigs) (:orbits orbitsConfigs) (:stars stars/configs)
         |loop-paint! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn loop-paint! ()
@@ -161,8 +162,11 @@
         |reload! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn reload! () $ if (nil? build-errors)
-              do (remove-watch *reel :changes) (clear-cache!)
+              do (remove-watch *reel :changes) (clearPointsBuffer) (clear-cache!)
                 add-watch *reel :changes $ fn (reel prev) (render-app!)
+                js/cancelAnimationFrame @*raf
+                render-app!
+                loop-paint!
                 reset! *reel $ refresh-reel @*reel schema/store updater
                 hud! "\"ok~" "\"Ok"
               hud! "\"error" build-errors
@@ -174,7 +178,6 @@
                   app-config $ get-app tab
                 .!initPointsBuffer app-config
                 renderLagopusTree (.-renderShader app-config) (.-useCompute app-config)
-                reset! *compute-shader $ .-computeShader app-config
               render! mount-target (comp-container @*reel) dispatch!
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
@@ -189,7 +192,7 @@
             app.config :as config
             "\"./calcit.build-errors" :default build-errors
             "\"bottom-tip" :default hud!
-            "\"../src/index" :refer $ initializeContext renderLagopusTree computeBasePoints paintLagopusTree loadTouchControl resetCanvasHeight paintLagopusTree setupRemoteControl loadGamepadControl
+            "\"../src/index" :refer $ initializeContext renderLagopusTree computeBasePoints paintLagopusTree loadTouchControl resetCanvasHeight paintLagopusTree setupRemoteControl loadGamepadControl clearPointsBuffer
             "\"../src/config" :refer $ useRemoteControl useGamepad
             "\"../src/apps/cubic-fire" :refer $ cubicFireConfigs
             "\"../src/apps/quaternion-fractal" :refer $ quaternionFractalConfigs
@@ -198,6 +201,7 @@
             "\"../src/apps/sphere-fractal" :refer $ sphereFractalConfigs
             "\"../src/apps/slow-fractal" :refer $ slowFractalConfigs
             "\"../src/apps/orbits" :refer $ orbitsConfigs
+            "\"../src/apps/stars" :as stars
             "\"../src/global" :refer $ atomLagopusTree
     |app.schema $ %{} :FileEntry
       :defs $ {}

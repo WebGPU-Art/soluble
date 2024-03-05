@@ -405,6 +405,12 @@
                       |b $ %{} :Leaf (:at 1709313645479) (:by |rJG4IHzWf) (:text |:orbits)
                       |h $ %{} :Leaf (:at 1709313648187) (:by |rJG4IHzWf) (:text "|\"Orbits")
                       |l $ %{} :Leaf (:at 1709313652440) (:by |rJG4IHzWf) (:text |:dark)
+                  |u $ %{} :Expr (:at 1709313639236) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1709313639781) (:by |rJG4IHzWf) (:text |::)
+                      |b $ %{} :Leaf (:at 1709658620965) (:by |rJG4IHzWf) (:text |:stars)
+                      |h $ %{} :Leaf (:at 1709658622724) (:by |rJG4IHzWf) (:text "|\"Stars")
+                      |l $ %{} :Leaf (:at 1709313652440) (:by |rJG4IHzWf) (:text |:dark)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ %{} :Expr (:at 1499755354983) (:by nil)
           :data $ {}
@@ -603,6 +609,9 @@
                       |j $ %{} :Leaf (:at 1692546015701) (:by |rJG4IHzWf) (:text |js/console.log)
                       |r $ %{} :Leaf (:at 1547437698992) (:by |root) (:text "|\"Dispatch:")
                       |v $ %{} :Leaf (:at 1518156280471) (:by |root) (:text |op)
+              |u $ %{} :Expr (:at 1709660917868) (:by |rJG4IHzWf)
+                :data $ {}
+                  |T $ %{} :Leaf (:at 1709660918092) (:by |rJG4IHzWf) (:text |clearPointsBuffer)
               |v $ %{} :Expr (:at 1584780634192) (:by |rJG4IHzWf)
                 :data $ {}
                   |T $ %{} :Leaf (:at 1499755354983) (:by |root) (:text |reset!)
@@ -625,7 +634,12 @@
                 :data $ {}
                   |T $ %{} :Leaf (:at 1699464509140) (:by |rJG4IHzWf) (:text |case-default)
                   |b $ %{} :Leaf (:at 1699464510217) (:by |rJG4IHzWf) (:text |tab)
-                  |e $ %{} :Leaf (:at 1699464566876) (:by |rJG4IHzWf) (:text |cubicFireConfigs)
+                  |e $ %{} :Expr (:at 1709660684600) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |D $ %{} :Leaf (:at 1709660690182) (:by |rJG4IHzWf) (:text |js/console.warn)
+                      |L $ %{} :Leaf (:at 1709660693256) (:by |rJG4IHzWf) (:text "|\"Unknown tab")
+                      |P $ %{} :Leaf (:at 1709660693845) (:by |rJG4IHzWf) (:text |tab)
+                      |T $ %{} :Leaf (:at 1699464566876) (:by |rJG4IHzWf) (:text |cubicFireConfigs)
                   |h $ %{} :Expr (:at 1699464510573) (:by |rJG4IHzWf)
                     :data $ {}
                       |T $ %{} :Leaf (:at 1699464527449) (:by |rJG4IHzWf) (:text |:cubic-fire)
@@ -654,6 +668,10 @@
                     :data $ {}
                       |T $ %{} :Leaf (:at 1709314044941) (:by |rJG4IHzWf) (:text |:orbits)
                       |b $ %{} :Leaf (:at 1709313856302) (:by |rJG4IHzWf) (:text |orbitsConfigs)
+                  |u $ %{} :Expr (:at 1709313727146) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1709658638811) (:by |rJG4IHzWf) (:text |:stars)
+                      |b $ %{} :Leaf (:at 1709658667646) (:by |rJG4IHzWf) (:text |stars/configs)
         |loop-paint! $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1699464116175) (:by |rJG4IHzWf)
             :data $ {}
@@ -968,6 +986,9 @@
                           |T $ %{} :Leaf (:at 1614750747553) (:by |rJG4IHzWf) (:text |remove-watch)
                           |j $ %{} :Leaf (:at 1614750747553) (:by |rJG4IHzWf) (:text |*reel)
                           |r $ %{} :Leaf (:at 1614750747553) (:by |rJG4IHzWf) (:text |:changes)
+                      |n $ %{} :Expr (:at 1709660884872) (:by |rJG4IHzWf)
+                        :data $ {}
+                          |T $ %{} :Leaf (:at 1709660885235) (:by |rJG4IHzWf) (:text |clearPointsBuffer)
                       |r $ %{} :Expr (:at 1507461699387) (:by |root)
                         :data $ {}
                           |T $ %{} :Leaf (:at 1507461702453) (:by |root) (:text |clear-cache!)
@@ -986,6 +1007,16 @@
                               |r $ %{} :Expr (:at 1612280627439) (:by |rJG4IHzWf)
                                 :data $ {}
                                   |T $ %{} :Leaf (:at 1612280627439) (:by |rJG4IHzWf) (:text |render-app!)
+                      |vT $ %{} :Expr (:at 1709660318285) (:by |rJG4IHzWf)
+                        :data $ {}
+                          |D $ %{} :Leaf (:at 1709660334383) (:by |rJG4IHzWf) (:text |js/cancelAnimationFrame)
+                          |T $ %{} :Leaf (:at 1709660323400) (:by |rJG4IHzWf) (:text |@*raf)
+                      |w $ %{} :Expr (:at 1709658873188) (:by |rJG4IHzWf)
+                        :data $ {}
+                          |T $ %{} :Leaf (:at 1709658873188) (:by |rJG4IHzWf) (:text |render-app!)
+                      |wT $ %{} :Expr (:at 1709660347660) (:by |rJG4IHzWf)
+                        :data $ {}
+                          |T $ %{} :Leaf (:at 1709660354536) (:by |rJG4IHzWf) (:text |loop-paint!)
                       |x $ %{} :Expr (:at 1507461704162) (:by |root)
                         :data $ {}
                           |T $ %{} :Leaf (:at 1507461706990) (:by |root) (:text |reset!)
@@ -1050,14 +1081,6 @@
                         :data $ {}
                           |D $ %{} :Leaf (:at 1709657375321) (:by |rJG4IHzWf) (:text |.-useCompute)
                           |T $ %{} :Leaf (:at 1709657372021) (:by |rJG4IHzWf) (:text |app-config)
-                  |j $ %{} :Expr (:at 1699464050720) (:by |rJG4IHzWf)
-                    :data $ {}
-                      |D $ %{} :Leaf (:at 1699464078513) (:by |rJG4IHzWf) (:text |reset!)
-                      |T $ %{} :Leaf (:at 1699464053409) (:by |rJG4IHzWf) (:text |*compute-shader)
-                      |b $ %{} :Expr (:at 1699464086175) (:by |rJG4IHzWf)
-                        :data $ {}
-                          |T $ %{} :Leaf (:at 1699464090366) (:by |rJG4IHzWf) (:text |.-computeShader)
-                          |b $ %{} :Leaf (:at 1699464092559) (:by |rJG4IHzWf) (:text |app-config)
               |v $ %{} :Expr (:at 1499755354983) (:by nil)
                 :data $ {}
                   |T $ %{} :Leaf (:at 1624469436438) (:by |rJG4IHzWf) (:text |render!)
@@ -1152,6 +1175,7 @@
                         |s $ %{} :Leaf (:at 1699464326310) (:by |rJG4IHzWf) (:text |paintLagopusTree)
                         |u $ %{} :Leaf (:at 1699464357199) (:by |rJG4IHzWf) (:text |setupRemoteControl)
                         |v $ %{} :Leaf (:at 1709143983810) (:by |rJG4IHzWf) (:text |loadGamepadControl)
+                        |w $ %{} :Leaf (:at 1709660891703) (:by |rJG4IHzWf) (:text |clearPointsBuffer)
                 |zD $ %{} :Expr (:at 1699464439366) (:by |rJG4IHzWf)
                   :data $ {}
                     |D $ %{} :Leaf (:at 1699464453203) (:by |rJG4IHzWf) (:text "|\"../src/config")
@@ -1209,6 +1233,11 @@
                     |h $ %{} :Expr (:at 1699464561369) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1709313859906) (:by |rJG4IHzWf) (:text |orbitsConfigs)
+                |zsT $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
+                  :data $ {}
+                    |T $ %{} :Leaf (:at 1709658651477) (:by |rJG4IHzWf) (:text "|\"../src/apps/stars")
+                    |a $ %{} :Leaf (:at 1709658652379) (:by |rJG4IHzWf) (:text |:as)
+                    |g $ %{} :Leaf (:at 1709658654167) (:by |rJG4IHzWf) (:text |stars)
                 |zt $ %{} :Expr (:at 1709657313552) (:by |rJG4IHzWf)
                   :data $ {}
                     |T $ %{} :Leaf (:at 1709657319126) (:by |rJG4IHzWf) (:text "|\"../src/global")
