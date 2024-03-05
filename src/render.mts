@@ -2,6 +2,7 @@ import { SolubleAttribute, SolubleObjectData } from "./primes.mjs";
 import { atomDepthTexture, atomContext, atomDevice, atomLagopusTree, wLog } from "./global.mjs";
 import { createBuffer } from "./utils.mjs";
 import { newBufferFormatLength, u32buffer } from "./alias.mjs";
+import { interpolateShader } from "./paint.mjs";
 
 /** init canvas context */
 export const initializeContext = async (): Promise<any> => {
@@ -92,7 +93,7 @@ export let createRenderer = (
 
   // ~~ DEFINE BASIC SHADERS ~~
   const shaderModule = device.createShaderModule({
-    code: shaderCode,
+    code: interpolateShader(shaderCode),
   });
 
   shaderModule.getCompilationInfo().then((e) => {

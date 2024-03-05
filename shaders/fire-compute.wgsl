@@ -1,3 +1,14 @@
+#import soluble::perspective
+
+struct Params {
+  time: f32,
+  dt: f32,
+  offset: f32,
+  p2: f32,
+}
+
+@group(0) @binding(1) var<uniform> params: Params;
+
 
 struct BaseCell {
   position: vec4<f32>,
@@ -17,18 +28,7 @@ struct BaseCell {
   p8: f32,
 };
 
-@group(0) @binding(0)
-var<storage, read_write> base_points: array<BaseCell>;
-
-struct Params {
-  time: f32,
-  dt: f32,
-  offset: f32,
-  p2: f32,
-}
-
-@group(0) @binding(1)
-var<uniform> params: Params;
+@group(1) @binding(0) var<storage, read_write> base_points: array<BaseCell>;
 
 @compute @workgroup_size(8, 8, 1)
 fn main(@builtin(global_invocation_id) global_id: vec3u) {
