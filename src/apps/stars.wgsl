@@ -1,28 +1,12 @@
-struct UBO {
-  screen_wh: vec2<f32>,
-  scale: f32,
-  forward: vec3<f32>,
-  // direction up overhead, better unit vector
-  upward: vec3<f32>,
-  rightward: vec3<f32>,
-  viewer_position: vec3<f32>,
-};
+
+#import soluble::perspective
 
 struct BaseCell {
   position: vec4<f32>,
-  velocity: vec4<f32>,
-  arm: vec4<f32>,
   p1: f32, p2: f32, p3: f32, p4: f32,
 };
 
-@group(0) @binding(0) var<uniform> uniforms: UBO;
-@group(0) @binding(1) var<storage, read_write> base_points: array<BaseCell>;
-
-// shapes
-
-fn sd_sphere(p: vec3<f32>, r: f32) -> f32 {
-  return length(p) - r;
-}
+@group(1) @binding(0) var<storage, read_write> base_points: array<BaseCell>;
 
 // Render Pass
 
@@ -99,10 +83,10 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     // let color = vec3(l*0.8, l*0.8, l*0.1);
     // total = max(total, color);
 
-    if 10.0 * pow(ratio, 1.5) * base_point.p3 > nearest {
+    if 1.0 * pow(ratio, 1.5) * base_point.p3 > nearest {
       total = vec3(1.0, 1.0, 0.5);
     }
   }
 
-  return vec4(total, 0.9);
+  return vec4(total, 1.);
 }

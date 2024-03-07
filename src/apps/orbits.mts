@@ -1,6 +1,6 @@
 import { createGlobalPointsBuffer, BaseCellParams } from "../index.mjs";
 
-import fractalRender from "../../shaders/orbits.wgsl";
+import fractalRender from "./orbits.wgsl";
 import { Number4, rand, randBalance } from "../math.mjs";
 
 import { useBaseSize } from "../config.mjs";
@@ -22,6 +22,6 @@ export const orbitsConfigs = {
   initPointsBuffer: () => {
     createGlobalPointsBuffer(10, createCubicFireBasePoint);
   },
-  computeShader: undefined as string,
+  useCompute: false,
   renderShader: fractalRender,
 };

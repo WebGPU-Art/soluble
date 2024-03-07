@@ -1,18 +1,27 @@
-struct UBO {
-  screen_wh: vec2<f32>,
-  scale: f32,
-  forward: vec3<f32>,
-  // direction up overhead, better unit vector
-  upward: vec3<f32>,
-  rightward: vec3<f32>,
-  viewer_position: vec3<f32>,
-};
+
+#import soluble::perspective
+
+struct Params {
+  time: f32,
+  dt: f32,
+  offset: f32,
+  p2: f32,
+}
+
+@group(0) @binding(1) var<uniform> params: Params;
+
+
 
 struct BaseCell {
   position: vec4<f32>,
   velocity: vec4<f32>,
   arm: vec4<f32>,
-  p1: f32, p2: f32, p3: f32, p4: f32,
+  // offset
+  offset: f32,
+  // duration
+  duration: f32,
+  p3: f32,
+  time: f32,
 
   // extend params
   p5: f32,
@@ -21,8 +30,20 @@ struct BaseCell {
   p8: f32,
 };
 
-@group(0) @binding(0) var<uniform> uniforms: UBO;
-@group(0) @binding(1) var<storage, read_write> base_points: array<BaseCell>;
+@group(1) @binding(0) var<storage, read_write> base_points: array<BaseCell>;
+
+
+@compute @workgroup_size(8, 8, 1)
+fn compute_main(@builtin(global_invocation_id) global_id: vec3u) {
+  var index = global_id.x + global_id.y * 8u;
+  base_points[index].position.y += params.dt * 0.03 * base_points[index].velocity.y;
+  if base_points[index].position.y > 200. {
+    base_points[index].position.y = -200.;
+  }
+  base_points[index].position.x = base_points[index].position.x;
+  // base_points[index].p3 = sin(base_points[index].offset + base_points[index].duration * 0.001 * params.time) * 0.4 + 0.6;
+  // base_points[index].time = params.time;
+}
 
 // shapes
 
@@ -182,5 +203,5 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     }
   }
 
-  return vec4(total, 1.0);
+  return vec4(total, 0.0);
 }

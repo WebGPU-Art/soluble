@@ -1,6 +1,6 @@
 import { createGlobalPointsBuffer, BaseCellParams } from "../index.mjs";
 
-import fractalRender from "../../shaders/quaternion-fractal.wgsl";
+import fractalRender from "./quaternion-fractal.wgsl";
 import { Number4, rand, randBalance } from "../math.mjs";
 
 import { useBaseSize } from "../config.mjs";
@@ -22,6 +22,6 @@ export const quaternionFractalConfigs = {
   initPointsBuffer: () => {
     createGlobalPointsBuffer(10, createCubicFireBasePoint);
   },
-  computeShader: undefined as string,
+  useCompute: false,
   renderShader: fractalRender,
 };

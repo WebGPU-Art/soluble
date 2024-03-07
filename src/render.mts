@@ -2,6 +2,7 @@ import { SolubleAttribute, SolubleObjectData } from "./primes.mjs";
 import { atomDepthTexture, atomContext, atomDevice, atomLagopusTree, wLog } from "./global.mjs";
 import { createBuffer } from "./utils.mjs";
 import { newBufferFormatLength, u32buffer } from "./alias.mjs";
+import { interpolateShader } from "./paint.mjs";
 
 /** init canvas context */
 export const initializeContext = async (): Promise<any> => {
@@ -73,7 +74,8 @@ export let createRenderer = (
   }[],
   verticesLength: number,
   vertices: (Float32Array | Uint32Array)[],
-  indices: Uint32Array
+  indices: Uint32Array,
+  useCompute: boolean
 ): SolubleObjectData => {
   // load shared device
   let device = atomDevice.deref();
@@ -92,7 +94,7 @@ export let createRenderer = (
 
   // ~~ DEFINE BASIC SHADERS ~~
   const shaderModule = device.createShaderModule({
-    code: shaderCode,
+    code: interpolateShader(shaderCode),
   });
 
   shaderModule.getCompilationInfo().then((e) => {
@@ -101,18 +103,18 @@ export let createRenderer = (
   });
 
   return {
-    type: "object",
     topology: topology,
     shaderModule: shaderModule,
     vertexBuffersDescriptors: vertexBuffersDescriptors,
     vertexBuffers,
     length: verticesLength,
     indices: indecesBuffer,
+    useCompute: useCompute,
   };
 };
 
 /** track tree, internally it calls `paintLagopusTree` to render */
-export function renderLagopusTree(strokeWgsl: string) {
+export function renderLagopusTree(strokeWgsl: string, useCompute: boolean) {
   let data: Record<string, number[]>[] = [
     {
       position: [-1, -1],
@@ -141,6 +143,6 @@ export function renderLagopusTree(strokeWgsl: string) {
   let indices = u32buffer([0, 1, 2, 1, 2, 3]);
 
   /** create a render object */
-  let tree = createRenderer(strokeWgsl, "triangle-list", attrsList, data.length, buffers, indices);
+  let tree = createRenderer(strokeWgsl, "triangle-list", attrsList, data.length, buffers, indices, useCompute);
   atomLagopusTree.reset(tree);
 }

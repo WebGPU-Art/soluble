@@ -1,6 +1,6 @@
 import { createGlobalPointsBuffer, BaseCellParams } from "../index.mjs";
 
-import fractalRender from "../../shaders/space-fractal.wgsl";
+import fractalRender from "./space-fractal.wgsl";
 import { Number4, rand, randBalance } from "../math.mjs";
 
 import { useBaseSize } from "../config.mjs";
@@ -22,6 +22,6 @@ export const spaceFractalConfigs = {
   initPointsBuffer: () => {
     createGlobalPointsBuffer(10, createCubicFireBasePoint);
   },
-  computeShader: undefined as string,
+  useCompute: false,
   renderShader: fractalRender,
 };
