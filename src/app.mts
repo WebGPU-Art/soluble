@@ -6,6 +6,7 @@ import { sphereFractalConfigs } from "./apps/sphere-fractal.mjs";
 import { slowFractalConfigs } from "./apps/slow-fractal.mjs";
 import { orbitsConfigs } from "./apps/orbits.mjs";
 import {} from "./apps/stars.mjs";
+import {} from "./apps/rings.mjs";
 
 // const appConfigs = cubicFireConfigs;
 // const appConfigs = quaternionFractalConfigs;
