@@ -3,8 +3,8 @@
 
 struct BaseCell {
   position: vec4<f32>,
-  velocity: vec4<f32>,
-  arm: vec4<f32>,
+  arm1: vec4<f32>,
+  arm2: vec4<f32>,
   p1: f32, p2: f32, p3: f32, p4: f32,
 };
 
@@ -49,45 +49,30 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   for (var j: u32 = 0u; j < base_size; j++) {
     let base_point = base_points[j];
-    let dh = sin(base_point.p4 * base_point.p1 * 0.000008) * 100.0;
-    let base_position = base_point.position.xyz + vec3(0., dh, 0.);
+    let base_position = base_point.position.xyz;
 
     let view = base_position - uniforms.viewer_position;
     let view_unit = normalize(view);
     let view_length = length(view);
     let cos_value = dot(view_unit, ray_unit);
-    if cos_value < 0.9 {
-      continue;
-    }
     let sin_value = sqrt(1.0 - cos_value * cos_value);
-    if abs(view_length * sin_value) > 10.0 {
+    if abs(view_length * sin_value) > 20.0 {
       continue;
     }
 
-    let near_point = uniforms.viewer_position + ray_unit * view_length * cos_value;
-    let near_offset = near_point - base_position;
-    let near_unit = normalize(near_offset);
-    let a = abs(dot(near_unit, uniforms.upward));
-    let b = abs(dot(near_unit, uniforms.rightward));
-    let t = b / a;
-    let y = (t + 1. - sqrt(2. * t)) / (t * t + 1.);
-    let x = t * y;
-    let ll = sqrt(x * x + y * y);
-    // var ratio = pow((1. - a), 3.0) + pow((1. - b), 3.0);
+    // perpendicular to ring plane
+    let arm3 = normalize(cross(base_point.arm1.xyz, base_point.arm2.xyz));
+    // distance from viewer to ring plane
+    let distance_to_ring_plane = dot(view_unit, arm3) * view_length;
+    let ray_plane_cos = dot(ray_unit, arm3);
+    let length_ray_to_ring_plane = distance_to_ring_plane / ray_plane_cos;
+    let hit_ring_plane = length_ray_to_ring_plane * ray_unit;
+    let hard_radius = base_point.p1; // TODO variable
+    let flat_distane_to_ring = abs(length(uniforms.viewer_position + hit_ring_plane - base_position) - hard_radius);
 
-    // let theta = PI * 0.25 - acos(a);
-    // ratio = 1.0 / (sqrt(2.0) * cos(theta));
-    let ratio = ll;
-
-    nearest = abs(view_length * 0.);
-    // var l: f32 = 100.1 / (pow(nearest * 1.0, 2.0) * 2.0 + 0.1) * ratio;
-    // l = 0.3 / ratio;
-    // let color = vec3(l*0.8, l*0.8, l*0.1);
-    // total = max(total, color);
-
-    if 1.0 * pow(ratio, 1.5) * base_point.p3 > nearest {
-      total = vec3(1.0, 1.0, 0.5);
-    }
+    // if 1.0 * pow(ratio, 1.5) * base_point.p3 > nearest {
+    total = 1. * vec3(1.0, 1.0, 0.5) / pow(flat_distane_to_ring + 0.01, 2.);
+    // }
   }
 
   return vec4(total, 1.);
