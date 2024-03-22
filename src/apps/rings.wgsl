@@ -55,8 +55,13 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     let view_unit = normalize(view);
     let view_length = length(view);
     let cos_value = dot(view_unit, ray_unit);
+    if cos_value < 0. {
+      continue; // at back
+    }
+    let hard_radius = base_point.p1; // TODO variable
+
     let sin_value = sqrt(1.0 - cos_value * cos_value);
-    if abs(view_length * sin_value) > 20.0 {
+    if abs(view_length * sin_value) > hard_radius * 1.5 {
       continue;
     }
 
@@ -65,14 +70,20 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     // distance from viewer to ring plane
     let distance_to_ring_plane = dot(view_unit, arm3) * view_length;
     let ray_plane_cos = dot(ray_unit, arm3);
+
+    // on ring plane, but perp to ray
+    let perp_direct = cross(ray_unit, arm3);
+    // on ring plane, close to ray direction
+    let far_direct = cross(perp_direct, arm3);
+
     let length_ray_to_ring_plane = distance_to_ring_plane / ray_plane_cos;
     let hit_ring_plane = length_ray_to_ring_plane * ray_unit;
-    let hard_radius = base_point.p1; // TODO variable
-    let flat_distane_to_ring = abs(length(uniforms.viewer_position + hit_ring_plane - base_position) - hard_radius);
+    // distance from hit point to ring center
+    var hit_ring_offset = uniforms.viewer_position + hit_ring_plane - base_position;
 
-    // if 1.0 * pow(ratio, 1.5) * base_point.p3 > nearest {
-    total = 1. * vec3(1.0, 1.0, 0.5) / pow(flat_distane_to_ring + 0.01, 2.);
-    // }
+    let flat_distance_to_ring = abs(length(hit_ring_offset) - hard_radius);
+
+    total += 2. * vec3(1.0, 1.0, 0.5) / pow(flat_distance_to_ring + 0.01, 1.6);
   }
 
   return vec4(total, 1.);
