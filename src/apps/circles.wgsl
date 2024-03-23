@@ -46,7 +46,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   for (var j: u32 = 0u; j < base_size; j++) {
     let base_point = (base_points[j]);
-    let base_position = vec3(base_point.position.xy, -2.);
+    let base_position = vec3(base_point.position.xy, 0.);
     let hard_radius = base_point.position.z; // TODO variable
 
 
@@ -60,9 +60,9 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     let distance_to_surface = dot(connect, n);
     let join_point = uniforms.viewer_position + ray_unit * distance_to_surface / cos_value;
 
-    let view = base_position - join_point;
-    let view_unit = normalize(view);
-    let view_length = length(view);
+    // let view = base_position - join_point;
+    // let view_unit = normalize(view);
+    // let view_length = length(view);
     // let cos_value = dot(view_unit, ray_unit);
     // if cos_value < 0.9 {
     //   continue; // at back
@@ -74,10 +74,11 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     // }
 
 
-    let near_point = join_point + ray_unit * view_length * cos_value;
-    let near_offset = near_point - base_position;
+    // let near_point = join_point + ray_unit * view_length * cos_value;
+    // let near_offset = near_point - base_position;
+    let offset = join_point - base_position;
 
-    if abs(length(near_offset) - hard_radius) < 0.2 {
+    if abs(length(offset) - hard_radius) < 0.4 {
       total += vec3(1.0, 1.0, 0.5);
     }
 
