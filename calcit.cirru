@@ -417,6 +417,12 @@
                       |b $ %{} :Leaf (:at 1710871525460) (:by |rJG4IHzWf) (:text |:rings)
                       |h $ %{} :Leaf (:at 1710871527711) (:by |rJG4IHzWf) (:text "|\"Rings")
                       |l $ %{} :Leaf (:at 1709313652440) (:by |rJG4IHzWf) (:text |:dark)
+                  |w $ %{} :Expr (:at 1709313639236) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1709313639781) (:by |rJG4IHzWf) (:text |::)
+                      |b $ %{} :Leaf (:at 1711166637235) (:by |rJG4IHzWf) (:text |:circles)
+                      |h $ %{} :Leaf (:at 1711166639067) (:by |rJG4IHzWf) (:text "|\"Circles")
+                      |l $ %{} :Leaf (:at 1709313652440) (:by |rJG4IHzWf) (:text |:dark)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ %{} :Expr (:at 1499755354983) (:by nil)
           :data $ {}
@@ -685,6 +691,10 @@
                     :data $ {}
                       |T $ %{} :Leaf (:at 1710871535494) (:by |rJG4IHzWf) (:text |:rings)
                       |b $ %{} :Leaf (:at 1710871538129) (:by |rJG4IHzWf) (:text |rings/configs)
+                  |w $ %{} :Expr (:at 1710871533736) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1711166650202) (:by |rJG4IHzWf) (:text |:circles)
+                      |b $ %{} :Leaf (:at 1711166652293) (:by |rJG4IHzWf) (:text |circles/configs)
         |loop-paint! $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1699464116175) (:by |rJG4IHzWf)
             :data $ {}
@@ -1256,6 +1266,11 @@
                     |T $ %{} :Leaf (:at 1710871544077) (:by |rJG4IHzWf) (:text "|\"../src/apps/rings")
                     |a $ %{} :Leaf (:at 1709658652379) (:by |rJG4IHzWf) (:text |:as)
                     |g $ %{} :Leaf (:at 1710871546430) (:by |rJG4IHzWf) (:text |rings)
+                |zsr $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
+                  :data $ {}
+                    |T $ %{} :Leaf (:at 1711166657440) (:by |rJG4IHzWf) (:text "|\"../src/apps/circles")
+                    |a $ %{} :Leaf (:at 1709658652379) (:by |rJG4IHzWf) (:text |:as)
+                    |g $ %{} :Leaf (:at 1711166659086) (:by |rJG4IHzWf) (:text |circles)
                 |zt $ %{} :Expr (:at 1709657313552) (:by |rJG4IHzWf)
                   :data $ {}
                     |T $ %{} :Leaf (:at 1709657319126) (:by |rJG4IHzWf) (:text "|\"../src/global")
@@ -1276,7 +1291,7 @@
                   |b $ %{} :Expr (:at 1699463594608) (:by |rJG4IHzWf)
                     :data $ {}
                       |T $ %{} :Leaf (:at 1699463595486) (:by |rJG4IHzWf) (:text |:tab)
-                      |b $ %{} :Leaf (:at 1699463599052) (:by |rJG4IHzWf) (:text |:cubic-fire)
+                      |b $ %{} :Leaf (:at 1711134297372) (:by |rJG4IHzWf) (:text |:rings)
                   |j $ %{} :Expr (:at 1499755354983) (:by nil)
                     :data $ {}
                       |T $ %{} :Leaf (:at 1499755354983) (:by |root) (:text |:states)

@@ -60,7 +60,7 @@
                 :color :white
         |tabs $ %{} :CodeEntry (:doc |)
           :code $ quote
-            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark)
+            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark) (:: :circles "\"Circles" :dark)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
           ns app.comp.container $ :require (respo-ui.css :as css)
@@ -122,6 +122,7 @@
                 :orbits orbitsConfigs
                 :stars stars/configs
                 :rings rings/configs
+                :circles circles/configs
         |loop-paint! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn loop-paint! ()
@@ -213,12 +214,13 @@
             "\"../src/apps/orbits" :refer $ orbitsConfigs
             "\"../src/apps/stars" :as stars
             "\"../src/apps/rings" :as rings
+            "\"../src/apps/circles" :as circles
             "\"../src/global" :refer $ atomLagopusTree
     |app.schema $ %{} :FileEntry
       :defs $ {}
         |store $ %{} :CodeEntry (:doc |)
           :code $ quote
-            def store $ {} (:tab :cubic-fire)
+            def store $ {} (:tab :rings)
               :states $ {}
                 :cursor $ []
       :ns $ %{} :CodeEntry (:doc |)
