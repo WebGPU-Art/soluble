@@ -43,6 +43,8 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   // raymarch
   var total: vec3<f32> = vec3(0.0, 0.0, 0.0);
+  var at_line = false;
+  var bg_times = 0u;
 
   for (var j: u32 = 0u; j < base_size; j++) {
     let base_point = (base_points[j]);
@@ -78,16 +80,31 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     // let near_offset = near_point - base_position;
     let offset = join_point - base_position;
 
-    if abs(length(offset) - hard_radius) < 0.4 {
-      total += vec3(1.0, 1.0, 0.5);
-    }
+    if length(join_point) <= 400. {
+      let d = abs(length(offset) - hard_radius);
+      if d < 1. {
+        total += vec3(1.0, 1.0, 0.5) / (d * 10. + 4.);
+        at_line = true;
+        continue;
+      }
 
-    // total += 2. * vec3(1.0, 1.0, 0.5) / pow(d_to_ring + 0.01, 1.6);
-    // if d_to_ring < 10. {
-    // total += 2. * vec3(1.0, 1.0, 0.5) / pow(d_to_ring + 0.01, 2.);
-      // total += vec3(1.0, 1.0, 0.5);
-    // }
+      if length(offset) - hard_radius < 0. {
+        bg_times += 1u;
+      }
+    }
   }
 
-  return vec4(total, 1.);
+  if at_line {
+    return vec4(total, 1.);
+  }
+
+  if bg_times == 0u {
+    return vec4(0.0, 0.0, 0.0, 1.0);
+  }
+
+  if bg_times % 2u == 1u {
+    return vec4(0.99, 0.5, 0.5, 1.0);
+  } else {
+    return vec4(0.5, 0.5, 0.99, 1.0);
+  }
 }
