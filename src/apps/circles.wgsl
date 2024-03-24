@@ -46,51 +46,40 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   var at_line = false;
   var bg_times = 0u;
 
+  let p0 = vec3<f32>(0.0, 0.0, 0.0);
+  let v1 = normalize(vec3<f32>(0.0, 1.0, 0.0));
+  let v2 = normalize(vec3<f32>(1.0, 0.0, 0.0));
+
+  let n = cross(v1, v2);
+  let cos_value = dot(ray_unit, n);
+  let connect = p0 - uniforms.viewer_position;
+  let distance_to_surface = dot(connect, n);
+
+  let join_point = uniforms.viewer_position + ray_unit * distance_to_surface / cos_value;
+  let off_center = length(join_point);
+  let ratio = 1. - off_center / 400.0;
+  let in_zone = off_center <= 400.;
+
+  if !in_zone {
+    return vec4(0.0, 0.0, 0.0, 1.0);
+  }
+
   for (var j: u32 = 0u; j < base_size; j++) {
-    let base_point = (base_points[j]);
-    let base_position = vec3(base_point.position.xy, 0.);
-    let hard_radius = base_point.position.z; // TODO variable
+    let base_point = base_points[j];
+    let hard_radius = base_point.position.z;
 
+    let offset = join_point.xy - base_point.position.xy;
+    let offset_length = length(offset);
 
-    let p0 = vec3<f32>(0.0, 0.0, 0.0);
-    let v1 = normalize(vec3<f32>(0.0, 1.0, 0.0));
-    let v2 = normalize(vec3<f32>(1.0, 0.0, 0.0));
+    let d = abs(offset_length - hard_radius);
+    if d < 1. * ratio {
+      total += vec3(1.0, 1.0, 0.5) / (d * 10. + 4.);
+      at_line = true;
+      continue;
+    }
 
-    let n = cross(v1, v2);
-    let cos_value = dot(ray_unit, n);
-    let connect = p0 - uniforms.viewer_position;
-    let distance_to_surface = dot(connect, n);
-    let join_point = uniforms.viewer_position + ray_unit * distance_to_surface / cos_value;
-
-    // let view = base_position - join_point;
-    // let view_unit = normalize(view);
-    // let view_length = length(view);
-    // let cos_value = dot(view_unit, ray_unit);
-    // if cos_value < 0.9 {
-    //   continue; // at back
-    // }
-
-    // let sin_value = sqrt(1.0 - cos_value * cos_value);
-    // if abs(view_length * sin_value) > hard_radius * 1.3 {
-    //   continue;
-    // }
-
-
-    // let near_point = join_point + ray_unit * view_length * cos_value;
-    // let near_offset = near_point - base_position;
-    let offset = join_point - base_position;
-
-    if length(join_point) <= 400. {
-      let d = abs(length(offset) - hard_radius);
-      if d < 1. {
-        total += vec3(1.0, 1.0, 0.5) / (d * 10. + 4.);
-        at_line = true;
-        continue;
-      }
-
-      if length(offset) - hard_radius < 0. {
-        bg_times += 1u;
-      }
+    if offset_length - hard_radius <= 0. {
+      bg_times += 1u;
     }
   }
 
@@ -99,7 +88,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   }
 
   if bg_times == 0u {
-    return vec4(0.0, 0.0, 0.0, 1.0);
+    return vec4(0.9, 0.6, 0.0, 1.0);
   }
 
   if bg_times % 2u == 1u {

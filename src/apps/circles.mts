@@ -12,7 +12,7 @@ let createPoint = (idx: number): BaseCellParams => {
   return { position, params };
 };
 
-console.log("size", useBaseSize);
+console.log("Size", poincareData.length, useBaseSize);
 
 export const configs = {
   initPointsBuffer: () => {
