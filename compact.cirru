@@ -156,7 +156,7 @@
               js/window.addEventListener |visibilitychange $ fn (event)
                 if (= "\"hidden" js/document.visibilityState) (persist-storage!)
               flipped js/setInterval 60000 persist-storage!
-              let
+              ; let
                   raw $ js/localStorage.getItem (:storage-key config/site)
                 when (some? raw)
                   dispatch! $ :: :hydrate-storage (parse-cirru-edn raw)
@@ -220,7 +220,8 @@
       :defs $ {}
         |store $ %{} :CodeEntry (:doc |)
           :code $ quote
-            def store $ {} (:tab :rings)
+            def store $ {}
+              :tab $ turn-tag (get-env "\"tab" "\"circles")
               :states $ {}
                 :cursor $ []
       :ns $ %{} :CodeEntry (:doc |)
