@@ -32,7 +32,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   // pixel coordinates
   let coord: vec2<f32> = vx_out.uv * uniforms.screen_wh;
-  let p: vec2<f32> = coord * 0.0005 / uniforms.scale;
+  let p: vec2<f32> = coord * 0.0006 / uniforms.scale;
 
   var base_size = arrayLength(&base_points);
 

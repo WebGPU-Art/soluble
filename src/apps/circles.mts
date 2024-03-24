@@ -16,7 +16,7 @@ console.log("Size", poincareData.length, useBaseSize);
 
 export const configs = {
   initPointsBuffer: () => {
-    createGlobalPointsBuffer(Math.min(useBaseSize, poincareData.length), createPoint);
+    createGlobalPointsBuffer(poincareData.length, createPoint);
   },
   useCompute: false,
   renderShader: ringsShader,
