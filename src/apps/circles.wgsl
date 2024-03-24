@@ -72,8 +72,8 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     let offset_length = length(offset);
 
     let d = abs(offset_length - hard_radius);
-    if d < 1. * ratio {
-      total += vec3(1.0, 1.0, 0.5) / (d * 10. + 4.);
+    if d < 4. * pow(ratio, 0.5) {
+      total += vec3(0.1, 0.1, 0.5) / (d * 0.2 + 1.1);
       at_line = true;
       continue;
     }
@@ -88,12 +88,14 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   }
 
   if bg_times == 0u {
-    return vec4(0.9, 0.6, 0.0, 1.0);
+    // return vec4(0.9, 0.6, 0.0, 1.0);
   }
 
   if bg_times % 2u == 1u {
-    return vec4(0.99, 0.5, 0.5, 1.0);
+    // return vec4(0.99, 0.5, 0.5, 1.0);
   } else {
-    return vec4(0.5, 0.5, 0.99, 1.0);
+    // return vec4(0.5, 0.5, 0.99, 1.0);
   }
+
+  return vec4(0.0, 0.0, 0.0, 1.0);
 }
