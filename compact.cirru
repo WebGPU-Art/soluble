@@ -60,7 +60,7 @@
                 :color :white
         |tabs $ %{} :CodeEntry (:doc |)
           :code $ quote
-            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark) (:: :circles "\"Circles" :dark)
+            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark) (:: :circles "\"Circles" :dark) (:: :kaleidoscope "\"Kaleidoscope" :dark)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
           ns app.comp.container $ :require (respo-ui.css :as css)
@@ -80,7 +80,8 @@
             def hide-tabs? $ = "\"true" (get-env "\"hide-tabs" "\"false")
         |interval $ %{} :CodeEntry (:doc |)
           :code $ quote
-            def interval $ parse-float (get-env "\"interval" "\"40")
+            def interval $ w-js-log
+              parse-float $ get-env "\"interval" "\"40"
         |site $ %{} :CodeEntry (:doc |)
           :code $ quote
             def site $ {} (:storage-key "\"workflow")
@@ -123,6 +124,7 @@
                 :stars stars/configs
                 :rings rings/configs
                 :circles circles/configs
+                :kaleidoscope kaleidoscopeConfigs
         |loop-paint! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn loop-paint! ()
@@ -145,11 +147,11 @@
               js-await $ initializeContext
               render-app!
               loop-paint!
-              loadTouchControl
+              ; loadTouchControl
               resetCanvasHeight canvas
               js/window.addEventListener "\"resize" $ fn (event) (resetCanvasHeight canvas) (paintLagopusTree)
-              if useRemoteControl $ setupRemoteControl
-              if useGamepad $ loadGamepadControl
+              ; if useRemoteControl $ setupRemoteControl
+              loadGamepadControl
               add-watch *reel :changes $ fn (reel prev) (render-app!)
               listen-devtools! |k dispatch!
               js/window.addEventListener |beforeunload $ fn (event) (persist-storage!)
@@ -204,7 +206,7 @@
             "\"./calcit.build-errors" :default build-errors
             "\"bottom-tip" :default hud!
             "\"../src/index" :refer $ initializeContext renderLagopusTree computeBasePoints paintLagopusTree loadTouchControl resetCanvasHeight paintLagopusTree setupRemoteControl loadGamepadControl clearPointsBuffer
-            "\"../src/config" :refer $ useRemoteControl useGamepad
+            "\"../src/config" :refer $ useRemoteControl
             "\"../src/apps/cubic-fire" :refer $ cubicFireConfigs
             "\"../src/apps/quaternion-fractal" :refer $ quaternionFractalConfigs
             "\"../src/apps/complex-fractal" :refer $ complexFractalConfigs
@@ -212,6 +214,7 @@
             "\"../src/apps/sphere-fractal" :refer $ sphereFractalConfigs
             "\"../src/apps/slow-fractal" :refer $ slowFractalConfigs
             "\"../src/apps/orbits" :refer $ orbitsConfigs
+            "\"../src/apps/kaleidoscope" :refer $ kaleidoscopeConfigs
             "\"../src/apps/stars" :as stars
             "\"../src/apps/rings" :as rings
             "\"../src/apps/circles" :as circles
@@ -221,7 +224,7 @@
         |store $ %{} :CodeEntry (:doc |)
           :code $ quote
             def store $ {}
-              :tab $ turn-tag (get-env "\"tab" "\"circles")
+              :tab $ turn-tag (get-env "\"tab" "\"kaleidoscope")
               :states $ {}
                 :cursor $ []
       :ns $ %{} :CodeEntry (:doc |)

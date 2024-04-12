@@ -53,35 +53,38 @@ let disconnecthandler = (e: GamepadEvent) => {
 let gameLoop = () => {
   const gamepads = navigator.getGamepads();
   let gp = gamepads[0] || gamepads[1] || gamepads[2];
-  let [face1, face2, face3, face4, l1, r1, l2, r2, select, start, l3, r3, up, down, left, right] = gp.buttons;
-  let [leftX, leftY, rightX, rightY] = gp.axes;
 
-  handler(
-    {
-      leftX,
-      leftY,
-      rightX,
-      rightY,
-    },
-    {
-      // face1,
-      // face2,
-      // face3,
-      // face4,
-      l1,
-      r1,
-      l2,
-      r2,
-      // select,
-      // start,
-      // l3,
-      // r3,
-      up,
-      down,
-      left,
-      right,
-    } as GameButtons
-  );
+  if (gp !== null) {
+    let [face1, face2, face3, face4, l1, r1, l2, r2, select, start, l3, r3, up, down, left, right] = gp.buttons;
+    let [leftX, leftY, rightX, rightY] = gp.axes;
 
-  looper = setTimeout(gameLoop, 10);
+    handler(
+      {
+        leftX,
+        leftY,
+        rightX,
+        rightY,
+      },
+      {
+        // face1,
+        // face2,
+        // face3,
+        // face4,
+        l1,
+        r1,
+        l2,
+        r2,
+        // select,
+        // start,
+        // l3,
+        // r3,
+        up,
+        down,
+        left,
+        right,
+      } as GameButtons
+    );
+  }
+
+  looper = requestAnimationFrame(gameLoop);
 };

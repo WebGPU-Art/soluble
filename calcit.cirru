@@ -423,6 +423,12 @@
                       |b $ %{} :Leaf (:at 1711166637235) (:by |rJG4IHzWf) (:text |:circles)
                       |h $ %{} :Leaf (:at 1711166639067) (:by |rJG4IHzWf) (:text "|\"Circles")
                       |l $ %{} :Leaf (:at 1709313652440) (:by |rJG4IHzWf) (:text |:dark)
+                  |x $ %{} :Expr (:at 1712938631055) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1712938631792) (:by |rJG4IHzWf) (:text |::)
+                      |b $ %{} :Leaf (:at 1712938637452) (:by |rJG4IHzWf) (:text |:kaleidoscope)
+                      |h $ %{} :Leaf (:at 1712938640622) (:by |rJG4IHzWf) (:text "|\"Kaleidoscope")
+                      |l $ %{} :Leaf (:at 1712938641596) (:by |rJG4IHzWf) (:text |:dark)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ %{} :Expr (:at 1499755354983) (:by nil)
           :data $ {}
@@ -523,14 +529,17 @@
             :data $ {}
               |T $ %{} :Leaf (:at 1699464828651) (:by |rJG4IHzWf) (:text |def)
               |b $ %{} :Leaf (:at 1699464828651) (:by |rJG4IHzWf) (:text |interval)
-              |h $ %{} :Expr (:at 1699464847007) (:by |rJG4IHzWf)
+              |h $ %{} :Expr (:at 1712939415634) (:by |rJG4IHzWf)
                 :data $ {}
-                  |D $ %{} :Leaf (:at 1699464875144) (:by |rJG4IHzWf) (:text |parse-float)
-                  |T $ %{} :Expr (:at 1699464828651) (:by |rJG4IHzWf)
+                  |D $ %{} :Leaf (:at 1712939417546) (:by |rJG4IHzWf) (:text |w-js-log)
+                  |T $ %{} :Expr (:at 1699464847007) (:by |rJG4IHzWf)
                     :data $ {}
-                      |T $ %{} :Leaf (:at 1699464836463) (:by |rJG4IHzWf) (:text |get-env)
-                      |b $ %{} :Leaf (:at 1699464838265) (:by |rJG4IHzWf) (:text "|\"interval")
-                      |h $ %{} :Leaf (:at 1699465043647) (:by |rJG4IHzWf) (:text "|\"40")
+                      |D $ %{} :Leaf (:at 1699464875144) (:by |rJG4IHzWf) (:text |parse-float)
+                      |T $ %{} :Expr (:at 1699464828651) (:by |rJG4IHzWf)
+                        :data $ {}
+                          |T $ %{} :Leaf (:at 1699464836463) (:by |rJG4IHzWf) (:text |get-env)
+                          |b $ %{} :Leaf (:at 1699464838265) (:by |rJG4IHzWf) (:text "|\"interval")
+                          |h $ %{} :Leaf (:at 1699465043647) (:by |rJG4IHzWf) (:text "|\"40")
         |site $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1545933382603) (:by |root)
             :data $ {}
@@ -695,6 +704,10 @@
                     :data $ {}
                       |T $ %{} :Leaf (:at 1711166650202) (:by |rJG4IHzWf) (:text |:circles)
                       |b $ %{} :Leaf (:at 1711166652293) (:by |rJG4IHzWf) (:text |circles/configs)
+                  |x $ %{} :Expr (:at 1712938927592) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1712938931280) (:by |rJG4IHzWf) (:text |:kaleidoscope)
+                      |b $ %{} :Leaf (:at 1712938938104) (:by |rJG4IHzWf) (:text |kaleidoscopeConfigs)
         |loop-paint! $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1699464116175) (:by |rJG4IHzWf)
             :data $ {}
@@ -813,6 +826,7 @@
                   |T $ %{} :Leaf (:at 1699464112278) (:by |rJG4IHzWf) (:text |loop-paint!)
               |xj $ %{} :Expr (:at 1699464231688) (:by |rJG4IHzWf)
                 :data $ {}
+                  |D $ %{} :Leaf (:at 1712944844885) (:by |rJG4IHzWf) (:text |;)
                   |T $ %{} :Leaf (:at 1699464231276) (:by |rJG4IHzWf) (:text |loadTouchControl)
               |xr $ %{} :Expr (:at 1699464257411) (:by |rJG4IHzWf)
                 :data $ {}
@@ -837,18 +851,15 @@
                           |T $ %{} :Leaf (:at 1699464323849) (:by |rJG4IHzWf) (:text |paintLagopusTree)
               |xx $ %{} :Expr (:at 1699464340057) (:by |rJG4IHzWf)
                 :data $ {}
+                  |D $ %{} :Leaf (:at 1712944846173) (:by |rJG4IHzWf) (:text |;)
                   |T $ %{} :Leaf (:at 1699464340444) (:by |rJG4IHzWf) (:text |if)
                   |b $ %{} :Leaf (:at 1699464344728) (:by |rJG4IHzWf) (:text |useRemoteControl)
                   |h $ %{} :Expr (:at 1699464355063) (:by |rJG4IHzWf)
                     :data $ {}
                       |T $ %{} :Leaf (:at 1699464355365) (:by |rJG4IHzWf) (:text |setupRemoteControl)
-              |xy $ %{} :Expr (:at 1709143930665) (:by |rJG4IHzWf)
+              |xy $ %{} :Expr (:at 1709143935396) (:by |rJG4IHzWf)
                 :data $ {}
-                  |T $ %{} :Leaf (:at 1709143932140) (:by |rJG4IHzWf) (:text |if)
-                  |b $ %{} :Leaf (:at 1709143932678) (:by |rJG4IHzWf) (:text |useGamepad)
-                  |h $ %{} :Expr (:at 1709143935396) (:by |rJG4IHzWf)
-                    :data $ {}
-                      |T $ %{} :Leaf (:at 1709143985483) (:by |rJG4IHzWf) (:text |loadGamepadControl)
+                  |T $ %{} :Leaf (:at 1709143985483) (:by |rJG4IHzWf) (:text |loadGamepadControl)
               |y $ %{} :Expr (:at 1499755354983) (:by nil)
                 :data $ {}
                   |T $ %{} :Leaf (:at 1499755354983) (:by |root) (:text |add-watch)
@@ -1207,7 +1218,6 @@
                     |T $ %{} :Expr (:at 1699464448619) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1699464439695) (:by |rJG4IHzWf) (:text |useRemoteControl)
-                        |b $ %{} :Leaf (:at 1709143919083) (:by |rJG4IHzWf) (:text |useGamepad)
                 |zP $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
                     |T $ %{} :Leaf (:at 1699464543817) (:by |rJG4IHzWf) (:text "|\"../src/apps/cubic-fire")
@@ -1257,6 +1267,13 @@
                     |h $ %{} :Expr (:at 1699464561369) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1709313859906) (:by |rJG4IHzWf) (:text |orbitsConfigs)
+                |zsD $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
+                  :data $ {}
+                    |T $ %{} :Leaf (:at 1712938783044) (:by |rJG4IHzWf) (:text "|\"../src/apps/kaleidoscope")
+                    |b $ %{} :Leaf (:at 1699464556816) (:by |rJG4IHzWf) (:text |:refer)
+                    |h $ %{} :Expr (:at 1699464561369) (:by |rJG4IHzWf)
+                      :data $ {}
+                        |T $ %{} :Leaf (:at 1712938794112) (:by |rJG4IHzWf) (:text |kaleidoscopeConfigs)
                 |zsT $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
                     |T $ %{} :Leaf (:at 1709658651477) (:by |rJG4IHzWf) (:text "|\"../src/apps/stars")
@@ -1299,7 +1316,7 @@
                             :data $ {}
                               |D $ %{} :Leaf (:at 1711260016101) (:by |rJG4IHzWf) (:text |get-env)
                               |L $ %{} :Leaf (:at 1711260020594) (:by |rJG4IHzWf) (:text "|\"tab")
-                              |T $ %{} :Leaf (:at 1711260062659) (:by |rJG4IHzWf) (:text "|\"circles")
+                              |T $ %{} :Leaf (:at 1712939306298) (:by |rJG4IHzWf) (:text "|\"kaleidoscope")
                   |j $ %{} :Expr (:at 1499755354983) (:by nil)
                     :data $ {}
                       |T $ %{} :Leaf (:at 1499755354983) (:by |root) (:text |:states)

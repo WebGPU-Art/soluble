@@ -52,7 +52,7 @@ export function clearPointsBuffer() {
 export function computeBasePoints() {
   let device = atomDevice.deref();
   const commandEncoder = device.createCommandEncoder();
-  const passEncoder = commandEncoder.beginComputePass();
+
   let { shaderModule } = atomLagopusTree.deref();
 
   let basePointsBuffer = atomPointsBuffer.deref();
@@ -94,10 +94,11 @@ export function computeBasePoints() {
     },
   });
 
+  const passEncoder = commandEncoder.beginComputePass();
   passEncoder.setPipeline(computePipeline);
   passEncoder.setBindGroup(0, uniformsBindGroup);
   passEncoder.setBindGroup(1, particlesUniformsBindGroup);
-  passEncoder.dispatchWorkgroups(8, 8);
+  passEncoder.dispatchWorkgroups(64);
   passEncoder.end();
 
   device.queue.submit([commandEncoder.finish()]);
