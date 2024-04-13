@@ -1,5 +1,5 @@
 import { threshold } from "./config.mjs";
-import { setupGamepadControl } from "./gamepad";
+import { GameButtons, setupGamepadControl } from "./gamepad";
 import { atomViewerScale, changeScaleBy, moveViewerBy, rotateGlanceBy, spinGlanceBy } from "./perspective.mjs";
 import { V2 } from "./primes.mjs";
 import { ControlStates, renderControl, startControlLoop } from "@triadica/touch-control";
@@ -61,7 +61,46 @@ export function loadTouchControl() {
   startControlLoop(10, onControlEvent);
 }
 
-export let loadGamepadControl = () => {
+let prevButtons: GameButtons = undefined;
+/** wrapped events from GameButtons */
+export type ButtonEvents = Partial<{
+  face1: boolean;
+  face2: boolean;
+  face3: boolean;
+  face4: boolean;
+  l1: boolean;
+  r1: boolean;
+  l2: boolean;
+  r2: boolean;
+  select: boolean;
+  start: boolean;
+  l3: boolean;
+  r3: boolean;
+  up: boolean;
+  down: boolean;
+  left: boolean;
+  right: boolean;
+}>;
+let buttonNames: (keyof GameButtons)[] = [
+  "face1",
+  "face2",
+  "face3",
+  "face4",
+  "l1",
+  "r1",
+  "l2",
+  "r2",
+  "select",
+  "start",
+  "l3",
+  "r3",
+  "up",
+  "down",
+  "left",
+  "right",
+];
+
+export let loadGamepadControl = (handleButtonEvent?: (events: ButtonEvents) => void) => {
   console.log("loading gamepad control");
   setupGamepadControl((axes, buttons) => {
     let scale = atomViewerScale.deref();
@@ -80,5 +119,20 @@ export let loadGamepadControl = () => {
     if (buttons.r2.value > 0.5) {
       changeScaleBy(-0.01 * speedy);
     }
+
+    if (handleButtonEvent != null && prevButtons != null) {
+      let events = {} as ButtonEvents;
+      let hasEvent = false;
+      buttonNames.forEach((b) => {
+        if (buttons?.[b]?.pressed === true && prevButtons?.[b]?.pressed === false) {
+          events[b] = true;
+          hasEvent = true;
+        }
+      });
+      if (hasEvent) {
+        handleButtonEvent(events);
+      }
+    }
+    prevButtons = buttons;
   });
 };

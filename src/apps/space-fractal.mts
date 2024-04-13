@@ -4,6 +4,7 @@ import fractalRender from "./space-fractal.wgsl";
 import { Number4, rand, randBalance } from "../math.mjs";
 
 import { useBaseSize } from "../config.mjs";
+import { SolubleApp } from "../primes.mjs";
 
 let createCubicFireBasePoint = (idx: number): BaseCellParams => {
   let offset = 200;
@@ -18,7 +19,7 @@ let createCubicFireBasePoint = (idx: number): BaseCellParams => {
   return { position, arm, velocity, params, extendParams };
 };
 
-export const spaceFractalConfigs = {
+export const spaceFractalConfigs: SolubleApp = {
   initPointsBuffer: () => {
     createGlobalPointsBuffer(10, createCubicFireBasePoint);
   },

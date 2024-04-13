@@ -1,8 +1,9 @@
-import { createGlobalPointsBuffer, BaseCellParams } from "../index.mjs";
+import { createGlobalPointsBuffer } from "../index.mjs";
 
 import cubicFire from "./cubic-fire.wgsl";
 import { useBaseSize } from "../config.mjs";
 import { Number4, rand, randBalance } from "../math.mjs";
+import { BaseCellParams } from "../paint.mjs";
 
 let createCubicFireBasePoint = (idx: number): BaseCellParams => {
   let offset = 200;

@@ -4,7 +4,8 @@
 struct Params {
   time: f32,
   dt: f32,
-  offset: f32,
+  /// 1 to disable
+  disableLens: f32,
   p2: f32,
 }
 
@@ -129,7 +130,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   // raymarch
   var total: vec3<f32> = vec3(0.0, 0.0, 0.0);
 
-  if length(coord) < radius * 22.0 {
+  if length(coord) < radius * 22.0 && params.disableLens < 0.5 {
     for (var i = 0u; i < 6u; i++) {
       let point_angle = atan2(coord.y, coord.x);
       let at_part = floor(point_angle / unit);

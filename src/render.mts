@@ -1,8 +1,9 @@
-import { SolubleAttribute, SolubleObjectData } from "./primes.mjs";
-import { atomDepthTexture, atomContext, atomDevice, atomLagopusTree, wLog } from "./global.mjs";
+import { SolubleApp, SolubleAttribute, SolubleObjectData } from "./primes.mjs";
+import { atomDepthTexture, atomContext, atomDevice, atomSolubleTree, wLog } from "./global.mjs";
 import { createBuffer } from "./utils.mjs";
 import { newBufferFormatLength, u32buffer } from "./alias.mjs";
 import { interpolateShader } from "./paint.mjs";
+import { type ButtonEvents } from "./control.mjs";
 
 /** init canvas context */
 export const initializeContext = async (): Promise<any> => {
@@ -62,23 +63,26 @@ export const initializeContext = async (): Promise<any> => {
 };
 
 /** prepare vertex buffer from object */
-export let createRenderer = (
-  shaderCode: string,
-  topology: GPUPrimitiveTopology,
+export let createRenderer = (options: {
+  shaderCode: string;
+  topology: GPUPrimitiveTopology;
   attrsList: {
     field: string;
     format: GPUVertexFormat;
     size: number;
     /** defaults to 4 for `float32` since 32=8*4, would change for other types */
     unitSize?: number;
-  }[],
-  verticesLength: number,
-  vertices: (Float32Array | Uint32Array)[],
-  indices: Uint32Array,
-  useCompute: boolean
-): SolubleObjectData => {
+  }[];
+  verticesLength: number;
+  vertices: (Float32Array | Uint32Array)[];
+  indices: Uint32Array;
+  useCompute: boolean;
+  onButtonEvent: (events: ButtonEvents) => void;
+  getParams?: () => number[];
+}): SolubleObjectData => {
   // load shared device
   let device = atomDevice.deref();
+  let { shaderCode, topology, attrsList, verticesLength, vertices, indices, useCompute } = options;
 
   let vertexBuffers = vertices.map((v) => createBuffer(v, GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST, device));
   let indecesBuffer = indices ? createBuffer(indices, GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST, device) : null;
@@ -110,11 +114,18 @@ export let createRenderer = (
     length: verticesLength,
     indices: indecesBuffer,
     useCompute: useCompute,
+    onButtonEvent: options.onButtonEvent,
+    getParams: options.getParams,
   };
 };
 
-/** track tree, internally it calls `paintLagopusTree` to render */
-export function renderLagopusTree(strokeWgsl: string, useCompute: boolean) {
+/** track tree, internally it calls `paintSolubleTree` to render */
+export function renderSolubleTree(options: SolubleApp) {
+  let strokeWgsl = options.renderShader;
+  let useCompute = options.useCompute;
+  let onButtonEvent = options.onButtonEvent;
+  let getParams = options.getParams;
+
   let data: Record<string, number[]>[] = [
     {
       position: [-1, -1],
@@ -143,6 +154,16 @@ export function renderLagopusTree(strokeWgsl: string, useCompute: boolean) {
   let indices = u32buffer([0, 1, 2, 1, 2, 3]);
 
   /** create a render object */
-  let tree = createRenderer(strokeWgsl, "triangle-list", attrsList, data.length, buffers, indices, useCompute);
-  atomLagopusTree.reset(tree);
+  let tree = createRenderer({
+    shaderCode: strokeWgsl,
+    topology: "triangle-list",
+    attrsList: attrsList,
+    verticesLength: data.length,
+    vertices: buffers,
+    indices: indices,
+    useCompute: useCompute,
+    onButtonEvent: onButtonEvent,
+    getParams,
+  });
+  atomSolubleTree.reset(tree);
 }

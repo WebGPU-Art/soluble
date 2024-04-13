@@ -3,6 +3,7 @@ import { createGlobalPointsBuffer, BaseCellParams } from "../index.mjs";
 import ringsShader from "./rings.wgsl";
 import { useBaseSize } from "../config.mjs";
 import { Number4, rand, randBalance, normalize } from "../math.mjs";
+import { SolubleApp } from "../primes.mjs";
 
 let createPoint = (idx: number): BaseCellParams => {
   let offset = 800;
@@ -16,7 +17,7 @@ let createPoint = (idx: number): BaseCellParams => {
 
 console.log("size", useBaseSize);
 
-export const configs = {
+export const configs: SolubleApp = {
   initPointsBuffer: () => {
     createGlobalPointsBuffer(useBaseSize, createPoint);
   },

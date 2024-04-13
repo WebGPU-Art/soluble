@@ -8,7 +8,7 @@ export var atomDepthTexture: Atom<GPUTexture> = new Atom(null);
 
 export var atomBufferNeedClear: Atom<boolean> = new Atom(true);
 
-export var atomLagopusTree: Atom<SolubleObjectData> = new Atom(null);
+export var atomSolubleTree: Atom<SolubleObjectData> = new Atom(null);
 
 export function wLog<T extends any>(message: string, a: T): T {
   console.warn(message, a);

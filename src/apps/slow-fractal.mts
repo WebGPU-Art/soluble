@@ -4,6 +4,7 @@ import fractalRender from "./slow-fractal.wgsl";
 import { Number4, rand, randBalance } from "../math.mjs";
 
 import { useBaseSize } from "../config.mjs";
+import { SolubleApp } from "../primes.mjs";
 
 let createCubicFireBasePoint = (idx: number): BaseCellParams => {
   let offset = 200;
@@ -18,10 +19,11 @@ let createCubicFireBasePoint = (idx: number): BaseCellParams => {
   return { position, arm, velocity, params, extendParams };
 };
 
-export const slowFractalConfigs = {
+export const slowFractalConfigs: SolubleApp = {
   initPointsBuffer: () => {
     createGlobalPointsBuffer(10, createCubicFireBasePoint);
   },
   useCompute: false,
   renderShader: fractalRender,
+  onButtonEvent: () => {},
 };

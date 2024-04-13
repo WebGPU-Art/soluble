@@ -3,6 +3,7 @@ import { onControlEvent } from "./control.mjs";
 
 let connected = false;
 
+/** @deprecated prefer gamepad */
 export let setupRemoteControl = () => {
   const parsed = queryString.parse(location.search);
   let host = (parsed["control-host"] as string) || "localhost";
