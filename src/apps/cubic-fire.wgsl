@@ -203,5 +203,5 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     }
   }
 
-  return vec4(total, 0.0);
+  return vec4(total, 1.0);
 }

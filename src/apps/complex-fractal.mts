@@ -1,9 +1,10 @@
-import { createGlobalPointsBuffer, BaseCellParams } from "../index.mjs";
+import { createGlobalPointsBuffer } from "../index.mjs";
 
 import fractalRender from "./complex-fractal.wgsl";
 import { Number4, rand, randBalance } from "../math.mjs";
 
 import { useBaseSize } from "../config.mjs";
+import { BaseCellParams } from "../paint.mjs";
 
 let createCubicFireBasePoint = (idx: number): BaseCellParams => {
   let offset = 200;

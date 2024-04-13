@@ -173,7 +173,7 @@ let buildCommandBuffer = (t: number, params: number[]): GPUCommandBuffer => {
   let now = Date.now();
 
   let uniformBuffer = getUniformBuffer(t);
-  let paramsBuffer = createBuffer(new Float32Array([now, now - prevTime, params[0] || 0, params[1] | 0]), GPUBufferUsage.UNIFORM, device);
+  let paramsBuffer = createBuffer(new Float32Array([now, now - prevTime, params[0] || 0, params[1] || 0]), GPUBufferUsage.UNIFORM, device);
   prevTime = now;
 
   let uniformBindGroupLayout = device.createBindGroupLayout({

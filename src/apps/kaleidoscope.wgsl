@@ -6,7 +6,7 @@ struct Params {
   dt: f32,
   /// 1 to disable
   disableLens: f32,
-  p2: f32,
+  maskRadius: f32,
 }
 
 @group(0) @binding(1) var<uniform> params: Params;
@@ -128,9 +128,10 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
 
   // raymarch
-  var total: vec3<f32> = vec3(0.0, 0.0, 0.0);
+  var opacity = 1.0;
 
-  if length(coord) < radius * 22.0 && params.disableLens < 0.5 {
+  let disableLens = params.disableLens > 0.5;
+  if length(coord) < radius * 22.0 {
     for (var i = 0u; i < 6u; i++) {
       let point_angle = atan2(coord.y, coord.x);
       let at_part = floor(point_angle / unit);
@@ -141,8 +142,11 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
       let perp = perpendicular(coord, p1, p2);
 
       if is_outside_line(coord, p1, p2) {
-        // total = vec3(0.1, 0.1, 0.1);
-        coord = reflection_line(coord, p1, p2, 0.0, 1.);
+        if disableLens {
+          opacity = 0.5;
+        } else {
+          coord = reflection_line(coord, p1, p2, 0.0, 1.);
+        }
         continue;
       } else {
         // let spin_rot = vec2(cos(spin), sin(spin));
@@ -179,14 +183,14 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     let d = abs(dot(n2, a));
 
     let r = 400.;
-    if d < r && d > r * 0.98 {
+    if d < r && d > (r * pow(params.maskRadius, 0.5)) {
       let idx = base_point.idx;
       let light = vec3<f32>(
         rand11(idx + 1.0),
         rand11(idx + 2.0),
         rand11(idx + 3.0)
       );
-      return vec4(light, 1.0);
+      return vec4(light * opacity, 1.0);
     } else {
       continue;
     }
@@ -216,5 +220,9 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     // return vec4(1.0, 1.0, 2.0, 0.0);
   }
 
-  return vec4(total, 0.0);
+  if opacity > 0.9 {
+    return vec4(0.0, 0.0, 0.0, 0.0);
+  } else {
+    return vec4(0.2, 0.2, 0.2, 1.0);
+  }
 }

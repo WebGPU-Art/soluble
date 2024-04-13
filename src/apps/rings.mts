@@ -1,9 +1,10 @@
-import { createGlobalPointsBuffer, BaseCellParams } from "../index.mjs";
+import { createGlobalPointsBuffer } from "../index.mjs";
 
 import ringsShader from "./rings.wgsl";
 import { useBaseSize } from "../config.mjs";
 import { Number4, rand, randBalance, normalize } from "../math.mjs";
 import { SolubleApp } from "../primes.mjs";
+import { BaseCellParams } from "../paint.mjs";
 
 let createPoint = (idx: number): BaseCellParams => {
   let offset = 800;

@@ -4,8 +4,8 @@ import {
   loadTouchControl,
   setupRemoteControl,
   initializeContext,
-  paintLagopusTree,
-  renderLagopusTree,
+  paintSolubleTree,
+  renderSolubleTree,
   resetCanvasHeight,
   computeBasePoints,
   registerShaderResult,
@@ -28,7 +28,7 @@ let loopPaint = () => {
   if (tree.useCompute) {
     computeBasePoints();
   }
-  paintLagopusTree([]);
+  paintSolubleTree([]);
   // timeoutState = setTimeout(() => {
   rafState = requestAnimationFrame(loopPaint);
   // }, 40);
@@ -38,7 +38,7 @@ let loopPaint = () => {
 window.onload = async () => {
   await initializeContext();
   appConfigs.initPointsBuffer();
-  renderLagopusTree(appConfigs);
+  renderSolubleTree(appConfigs);
   loadTouchControl();
 
   loopPaint();
@@ -52,7 +52,7 @@ window.onload = async () => {
 
   window.onresize = () => {
     resetCanvasHeight(canvas);
-    paintLagopusTree([]);
+    paintSolubleTree([]);
   };
 
   if (useRemoteControl) {
@@ -68,7 +68,7 @@ import.meta.hot?.accept("./app.mts", (app) => {
   let newAppConfigs = app.default as typeof appConfigs;
   newAppConfigs.initPointsBuffer();
 
-  renderLagopusTree(newAppConfigs);
+  renderSolubleTree(newAppConfigs);
 
   console.log("reloaded");
 });
