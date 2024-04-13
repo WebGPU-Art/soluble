@@ -8,7 +8,7 @@ import { BaseCellParams } from "../paint.mjs";
 
 let store = {
   disableLens: 0, // or 1
-  radius: 0.08,
+  radius: 0.98,
 };
 
 let createKaleidoscopeBasePoint = (idx: number): BaseCellParams => {
@@ -25,7 +25,7 @@ let createKaleidoscopeBasePoint = (idx: number): BaseCellParams => {
 
 export const kaleidoscopeConfigs: SolubleApp = {
   initPointsBuffer: () => {
-    createGlobalPointsBuffer(120, createKaleidoscopeBasePoint);
+    createGlobalPointsBuffer(160, createKaleidoscopeBasePoint);
   },
   useCompute: false,
   renderShader: kaleidoscope,
@@ -35,9 +35,9 @@ export const kaleidoscopeConfigs: SolubleApp = {
       console.log("face1 tapped", store.disableLens);
     }
     if (events.face2) {
-      store.radius = store.radius + 0.1;
-      if (store.radius > 1) {
-        store.radius -= 1;
+      store.radius = store.radius - 0.1;
+      if (store.radius < 0) {
+        store.radius += 1;
       }
       console.log("face2 tapped", store.radius);
     }

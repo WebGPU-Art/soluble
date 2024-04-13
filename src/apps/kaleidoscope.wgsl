@@ -178,6 +178,9 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     // base_position.z *= scale;
     let a = base_point.position.xyz - viewer_position;
 
+
+    // display ciecles
+
     let n1 = cross(a, ray_unit);
     let n2 = normalize(cross(ray_unit, n1));
     let d = abs(dot(n2, a));
@@ -185,39 +188,30 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     let r = 400.;
     if d < r && d > (r * pow(params.maskRadius, 0.5)) {
       let idx = base_point.idx;
-      let light = vec3<f32>(
-        rand11(idx + 1.0),
-        rand11(idx + 2.0),
-        rand11(idx + 3.0)
-      );
+      let light = vec3<f32>(rand11(idx + 1.0), rand11(idx + 2.0), rand11(idx + 3.0));
       return vec4(light * opacity, 1.0);
     } else {
       continue;
     }
 
-    // find perp direction and projection length on it
+
+    // // display lines
+
+    // // find perp direction and projection length on it
     // let arm = base_point.arm.xyz;
     // let n = cross(arm, ray_unit);
 
     // let n0 = normalize(n);
     // let d_min = abs(dot(n0, a));
 
-    // if d_min > 4.0 {
+    // if d_min > 16.0 * params.maskRadius {
     //   // too far from ray, contribute no light
     //   continue;
     // }
 
     // let idx = base_point.idx;
-    // let light = vec3<f32>(
-    //   rand11(idx + 1.0),
-    //   rand11(idx + 2.0),
-    //   rand11(idx + 3.0)
-    // );
-    // return vec4(light, 1.0);
-    // let light = vec3(1.0, 1.0, 2.0);
-    // total = max(total, light);
-      // total += light;
-    // return vec4(1.0, 1.0, 2.0, 0.0);
+    // let light = vec3<f32>(rand11(idx + 1.0), rand11(idx + 2.0), rand11(idx + 3.0));
+    // return vec4(light * opacity, 1.0);
   }
 
   if opacity > 0.9 {
