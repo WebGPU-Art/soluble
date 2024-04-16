@@ -6,4 +6,6 @@ export { onControlEvent, registerShaderResult, loadTouchControl, loadGamepadCont
 
 export { setupRemoteControl } from "./remote-control.mjs";
 
-export { atomSolubleTree } from "./global.mjs";
+export { atomSolubleTree, atomSharedTextures } from "./global.mjs";
+
+export { createTextureFromSource } from "./utils.mjs";

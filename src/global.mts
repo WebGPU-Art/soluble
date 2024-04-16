@@ -18,3 +18,5 @@ export function wLog<T extends any>(message: string, a: T): T {
 // prepare shared array called `base_points`
 
 export let atomPointsBuffer: Atom<GPUBuffer> = new Atom(null);
+
+export var atomSharedTextures: Atom<Record<string, GPUTexture>> = new Atom({});

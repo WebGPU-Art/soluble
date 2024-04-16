@@ -60,7 +60,7 @@
                 :color :white
         |tabs $ %{} :CodeEntry (:doc |)
           :code $ quote
-            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark) (:: :circles "\"Circles" :dark) (:: :kaleidoscope "\"Kaleidoscope" :dark)
+            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark) (:: :circles "\"Circles" :dark) (:: :kaleidoscope "\"Kaleidoscope" :dark) (:: :image "\"Image" :dark)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
           ns app.comp.container $ :require (respo-ui.css :as css)
@@ -125,6 +125,19 @@
                 :rings rings/configs
                 :circles circles/configs
                 :kaleidoscope kaleidoscopeConfigs
+                :image imageConfigs
+        |load-textures! $ %{} :CodeEntry (:doc |)
+          :code $ quote
+            defn load-textures! (device) (hint-fn async)
+              let
+                  response $ js-await (js/fetch "\"https://cdn.tiye.me/logo/tiye.jpg")
+                  image-map $ js-await
+                    js/createImageBitmap $ js-await (.!blob response)
+                  texture $ solublejs/createTextureFromSource device
+                    js-object (:source image-map)
+                      :w $ .-width image-map
+                      :h $ .-height image-map
+                js-set (.!deref solublejs/atomSharedTextures) "\"tiye" texture
         |loop-paint! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn loop-paint! () (solublejs/callFramePaint)
@@ -139,7 +152,9 @@
             defn main! () (hint-fn async)
               println "\"Running mode:" $ if config/dev? "\"dev" "\"release"
               if config/dev? $ load-console-formatter!
-              js-await $ solublejs/initializeContext
+              let
+                  ret $ js-await (solublejs/initializeContext)
+                js-await $ load-textures! (.-device ret)
               render-app!
               loop-paint!
               solublejs/resetCanvasHeight canvas
@@ -210,6 +225,7 @@
             "\"../src/apps/slow-fractal" :refer $ slowFractalConfigs
             "\"../src/apps/orbits" :refer $ orbitsConfigs
             "\"../src/apps/kaleidoscope" :refer $ kaleidoscopeConfigs
+            "\"../src/apps/image" :refer $ imageConfigs
             "\"../src/apps/stars" :as stars
             "\"../src/apps/rings" :as rings
             "\"../src/apps/circles" :as circles
@@ -219,7 +235,7 @@
         |store $ %{} :CodeEntry (:doc |)
           :code $ quote
             def store $ {}
-              :tab $ turn-tag (get-env "\"tab" "\"kaleidoscope")
+              :tab $ turn-tag (get-env "\"tab" "\"image")
               :states $ {}
                 :cursor $ []
       :ns $ %{} :CodeEntry (:doc |)

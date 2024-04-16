@@ -34,6 +34,9 @@ Vertex shader:
 @group(0) @binding(1) var<uniform> params: Params;
 
 @group(1) @binding(0) var<storage, read_write> base_points: array<BaseCell>;
+
+@group(2) @binding(0) var mySampler : sampler;
+@group(2) @binding(1) var myTexture : texture_2d<f32>; // optionally more
 ```
 
 ### License

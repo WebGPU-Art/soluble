@@ -1,4 +1,4 @@
-import { atomDepthTexture, atomContext, atomDevice, atomBufferNeedClear, atomSolubleTree, wLog, atomPointsBuffer } from "./global.mjs";
+import { atomDepthTexture, atomContext, atomDevice, atomBufferNeedClear, atomSolubleTree, wLog, atomPointsBuffer, atomSharedTextures } from "./global.mjs";
 import { atomViewerPosition, atomViewerScale, atomViewerUpward, newLookatPoint } from "./perspective.mjs";
 import { vNormalize, vCross } from "./quaternion.mjs";
 
@@ -164,7 +164,7 @@ let getUniformBuffer = (t: number): GPUBuffer => {
   return uniformBuffer;
 };
 
-let buildCommandBuffer = (t: number, params: number[]): GPUCommandBuffer => {
+let buildCommandBuffer = (t: number, params: number[], textures: GPUTexture[]): GPUCommandBuffer => {
   let { topology, shaderModule, vertexBuffersDescriptors, vertexBuffers, indices } = atomSolubleTree.deref();
 
   // console.log("uniformData", uniformData);
@@ -200,9 +200,14 @@ let buildCommandBuffer = (t: number, params: number[]): GPUCommandBuffer => {
     entries: [{ binding: 0, resource: { buffer: atomPointsBuffer.deref() } }],
   });
 
+  let texturesInfo = prepareTextures(device, textures, "texturesInfo");
+
   // ~~ CREATE RENDER PIPELINE ~~
 
-  let renderLayout = device.createPipelineLayout({ bindGroupLayouts: [uniformBindGroupLayout, particlesBindGroupLayout] });
+  let renderLayout = device.createPipelineLayout({
+    label: "renderLayout",
+    bindGroupLayouts: [uniformBindGroupLayout, particlesBindGroupLayout, texturesInfo.layout].filter(Boolean),
+  });
 
   let pipeline = device.createRenderPipeline({
     layout: renderLayout,
@@ -232,6 +237,9 @@ let buildCommandBuffer = (t: number, params: number[]): GPUCommandBuffer => {
 
   passEncoder.setBindGroup(0, uniformBindGroup);
   passEncoder.setBindGroup(1, particlesBindGroup);
+  if (texturesInfo.bindGroup) {
+    passEncoder.setBindGroup(2, texturesInfo.bindGroup);
+  }
 
   passEncoder.setPipeline(pipeline);
   vertexBuffers.forEach((vertexBuffer, idx) => {
@@ -260,7 +268,12 @@ export function paintSolubleTree(
 
   let lifetime = Date.now() - startTime;
 
-  let bufferList: GPUCommandBuffer[] = [buildCommandBuffer(lifetime, params || [])];
+  let textures: GPUTexture[] = [];
+  if (atomSolubleTree.deref()?.getTextures) {
+    textures = atomSolubleTree.deref().getTextures(atomSharedTextures.deref());
+  }
+
+  let bufferList: GPUCommandBuffer[] = [buildCommandBuffer(lifetime, params || [], textures || [])];
   device.queue.submit(bufferList);
 }
 
@@ -281,3 +294,57 @@ export let callFramePaint = () => {
 
   paintSolubleTree(atomSolubleTree.deref()?.getParams?.() || []);
 };
+
+/** based on code https://webgpu.github.io/webgpu-samples/?sample=imageBlur#fullscreenTexturedQuad.wgsl */
+function prepareTextures(device: GPUDevice, textures: GPUTexture[], label: string) {
+  let textureBindGroup: GPUBindGroup = undefined;
+  let layout: GPUBindGroupLayout = undefined;
+
+  if (textures && textures[0]) {
+    let entries: GPUBindGroupLayoutEntry[] = [
+      {
+        binding: 0,
+        visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
+        sampler: { type: "filtering" },
+      } as GPUBindGroupLayoutEntry,
+    ].concat(
+      textures.map((texture, idx) => {
+        return {
+          binding: idx + 1,
+          visibility: GPUShaderStage.FRAGMENT,
+          texture: { sampleType: "float", viewDimension: "2d", multisampled: false },
+        };
+      })
+    );
+    layout = device.createBindGroupLayout({ label: label, entries });
+
+    const sampler = device.createSampler({
+      label: label,
+      magFilter: "linear",
+      minFilter: "linear",
+    });
+
+    textureBindGroup = device.createBindGroup({
+      label: label,
+      layout,
+      entries: [
+        {
+          binding: 0,
+          resource: sampler,
+        } as GPUBindGroupEntry,
+      ].concat(
+        textures.map((texture, idx) => {
+          return {
+            binding: idx + 1,
+            resource: texture.createView(),
+          };
+        })
+      ),
+    });
+  }
+
+  return {
+    layout,
+    bindGroup: textureBindGroup,
+  };
+}
