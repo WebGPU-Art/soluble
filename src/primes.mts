@@ -1,3 +1,5 @@
+import { type ButtonEvents } from "./control.mjs";
+
 /** 3D point */
 export type V3 = [number, number, number];
 
@@ -22,4 +24,15 @@ export interface SolubleObjectData {
   length: number;
   indices?: GPUBuffer;
   useCompute: boolean;
+  onButtonEvent: (events: any) => void;
+  getParams?: () => number[];
 }
+
+/** an application */
+export type SolubleApp = {
+  initPointsBuffer: () => void;
+  useCompute: boolean;
+  renderShader: string;
+  onButtonEvent?: (events: ButtonEvents) => void;
+  getParams?: () => number[];
+};

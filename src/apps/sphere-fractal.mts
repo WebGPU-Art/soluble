@@ -1,9 +1,11 @@
-import { createGlobalPointsBuffer, BaseCellParams } from "../index.mjs";
+import { createGlobalPointsBuffer } from "../index.mjs";
 
 import sphereFractalRender from "./sphere-fractal.wgsl";
 import { Number4, rand, randBalance } from "../math.mjs";
 
 import { useBaseSize } from "../config.mjs";
+import { SolubleApp } from "../primes.mjs";
+import { BaseCellParams } from "../paint.mjs";
 
 let createCubicFireBasePoint = (idx: number): BaseCellParams => {
   let offset = 400;
@@ -20,7 +22,7 @@ let createCubicFireBasePoint = (idx: number): BaseCellParams => {
   return { position, arm, velocity, params, extendParams };
 };
 
-export const sphereFractalConfigs = {
+export const sphereFractalConfigs: SolubleApp = {
   initPointsBuffer: () => {
     createGlobalPointsBuffer(20, createCubicFireBasePoint);
   },

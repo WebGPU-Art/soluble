@@ -60,7 +60,7 @@
                 :color :white
         |tabs $ %{} :CodeEntry (:doc |)
           :code $ quote
-            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark) (:: :circles "\"Circles" :dark)
+            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark) (:: :circles "\"Circles" :dark) (:: :kaleidoscope "\"Kaleidoscope" :dark)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
           ns app.comp.container $ :require (respo-ui.css :as css)
@@ -80,7 +80,8 @@
             def hide-tabs? $ = "\"true" (get-env "\"hide-tabs" "\"false")
         |interval $ %{} :CodeEntry (:doc |)
           :code $ quote
-            def interval $ parse-float (get-env "\"interval" "\"40")
+            def interval $ w-js-log
+              parse-float $ get-env "\"interval" "\"40"
         |site $ %{} :CodeEntry (:doc |)
           :code $ quote
             def site $ {} (:storage-key "\"workflow")
@@ -106,7 +107,7 @@
               when
                 and config/dev? $ not= op :states
                 js/console.log "\"Dispatch:" op
-              clearPointsBuffer
+              solublejs/clearPointsBuffer
               reset! *reel $ reel-updater updater @*reel op
         |get-app $ %{} :CodeEntry (:doc |)
           :code $ quote
@@ -123,18 +124,14 @@
                 :stars stars/configs
                 :rings rings/configs
                 :circles circles/configs
+                :kaleidoscope kaleidoscopeConfigs
         |loop-paint! $ %{} :CodeEntry (:doc |)
           :code $ quote
-            defn loop-paint! ()
-              if
-                .-useCompute $ .!deref atomLagopusTree
-                computeBasePoints
-              paintLagopusTree
+            defn loop-paint! () (solublejs/callFramePaint)
               if (> config/interval 10)
-                reset! *timeout $ js/setTimeout
+                reset! *timeout $ flipped js/setTimeout config/interval
                   fn () $ reset! *raf
                     js/requestAnimationFrame $ fn (t) (loop-paint!)
-                  , config/interval
                 reset! *raf $ js/requestAnimationFrame
                   fn (t) (loop-paint!)
         |main! $ %{} :CodeEntry (:doc |)
@@ -142,14 +139,15 @@
             defn main! () (hint-fn async)
               println "\"Running mode:" $ if config/dev? "\"dev" "\"release"
               if config/dev? $ load-console-formatter!
-              js-await $ initializeContext
+              js-await $ solublejs/initializeContext
               render-app!
               loop-paint!
-              loadTouchControl
-              resetCanvasHeight canvas
-              js/window.addEventListener "\"resize" $ fn (event) (resetCanvasHeight canvas) (paintLagopusTree)
-              if useRemoteControl $ setupRemoteControl
-              if useGamepad $ loadGamepadControl
+              solublejs/resetCanvasHeight canvas
+              js/window.addEventListener "\"resize" $ fn (event) (solublejs/resetCanvasHeight canvas) (solublejs/paintSolubleTree)
+              solublejs/loadGamepadControl $ fn (events)
+                if-let
+                  f $ .-onButtonEvent (.-value atomSolubleTree)
+                  f events
               add-watch *reel :changes $ fn (reel prev) (render-app!)
               listen-devtools! |k dispatch!
               js/window.addEventListener |beforeunload $ fn (event) (persist-storage!)
@@ -173,7 +171,7 @@
         |reload! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn reload! () $ if (nil? build-errors)
-              do (remove-watch *reel :changes) (clearPointsBuffer) (clear-cache!)
+              do (remove-watch *reel :changes) (solublejs/clearPointsBuffer) (clear-cache!)
                 add-watch *reel :changes $ fn (reel prev) (render-app!)
                 js/cancelAnimationFrame @*raf
                 render-app!
@@ -188,7 +186,7 @@
                   tab $ :tab (:store @*reel)
                   app-config $ get-app tab
                 .!initPointsBuffer app-config
-                renderLagopusTree (.-renderShader app-config) (.-useCompute app-config)
+                solublejs/renderSolubleTree app-config
               render! mount-target (comp-container @*reel) dispatch!
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
@@ -203,8 +201,7 @@
             app.config :as config
             "\"./calcit.build-errors" :default build-errors
             "\"bottom-tip" :default hud!
-            "\"../src/index" :refer $ initializeContext renderLagopusTree computeBasePoints paintLagopusTree loadTouchControl resetCanvasHeight paintLagopusTree setupRemoteControl loadGamepadControl clearPointsBuffer
-            "\"../src/config" :refer $ useRemoteControl useGamepad
+            "\"../src/index" :as solublejs
             "\"../src/apps/cubic-fire" :refer $ cubicFireConfigs
             "\"../src/apps/quaternion-fractal" :refer $ quaternionFractalConfigs
             "\"../src/apps/complex-fractal" :refer $ complexFractalConfigs
@@ -212,16 +209,17 @@
             "\"../src/apps/sphere-fractal" :refer $ sphereFractalConfigs
             "\"../src/apps/slow-fractal" :refer $ slowFractalConfigs
             "\"../src/apps/orbits" :refer $ orbitsConfigs
+            "\"../src/apps/kaleidoscope" :refer $ kaleidoscopeConfigs
             "\"../src/apps/stars" :as stars
             "\"../src/apps/rings" :as rings
             "\"../src/apps/circles" :as circles
-            "\"../src/global" :refer $ atomLagopusTree
+            "\"../src/global" :refer $ atomSolubleTree
     |app.schema $ %{} :FileEntry
       :defs $ {}
         |store $ %{} :CodeEntry (:doc |)
           :code $ quote
             def store $ {}
-              :tab $ turn-tag (get-env "\"tab" "\"circles")
+              :tab $ turn-tag (get-env "\"tab" "\"kaleidoscope")
               :states $ {}
                 :cursor $ []
       :ns $ %{} :CodeEntry (:doc |)

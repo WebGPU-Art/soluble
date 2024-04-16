@@ -1,5 +1,4 @@
-import { SolubleObjectData } from "./primes.mjs";
-import { atomDepthTexture, atomContext, atomDevice, atomBufferNeedClear, atomLagopusTree, wLog, atomPointsBuffer } from "./global.mjs";
+import { atomDepthTexture, atomContext, atomDevice, atomBufferNeedClear, atomSolubleTree, wLog, atomPointsBuffer } from "./global.mjs";
 import { atomViewerPosition, atomViewerScale, atomViewerUpward, newLookatPoint } from "./perspective.mjs";
 import { vNormalize, vCross } from "./quaternion.mjs";
 
@@ -52,8 +51,8 @@ export function clearPointsBuffer() {
 export function computeBasePoints() {
   let device = atomDevice.deref();
   const commandEncoder = device.createCommandEncoder();
-  const passEncoder = commandEncoder.beginComputePass();
-  let { shaderModule } = atomLagopusTree.deref();
+
+  let { shaderModule } = atomSolubleTree.deref();
 
   let basePointsBuffer = atomPointsBuffer.deref();
   let now = Date.now();
@@ -94,10 +93,11 @@ export function computeBasePoints() {
     },
   });
 
+  const passEncoder = commandEncoder.beginComputePass();
   passEncoder.setPipeline(computePipeline);
   passEncoder.setBindGroup(0, uniformsBindGroup);
   passEncoder.setBindGroup(1, particlesUniformsBindGroup);
-  passEncoder.dispatchWorkgroups(8, 8);
+  passEncoder.dispatchWorkgroups(64);
   passEncoder.end();
 
   device.queue.submit([commandEncoder.finish()]);
@@ -164,8 +164,8 @@ let getUniformBuffer = (t: number): GPUBuffer => {
   return uniformBuffer;
 };
 
-let buildCommandBuffer = (t: number): GPUCommandBuffer => {
-  let { topology, shaderModule, vertexBuffersDescriptors, vertexBuffers, indices } = atomLagopusTree.deref();
+let buildCommandBuffer = (t: number, params: number[]): GPUCommandBuffer => {
+  let { topology, shaderModule, vertexBuffersDescriptors, vertexBuffers, indices } = atomSolubleTree.deref();
 
   // console.log("uniformData", uniformData);
 
@@ -173,7 +173,7 @@ let buildCommandBuffer = (t: number): GPUCommandBuffer => {
   let now = Date.now();
 
   let uniformBuffer = getUniformBuffer(t);
-  let paramsBuffer = createBuffer(new Float32Array([now, now - prevTime, 0, 0]), GPUBufferUsage.UNIFORM, device);
+  let paramsBuffer = createBuffer(new Float32Array([now, now - prevTime, params[0] || 0, params[1] || 0]), GPUBufferUsage.UNIFORM, device);
   prevTime = now;
 
   let uniformBindGroupLayout = device.createBindGroupLayout({
@@ -250,14 +250,17 @@ let buildCommandBuffer = (t: number): GPUCommandBuffer => {
 let startTime = Date.now();
 
 /** send command buffer to device and render */
-export function paintLagopusTree() {
-  // console.log("paint");
+export function paintSolubleTree(
+  /** extra params */
+  params: number[]
+) {
+  // console.log("paint", params);
   atomBufferNeedClear.reset(true);
   let device = atomDevice.deref();
 
   let lifetime = Date.now() - startTime;
 
-  let bufferList: GPUCommandBuffer[] = [buildCommandBuffer(lifetime)];
+  let bufferList: GPUCommandBuffer[] = [buildCommandBuffer(lifetime, params || [])];
   device.queue.submit(bufferList);
 }
 
@@ -268,4 +271,13 @@ export function resetCanvasHeight(canvas: HTMLCanvasElement) {
 
 export let interpolateShader = (shader: string) => {
   return shader.replace("#import soluble::perspective", solublePerspective);
+};
+
+/** unified API to call paint */
+export let callFramePaint = () => {
+  if (atomSolubleTree.deref()?.useCompute) {
+    computeBasePoints();
+  }
+
+  paintSolubleTree(atomSolubleTree.deref()?.getParams?.() || []);
 };

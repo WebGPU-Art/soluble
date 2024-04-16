@@ -1,9 +1,11 @@
-import { createGlobalPointsBuffer, BaseCellParams } from "../index.mjs";
+import { createGlobalPointsBuffer } from "../index.mjs";
 
 import fractalRender from "./quaternion-fractal.wgsl";
 import { Number4, rand, randBalance } from "../math.mjs";
 
 import { useBaseSize } from "../config.mjs";
+import { SolubleApp } from "../primes.mjs";
+import { BaseCellParams } from "../paint.mjs";
 
 let createCubicFireBasePoint = (idx: number): BaseCellParams => {
   let offset = 200;
@@ -18,7 +20,7 @@ let createCubicFireBasePoint = (idx: number): BaseCellParams => {
   return { position, arm, velocity, params, extendParams };
 };
 
-export const quaternionFractalConfigs = {
+export const quaternionFractalConfigs: SolubleApp = {
   initPointsBuffer: () => {
     createGlobalPointsBuffer(10, createCubicFireBasePoint);
   },

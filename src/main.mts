@@ -4,8 +4,8 @@ import {
   loadTouchControl,
   setupRemoteControl,
   initializeContext,
-  paintLagopusTree,
-  renderLagopusTree,
+  paintSolubleTree,
+  renderSolubleTree,
   resetCanvasHeight,
   computeBasePoints,
   registerShaderResult,
@@ -16,19 +16,19 @@ import { Atom } from "./atom.mjs";
 
 import appConfigs from "./app.mjs";
 import { loadGamepadControl } from "./control.mjs";
-import { atomLagopusTree } from "./global.mjs";
+import { atomSolubleTree } from "./global.mjs";
 
 let canvas = document.querySelector("canvas");
 let timeoutState: NodeJS.Timeout;
 let rafState = 0;
 
 let loopPaint = () => {
-  let tree = atomLagopusTree.deref();
+  let tree = atomSolubleTree.deref();
   console.log("compute", tree);
   if (tree.useCompute) {
     computeBasePoints();
   }
-  paintLagopusTree();
+  paintSolubleTree([]);
   // timeoutState = setTimeout(() => {
   rafState = requestAnimationFrame(loopPaint);
   // }, 40);
@@ -38,7 +38,7 @@ let loopPaint = () => {
 window.onload = async () => {
   await initializeContext();
   appConfigs.initPointsBuffer();
-  renderLagopusTree(appConfigs.renderShader, appConfigs.useCompute);
+  renderSolubleTree(appConfigs);
   loadTouchControl();
 
   loopPaint();
@@ -52,7 +52,7 @@ window.onload = async () => {
 
   window.onresize = () => {
     resetCanvasHeight(canvas);
-    paintLagopusTree();
+    paintSolubleTree([]);
   };
 
   if (useRemoteControl) {
@@ -68,7 +68,7 @@ import.meta.hot?.accept("./app.mts", (app) => {
   let newAppConfigs = app.default as typeof appConfigs;
   newAppConfigs.initPointsBuffer();
 
-  renderLagopusTree(newAppConfigs.renderShader, newAppConfigs.useCompute);
+  renderSolubleTree(newAppConfigs);
 
   console.log("reloaded");
 });
