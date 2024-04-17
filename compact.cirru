@@ -129,15 +129,10 @@
         |load-textures! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn load-textures! (device) (hint-fn async)
-              let
-                  response $ js-await (js/fetch "\"https://cdn.tiye.me/logo/tiye.jpg")
-                  image-map $ js-await
-                    js/createImageBitmap $ js-await (.!blob response)
-                  texture $ solublejs/createTextureFromSource device
-                    js-object (:source image-map)
-                      :w $ .-width image-map
-                      :h $ .-height image-map
-                js-set (.!deref solublejs/atomSharedTextures) "\"tiye" texture
+              js-set (.!deref solublejs/atomSharedTextures) "\"tiye" $ js-await (solublejs/loadImageAsTexture device "\"https://cdn.tiye.me/logo/tiye.jpg")
+              js-set (.!deref solublejs/atomSharedTextures) "\"candy" $ js-await (solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/c7367e21405d602c5ef5a8c55c35d512/candy.jpeg")
+              js-set (.!deref solublejs/atomSharedTextures) "\"bubbles" $ js-await (solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/20b39957d952bd189e4253369db30335/pasted-2024-04-17T17:00:49.301Z.png")
+              js-set (.!deref solublejs/atomSharedTextures) "\"rugs" $ js-await (solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/ceec218462f81744323e22dd2d04e94b/pasted-2024-04-17T17:12:29.234Z.png")
         |loop-paint! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn loop-paint! () (solublejs/callFramePaint)

@@ -29,37 +29,27 @@ struct BaseCell {
 
 @group(2) @binding(0) var mySampler : sampler;
 @group(2) @binding(1) var myTexture : texture_2d<f32>;
+@group(2) @binding(2) var image2 : texture_2d<f32>;
+@group(2) @binding(3) var image_bubbles : texture_2d<f32>;
+@group(2) @binding(4) var image_rugs : texture_2d<f32>;
 
 @compute @workgroup_size(8, 8, 1)
-fn compute_main(@builtin(global_invocation_id) global_id: vec3u) {
-  // var index = global_id.x + global_id.y * 8u;
-  // base_points[index].position.y += params.dt * 0.03 * base_points[index].velocity.y;
-  // if base_points[index].position.y > 200. {
-  //   base_points[index].position.y = -200.;
-  // }
-  // base_points[index].position.x = base_points[index].position.x;
-  // base_points[index].p3 = sin(base_points[index].offset + base_points[index].duration * 0.001 * params.time) * 0.4 + 0.6;
-  // base_points[index].time = params.time;
-}
+fn compute_main(@builtin(global_invocation_id) global_id: vec3u) {}
 
 // shapes
 
 const PI = 3.14159265358532374;
-
-// fn square(x: f32) -> f32 {
-//   return x * x;
-// }
 
 fn product(a: vec2f, b: vec2f) -> vec2f {
   return vec2f(a.x * b.x - a.y * b.y, a.x * b.y + a.y * b.x);
 }
 
 fn conjugate(a: vec2f) -> vec2f {
-  return vec2f(a.x, - a.y);
+  return vec2f(a.x, -a.y);
 }
 
 fn divide(a: vec2f, b: vec2f) -> vec2f {
-  let l_square_inverse = 1. / b.x * b.x + b.y * b.y;
+  let l_square_inverse = 1. / (b.x * b.x + b.y * b.y);
   return vec2f(((a.x * b.x + a.y * b.y) * l_square_inverse), ((a.y * b.x - a.x * b.y) * l_square_inverse));
 }
 
@@ -117,10 +107,11 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   // apply kaleidoscope
 
     // divide circle by 6 segments
-  let parts = 2.5;
+  // let parts = 2.286;
+  let parts = 2.333;
 
     // radius of the circle containing the shape
-  let radius = 500.;
+  let radius = 800.;
   let unit = 2.0 * PI / parts;
   let spin = 0.0;
 
@@ -135,7 +126,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   let disableLens = params.disableLens > 0.5;
   if length(coord) < radius * 22.0 {
-    for (var i = 0u; i < 6u; i++) {
+    for (var i = 0u; i < 32u; i++) {
       let point_angle = atan2(coord.y, coord.x);
       let at_part = floor(point_angle / unit);
       let p1 = vec2(cos(at_part * unit), sin(at_part * unit)) * radius;
@@ -184,11 +175,24 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   let small_coord = hit.xy / 500.0;
 
   let pixel = textureSample(myTexture, mySampler, small_coord);
+  let pixel2 = textureSample(image2, mySampler, small_coord - vec2f(1., 1.));
+  let pixel3 = textureSample(image_bubbles, mySampler, small_coord - vec2f(1., 0.));
+  let pixel4 = textureSample(image_rugs, mySampler, small_coord - vec2f(0., 1.));
+
   let inside_image = small_coord.x > 0.0 && small_coord.y > 0. && small_coord.x < 1. && small_coord.y < 1.;
+  let inside_image2 = small_coord.x > 1.0 && small_coord.y > 1. && small_coord.x < 2. && small_coord.y < 2.;
+  let inside_image3 = small_coord.x > 1.0 && small_coord.y > 0. && small_coord.x < 2. && small_coord.y < 1.;
+  let inside_image4 = small_coord.x > 0.0 && small_coord.y > 1. && small_coord.x < 1. && small_coord.y < 2.;
 
   if disableLens {
     if inside_image {
       return pixel * opacity;
+    } else if inside_image2 {
+      return pixel2 * opacity;
+    } else if inside_image3 {
+      return pixel3 * opacity;
+    } else if inside_image4 {
+      return pixel4 * opacity;
     } else {
       return  vec4(0.2, 0.2, 0.2, 1.0) * opacity;
     }
@@ -196,7 +200,13 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   if inside_image {
     return pixel;
+  } else if inside_image2 {
+    return pixel2;
+  } else if inside_image3 {
+    return pixel3;
+  } else if inside_image4 {
+    return pixel4;
+  } else {
+    return vec4(0.0, 0.0, 0.0, 0.0);
   }
-
-  return vec4(0.0, 0.0, 0.0, 0.0);
 }
