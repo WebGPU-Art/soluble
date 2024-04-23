@@ -129,10 +129,15 @@
         |load-textures! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn load-textures! (device) (hint-fn async)
-              js-set (.!deref solublejs/atomSharedTextures) "\"tiye" $ js-await (solublejs/loadImageAsTexture device "\"https://cdn.tiye.me/logo/tiye.jpg")
-              js-set (.!deref solublejs/atomSharedTextures) "\"candy" $ js-await (solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/c7367e21405d602c5ef5a8c55c35d512/candy.jpeg")
-              js-set (.!deref solublejs/atomSharedTextures) "\"bubbles" $ js-await (solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/20b39957d952bd189e4253369db30335/pasted-2024-04-17T17:00:49.301Z.png")
-              js-set (.!deref solublejs/atomSharedTextures) "\"rugs" $ js-await (solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/ceec218462f81744323e22dd2d04e94b/pasted-2024-04-17T17:12:29.234Z.png")
+              let
+                  img-tiye $ solublejs/loadImageAsTexture device "\"https://cdn.tiye.me/logo/tiye.jpg"
+                  img-candy $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/c7367e21405d602c5ef5a8c55c35d512/candy.jpeg"
+                  img-bubbles $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/20b39957d952bd189e4253369db30335/pasted-2024-04-17T17:00:49.301Z.png"
+                  img-rugs $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/ceec218462f81744323e22dd2d04e94b/pasted-2024-04-17T17:12:29.234Z.png"
+                js-set (.!deref solublejs/atomSharedTextures) "\"tiye" $ js-await img-tiye
+                js-set (.!deref solublejs/atomSharedTextures) "\"candy" $ js-await img-candy
+                js-set (.!deref solublejs/atomSharedTextures) "\"bubbles" $ js-await img-bubbles
+                js-set (.!deref solublejs/atomSharedTextures) "\"rugs" $ js-await img-rugs
         |loop-paint! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn loop-paint! () (solublejs/callFramePaint)
@@ -149,7 +154,12 @@
               if config/dev? $ load-console-formatter!
               let
                   ret $ js-await (solublejs/initializeContext)
-                js-await $ load-textures! (.-device ret)
+                if
+                  = :image $ -> @*reel :store :tab
+                  js-await $ load-textures! (.-device ret)
+                  do
+                    load-textures! $ .-device ret
+                    , nil
               render-app!
               loop-paint!
               solublejs/resetCanvasHeight canvas
@@ -230,7 +240,7 @@
         |store $ %{} :CodeEntry (:doc |)
           :code $ quote
             def store $ {}
-              :tab $ turn-tag (get-env "\"tab" "\"image")
+              :tab $ turn-tag (get-env "\"tab" "\"kaleidoscope")
               :states $ {}
                 :cursor $ []
       :ns $ %{} :CodeEntry (:doc |)
