@@ -60,6 +60,10 @@ export const initializeContext = async (): Promise<any> => {
   });
 
   atomDepthTexture.reset(depthTexture);
+
+  return {
+    device,
+  };
 };
 
 /** prepare vertex buffer from object */
@@ -79,6 +83,7 @@ export let createRenderer = (options: {
   useCompute: boolean;
   onButtonEvent: (events: ButtonEvents) => void;
   getParams?: () => number[];
+  getTextures?: (obj: Record<string, GPUTexture>) => GPUTexture[];
 }): SolubleObjectData => {
   // load shared device
   let device = atomDevice.deref();
@@ -116,6 +121,7 @@ export let createRenderer = (options: {
     useCompute: useCompute,
     onButtonEvent: options.onButtonEvent,
     getParams: options.getParams,
+    getTextures: options.getTextures,
   };
 };
 
@@ -164,6 +170,7 @@ export function renderSolubleTree(options: SolubleApp) {
     useCompute: useCompute,
     onButtonEvent: onButtonEvent,
     getParams,
+    getTextures: options.getTextures,
   });
   atomSolubleTree.reset(tree);
 }

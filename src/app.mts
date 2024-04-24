@@ -4,6 +4,7 @@ import { complexFractalConfigs } from "./apps/complex-fractal.mjs";
 import { spaceFractalConfigs } from "./apps/space-fractal.mjs";
 import { sphereFractalConfigs } from "./apps/sphere-fractal.mjs";
 import { slowFractalConfigs } from "./apps/slow-fractal.mjs";
+import { imageConfigs } from "./apps/image.mjs";
 import { orbitsConfigs } from "./apps/orbits.mjs";
 import {} from "./apps/kaleidoscope.mjs";
 import {} from "./apps/stars.mjs";

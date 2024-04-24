@@ -29,3 +29,24 @@ export function getComputeShaderModule(device: GPUDevice, shaderCode: string) {
   });
   return shaderModule;
 }
+
+export let createTextureFromSource = (device: GPUDevice, source: { w: number; h: number; source: GPUImageCopyExternalImageSource }) => {
+  let texture = device.createTexture({
+    size: { width: source.w, height: source.h },
+    format: "rgba8unorm",
+    usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT,
+  });
+  device.queue.copyExternalImageToTexture(source, { texture }, { width: source.w, height: source.h });
+  return texture;
+};
+
+export let loadImageAsTexture = async (device: GPUDevice, url: string): Promise<GPUTexture> => {
+  const response = await fetch(url);
+  const imageBitmap = await createImageBitmap(await response.blob());
+  let texture = createTextureFromSource(device, {
+    source: imageBitmap,
+    w: imageBitmap.width,
+    h: imageBitmap.height,
+  });
+  return texture;
+};

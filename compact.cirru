@@ -60,7 +60,7 @@
                 :color :white
         |tabs $ %{} :CodeEntry (:doc |)
           :code $ quote
-            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark) (:: :circles "\"Circles" :dark) (:: :kaleidoscope "\"Kaleidoscope" :dark)
+            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark) (:: :circles "\"Circles" :dark) (:: :kaleidoscope "\"Kaleidoscope" :dark) (:: :image "\"Image" :dark)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
           ns app.comp.container $ :require (respo-ui.css :as css)
@@ -125,6 +125,19 @@
                 :rings rings/configs
                 :circles circles/configs
                 :kaleidoscope kaleidoscopeConfigs
+                :image imageConfigs
+        |load-textures! $ %{} :CodeEntry (:doc |)
+          :code $ quote
+            defn load-textures! (device) (hint-fn async)
+              let
+                  img-tiye $ solublejs/loadImageAsTexture device "\"https://cdn.tiye.me/logo/tiye.jpg"
+                  img-candy $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/c7367e21405d602c5ef5a8c55c35d512/candy.jpeg"
+                  img-bubbles $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/20b39957d952bd189e4253369db30335/pasted-2024-04-17T17:00:49.301Z.png"
+                  img-rugs $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/ceec218462f81744323e22dd2d04e94b/pasted-2024-04-17T17:12:29.234Z.png"
+                js-set (.!deref solublejs/atomSharedTextures) "\"tiye" $ js-await img-tiye
+                js-set (.!deref solublejs/atomSharedTextures) "\"candy" $ js-await img-candy
+                js-set (.!deref solublejs/atomSharedTextures) "\"bubbles" $ js-await img-bubbles
+                js-set (.!deref solublejs/atomSharedTextures) "\"rugs" $ js-await img-rugs
         |loop-paint! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn loop-paint! () (solublejs/callFramePaint)
@@ -139,7 +152,14 @@
             defn main! () (hint-fn async)
               println "\"Running mode:" $ if config/dev? "\"dev" "\"release"
               if config/dev? $ load-console-formatter!
-              js-await $ solublejs/initializeContext
+              let
+                  ret $ js-await (solublejs/initializeContext)
+                if
+                  = :image $ -> @*reel :store :tab
+                  js-await $ load-textures! (.-device ret)
+                  do
+                    load-textures! $ .-device ret
+                    , nil
               render-app!
               loop-paint!
               solublejs/resetCanvasHeight canvas
@@ -210,6 +230,7 @@
             "\"../src/apps/slow-fractal" :refer $ slowFractalConfigs
             "\"../src/apps/orbits" :refer $ orbitsConfigs
             "\"../src/apps/kaleidoscope" :refer $ kaleidoscopeConfigs
+            "\"../src/apps/image" :refer $ imageConfigs
             "\"../src/apps/stars" :as stars
             "\"../src/apps/rings" :as rings
             "\"../src/apps/circles" :as circles

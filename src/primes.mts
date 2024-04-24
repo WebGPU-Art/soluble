@@ -26,6 +26,7 @@ export interface SolubleObjectData {
   useCompute: boolean;
   onButtonEvent: (events: any) => void;
   getParams?: () => number[];
+  getTextures?: (obj: Record<string, GPUTexture>) => GPUTexture[];
 }
 
 /** an application */
@@ -35,4 +36,5 @@ export type SolubleApp = {
   renderShader: string;
   onButtonEvent?: (events: ButtonEvents) => void;
   getParams?: () => number[];
+  getTextures?: (obj: Record<string, GPUTexture>) => GPUTexture[];
 };
