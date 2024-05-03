@@ -60,7 +60,7 @@
                 :color :white
         |tabs $ %{} :CodeEntry (:doc |)
           :code $ quote
-            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark) (:: :circles "\"Circles" :dark) (:: :kaleidoscope "\"Kaleidoscope" :dark) (:: :image "\"Image" :dark)
+            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark) (:: :circles "\"Circles" :dark) (:: :kaleidoscope "\"Kaleidoscope" :dark) (:: :image "\"Image" :dark) (:: :clocking "\"Clocking" :dark)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
           ns app.comp.container $ :require (respo-ui.css :as css)
@@ -125,6 +125,7 @@
                 :rings rings/configs
                 :circles circles/configs
                 :kaleidoscope kaleidoscopeConfigs
+                :clocking clockingConfigs
                 :image imageConfigs
         |load-textures! $ %{} :CodeEntry (:doc |)
           :code $ quote
@@ -234,13 +235,14 @@
             "\"../src/apps/stars" :as stars
             "\"../src/apps/rings" :as rings
             "\"../src/apps/circles" :as circles
+            "\"../src/apps/clocking" :refer $ clockingConfigs
             "\"../src/global" :refer $ atomSolubleTree
     |app.schema $ %{} :FileEntry
       :defs $ {}
         |store $ %{} :CodeEntry (:doc |)
           :code $ quote
             def store $ {}
-              :tab $ turn-tag (get-env "\"tab" "\"kaleidoscope")
+              :tab $ turn-tag (get-env "\"tab" "\"clocking")
               :states $ {}
                 :cursor $ []
       :ns $ %{} :CodeEntry (:doc |)
