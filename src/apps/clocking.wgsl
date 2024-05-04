@@ -6,7 +6,7 @@ struct Params {
   dt: f32,
   /// 1 to disable
   disableLens: f32,
-  maskRadius: f32,
+  mask_radius: f32,
 }
 
 @group(0) @binding(1) var<uniform> params: Params;
@@ -72,10 +72,15 @@ fn perpendicular(p: vec2f, p1: vec2f, p2: vec2f) -> vec2f {
   return vec2f(a + (c - a) * k, b + (d - b) * k);
 }
 
+/// for 2d
+fn length_square(a: vec2f) -> f32 {
+  return a.x * a.x + a.y * a.y;
+}
+
 fn is_outside_line(p: vec2f, p1: vec2f, p2: vec2f) -> bool {
   let perp = perpendicular(p, p1, p2);
-  let l = length(perp);
-  return product(p, conjugate(perp)).x > (l * l);
+  let l_sq = length_square(perp);
+  return product(p, conjugate(perp)).x > l_sq;
 }
 
 
@@ -131,8 +136,8 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   var opacity = 1.0;
 
   let disableLens = params.disableLens > 0.5;
-  if length(coord) < radius * 22.0 {
-    for (var i = 0u; i < 6u; i++) {
+  if length(coord) < radius * 32.0 {
+    for (var i = 0u; i < 10u; i++) {
       let point_angle = atan2(coord.y, coord.x);
       let at_part = floor(point_angle / unit);
       let p1 = vec2(cos(at_part * unit), sin(at_part * unit)) * radius;
@@ -180,7 +185,6 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     // base_position.z *= scale;
     let a = base_point.position.xyz - viewer_position;
 
-
     // display circles
 
     let n1 = cross(a, ray_unit);
@@ -189,16 +193,23 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
     let d_angle = atan2(n1.y, n1.x);
 
-    let r = 400.;
-    let speed = 0.0003;
-    let offset = rand11(base_point.idx + 0.1);
-    let r_length = rand11(base_point.idx + 0.2);
-    if d < r && d > (r * pow(params.maskRadius, 0.5)) {
-      let show1 = abs(d_angle - fract(params.time * speed + offset) * 2. * PI) < r_length;
-      let show2 = abs(d_angle + 2. * PI - fract(params.time * speed + offset) * 2. * PI) < r_length;
+    let rand_v1 = rand11(base_point.idx + 0.5);
+    let rand_v2 = rand11(base_point.idx + 0.6);
+    let rand_v3 = rand11(base_point.idx + 0.7);
+
+    let r = 300. * rand_v2;
+    let speed = 0.0004 * rand_v1;
+    let offset = rand_v2;
+    let r_length = 0.3 * rand_v3;
+    let gap = params.mask_radius * (0.9 + 0.1 * rand_v1);
+
+    if d < r && d > (r * pow(gap, 0.7)) {
+      let v = fract(params.time * speed + offset) * 2. * PI;
+      let show1 = abs(d_angle - v) < r_length;
+      let show2 = abs(d_angle + 2. * PI - v) < r_length;
       if show1 || show2 {
         let idx = base_point.idx;
-        let light = vec3<f32>(rand11(idx + 1.0), rand11(idx + 2.0), rand11(idx + 3.0));
+        let light = vec3<f32>(rand_v1, rand_v2, rand_v3);
         return vec4(light * opacity, 1.0);
       } else {
         continue;
@@ -217,7 +228,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     // let n0 = normalize(n);
     // let d_min = abs(dot(n0, a));
 
-    // if d_min > 16.0 * params.maskRadius {
+    // if d_min > 16.0 * params.mask_radius {
     //   // too far from ray, contribute no light
     //   continue;
     // }
