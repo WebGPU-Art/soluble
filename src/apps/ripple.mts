@@ -6,7 +6,10 @@ import { type ButtonEvents } from "../control.mjs";
 import { SolubleApp } from "../primes.mjs";
 import { BaseCellParams } from "../paint.mjs";
 
-let store = {
+let store: {
+  disableLens: number;
+  radius: number;
+} = {
   disableLens: 0, // or 1
   radius: 0.99,
 };

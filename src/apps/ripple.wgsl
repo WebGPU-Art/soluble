@@ -1,6 +1,8 @@
 
 #import soluble::perspective
 
+#import soluble::math
+
 struct Params {
   time: f32,
   dt: f32,
@@ -41,49 +43,6 @@ fn compute_main(@builtin(global_invocation_id) global_id: vec3u) {
 
 // shapes
 
-const PI = 3.14159265358532374;
-
-// fn square(x: f32) -> f32 {
-//   return x * x;
-// }
-
-fn product(a: vec2f, b: vec2f) -> vec2f {
-  return vec2f(a.x * b.x - a.y * b.y, a.x * b.y + a.y * b.x);
-}
-
-fn conjugate(a: vec2f) -> vec2f {
-  return vec2f(a.x, - a.y);
-}
-
-fn divide(a: vec2f, b: vec2f) -> vec2f {
-  let l_square_inverse = 1. / b.x * b.x + b.y * b.y;
-  return vec2f(((a.x * b.x + a.y * b.y) * l_square_inverse), ((a.y * b.x - a.x * b.y) * l_square_inverse));
-}
-
-fn perpendicular(p: vec2f, p1: vec2f, p2: vec2f) -> vec2f {
-  let x = p.x;
-  let y = p.y;
-  let a = p1.x;
-  let b = p1.y;
-  let c = p2.x;
-  let d = p2.y;
-    // corrected with https://blog.csdn.net/qq_32867925/article/details/114294753
-  let k = - ((a - x) * (c - a) + (b - y) * (d - b)) / ((a - c) * (a - c) + (b - d) * (b - d));
-  return vec2f(a + (c - a) * k, b + (d - b) * k);
-}
-
-/// for 2d
-fn length_square(a: vec2f) -> f32 {
-  return a.x * a.x + a.y * a.y;
-}
-
-fn is_outside_line(p: vec2f, p1: vec2f, p2: vec2f) -> bool {
-  let perp = perpendicular(p, p1, p2);
-  let l_sq = length_square(perp);
-  return product(p, conjugate(perp)).x > l_sq;
-}
-
-
 fn reflection_line(p: vec2f, p1: vec2f, p2: vec2f, skip: f32, regress: f32) -> vec2f {
   let perp = perpendicular(p, p1, p2);
   let d = perp - p;
@@ -107,8 +66,6 @@ fn vertex_main(
   output.uv = vec2<f32>(position.x, position.y);
   return output;
 }
-
-fn rand11(n: f32) -> f32 { return fract(sin(n) * 43758.5453123); }
 
 @fragment
 fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
