@@ -441,6 +441,12 @@
                       |b $ %{} :Leaf (:at 1714755215218) (:by |rJG4IHzWf) (:text |:clocking)
                       |h $ %{} :Leaf (:at 1714755229863) (:by |rJG4IHzWf) (:text "|\"Clocking")
                       |l $ %{} :Leaf (:at 1712938641596) (:by |rJG4IHzWf) (:text |:dark)
+                  |zD $ %{} :Expr (:at 1712938631055) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1712938631792) (:by |rJG4IHzWf) (:text |::)
+                      |b $ %{} :Leaf (:at 1714883742296) (:by |rJG4IHzWf) (:text |:ripple)
+                      |h $ %{} :Leaf (:at 1714883746119) (:by |rJG4IHzWf) (:text "|\"Ripple")
+                      |l $ %{} :Leaf (:at 1712938641596) (:by |rJG4IHzWf) (:text |:dark)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ %{} :Expr (:at 1499755354983) (:by nil)
           :data $ {}
@@ -728,6 +734,10 @@
                     :data $ {}
                       |T $ %{} :Leaf (:at 1713296835527) (:by |rJG4IHzWf) (:text |:image)
                       |b $ %{} :Leaf (:at 1713296833758) (:by |rJG4IHzWf) (:text |imageConfigs)
+                  |z $ %{} :Expr (:at 1712938927592) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1714883754487) (:by |rJG4IHzWf) (:text |:ripple)
+                      |b $ %{} :Leaf (:at 1714883759093) (:by |rJG4IHzWf) (:text |rippleConfigs)
         |load-textures! $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1713297574685) (:by |rJG4IHzWf)
             :data $ {}
@@ -1436,6 +1446,13 @@
                     |g $ %{} :Expr (:at 1714755629826) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1714755654538) (:by |rJG4IHzWf) (:text |clockingConfigs)
+                |zsx $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
+                  :data $ {}
+                    |T $ %{} :Leaf (:at 1714883766148) (:by |rJG4IHzWf) (:text "|\"../src/apps/ripple")
+                    |a $ %{} :Leaf (:at 1714755628974) (:by |rJG4IHzWf) (:text |:refer)
+                    |g $ %{} :Expr (:at 1714755629826) (:by |rJG4IHzWf)
+                      :data $ {}
+                        |T $ %{} :Leaf (:at 1714883764074) (:by |rJG4IHzWf) (:text |rippleConfigs)
                 |zt $ %{} :Expr (:at 1709657313552) (:by |rJG4IHzWf)
                   :data $ {}
                     |T $ %{} :Leaf (:at 1709657319126) (:by |rJG4IHzWf) (:text "|\"../src/global")
@@ -1463,7 +1480,7 @@
                             :data $ {}
                               |D $ %{} :Leaf (:at 1711260016101) (:by |rJG4IHzWf) (:text |get-env)
                               |L $ %{} :Leaf (:at 1711260020594) (:by |rJG4IHzWf) (:text "|\"tab")
-                              |T $ %{} :Leaf (:at 1714756919889) (:by |rJG4IHzWf) (:text "|\"clocking")
+                              |T $ %{} :Leaf (:at 1714883775787) (:by |rJG4IHzWf) (:text "|\"ripple")
                   |j $ %{} :Expr (:at 1499755354983) (:by nil)
                     :data $ {}
                       |T $ %{} :Leaf (:at 1499755354983) (:by |root) (:text |:states)
