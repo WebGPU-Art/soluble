@@ -34,10 +34,7 @@ export const clockingConfigs: SolubleApp = {
       console.log("face1 tapped", store.disableLens);
     }
     if (events.face2) {
-      store.radius = store.radius - 0.1;
-      if (store.radius < 0) {
-        store.radius += 1;
-      }
+      store.radius = Math.max(0, store.radius - 0.1);
       console.log("face2 tapped", store.radius);
     }
   },

@@ -14,15 +14,16 @@ let store: {
   radius: 0.99,
 };
 
+let baseOffset = 400;
+let baseArm = [0, 0, 0, 0] as Number4;
+
 let createBasePoint = (idx: number): BaseCellParams => {
-  let offset = 400;
-  let position: Number4 = [randBalance(offset), randBalance(offset), randBalance(offset), 1];
+  let position: Number4 = [randBalance(baseOffset), randBalance(baseOffset), randBalance(baseOffset), 1];
   // let arm: Number4 = [randBalance(armOffset), randBalance(armOffset), randBalance(armOffset), 1];
   // let arm: Number4 = [100, 0, 0, 0];
   // let arm: Number4 = [randBalance(armOffset), randBalance(armOffset), randBalance(armOffset), 0];
-  let arm = [0, 0, 0, 0] as Number4;
   let params: Number4 = [idx, rand(20), 2 + rand(2), 0];
-  return { position, arm, params };
+  return { position, arm: baseArm, params };
 };
 
 export const rippleConfigs: SolubleApp = {
@@ -37,10 +38,7 @@ export const rippleConfigs: SolubleApp = {
       console.log("face1 tapped", store.disableLens);
     }
     if (events.face2) {
-      store.radius = store.radius - 0.1;
-      if (store.radius < 0) {
-        store.radius += 1;
-      }
+      store.radius = Math.max(0, store.radius - 0.1);
       console.log("face2 tapped", store.radius);
     }
   },
