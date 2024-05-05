@@ -31,14 +31,7 @@ struct BaseCell {
 
 @compute @workgroup_size(8, 8, 1)
 fn compute_main(@builtin(global_invocation_id) global_id: vec3u) {
-  // var index = global_id.x + global_id.y * 8u;
-  // base_points[index].position.y += params.dt * 0.03 * base_points[index].velocity.y;
-  // if base_points[index].position.y > 200. {
-  //   base_points[index].position.y = -200.;
-  // }
-  // base_points[index].position.x = base_points[index].position.x;
-  // base_points[index].p3 = sin(base_points[index].offset + base_points[index].duration * 0.001 * params.time) * 0.4 + 0.6;
-  // base_points[index].time = params.time;
+  // nothing to do
 }
 
 // shapes
@@ -175,25 +168,6 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     } else {
       continue;
     }
-
-
-    // // display lines
-
-    // // find perp direction and projection length on it
-    // let arm = base_point.arm.xyz;
-    // let n = cross(arm, ray_unit);
-
-    // let n0 = normalize(n);
-    // let d_min = abs(dot(n0, a));
-
-    // if d_min > 16.0 * params.mask_radius {
-    //   // too far from ray, contribute no light
-    //   continue;
-    // }
-
-    // let idx = base_point.idx;
-    // let light = vec3<f32>(rand11(idx + 1.0), rand11(idx + 2.0), rand11(idx + 3.0));
-    // return vec4(light * opacity, 1.0);
   }
 
   if opacity > 0.9 {
