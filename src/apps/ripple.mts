@@ -1,34 +1,37 @@
 import { createGlobalPointsBuffer } from "../index.mjs";
 
-import kaleidoscope from "./image.wgsl";
+import shader from "./ripple.wgsl";
 import { Number4, rand, randBalance } from "../math.mjs";
 import { type ButtonEvents } from "../control.mjs";
 import { SolubleApp } from "../primes.mjs";
 import { BaseCellParams } from "../paint.mjs";
 
-let store = {
+let store: {
+  disableLens: number;
+  radius: number;
+} = {
   disableLens: 0, // or 1
-  radius: 0.98,
+  radius: 0.99,
 };
 
-let createKaleidoscopeBasePoint = (idx: number): BaseCellParams => {
-  let offset = 8000;
-  let armOffset = 8000;
-  let position: Number4 = [randBalance(offset), randBalance(offset), randBalance(offset), 1];
+let baseOffset = 400;
+let baseArm = [0, 0, 0, 0] as Number4;
+
+let createBasePoint = (idx: number): BaseCellParams => {
+  let position: Number4 = [randBalance(baseOffset), randBalance(baseOffset), randBalance(baseOffset), 1];
   // let arm: Number4 = [randBalance(armOffset), randBalance(armOffset), randBalance(armOffset), 1];
   // let arm: Number4 = [100, 0, 0, 0];
   // let arm: Number4 = [randBalance(armOffset), randBalance(armOffset), randBalance(armOffset), 0];
-  let arm = [1000, 0, 0, 0] as Number4;
   let params: Number4 = [idx, rand(20), 2 + rand(2), 0];
-  return { position, arm, params };
+  return { position, arm: baseArm, params };
 };
 
-export const imageConfigs: SolubleApp = {
+export const rippleConfigs: SolubleApp = {
   initPointsBuffer: () => {
-    createGlobalPointsBuffer(160, createKaleidoscopeBasePoint);
+    createGlobalPointsBuffer(80, createBasePoint);
   },
   useCompute: false,
-  renderShader: kaleidoscope,
+  renderShader: shader,
   onButtonEvent: (events: ButtonEvents) => {
     if (events.face1) {
       store.disableLens = store.disableLens < 0.5 ? 1 : 0;
@@ -41,8 +44,5 @@ export const imageConfigs: SolubleApp = {
   },
   getParams: () => {
     return [store.disableLens, store.radius];
-  },
-  getTextures: (obj) => {
-    return [obj["tiye"], obj["candy"], obj["bubbles"], obj["rugs"]];
   },
 };

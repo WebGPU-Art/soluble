@@ -8,7 +8,7 @@ struct Params {
   dt: f32,
   /// 1 to disable
   disableLens: f32,
-  maskRadius: f32,
+  mask_radius: f32,
 }
 
 @group(0) @binding(1) var<uniform> params: Params;
@@ -31,17 +31,11 @@ struct BaseCell {
 
 @compute @workgroup_size(8, 8, 1)
 fn compute_main(@builtin(global_invocation_id) global_id: vec3u) {
-  // var index = global_id.x + global_id.y * 8u;
-  // base_points[index].position.y += params.dt * 0.03 * base_points[index].velocity.y;
-  // if base_points[index].position.y > 200. {
-  //   base_points[index].position.y = -200.;
-  // }
-  // base_points[index].position.x = base_points[index].position.x;
-  // base_points[index].p3 = sin(base_points[index].offset + base_points[index].duration * 0.001 * params.time) * 0.4 + 0.6;
-  // base_points[index].time = params.time;
+  // nothing to do
 }
 
 // shapes
+
 
 fn reflection_line(p: vec2f, p1: vec2f, p2: vec2f, skip: f32, regress: f32) -> vec2f {
   let perp = perpendicular(p, p1, p2);
@@ -93,8 +87,8 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   var opacity = 1.0;
 
   let disableLens = params.disableLens > 0.5;
-  if length(coord) < radius * 22.0 {
-    for (var i = 0u; i < 6u; i++) {
+  if length(coord) < radius * 32.0 {
+    for (var i = 0u; i < 10u; i++) {
       let point_angle = atan2(coord.y, coord.x);
       let at_part = floor(point_angle / unit);
       let p1 = vec2(cos(at_part * unit), sin(at_part * unit)) * radius;
@@ -132,6 +126,8 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   // return vec4f(1., 1., 0.7, 2.) - textureSample(myTexture, mySampler, vtx_out.uv);
 
+  // return vec4(fract(uniforms.time * 0.002) + 0.3, 0.0, 0.0, 1.0);
+
   let viewer_position = uniforms.viewer_position;
   for (var j: u32 = 0u; j < base_size; j++) {
     let base_point = base_points[j];
@@ -140,40 +136,38 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     // base_position.z *= scale;
     let a = base_point.position.xyz - viewer_position;
 
-
-    // display ciecles
+    // display circles
 
     let n1 = cross(a, ray_unit);
     let n2 = normalize(cross(ray_unit, n1));
     let d = abs(dot(n2, a));
 
-    let r = 400.;
-    if d < r && d > (r * pow(params.maskRadius, 0.5)) {
-      let idx = base_point.idx;
-      let light = vec3<f32>(rand11(idx + 1.0), rand11(idx + 2.0), rand11(idx + 3.0));
-      return vec4(light * opacity, 1.0);
+    let d_angle = atan2(n1.y, n1.x);
+
+    let rand_v1 = rand11(base_point.idx + 0.5);
+    let rand_v2 = rand11(base_point.idx + 0.6);
+    let rand_v3 = rand11(base_point.idx + 0.7);
+
+    let r = 300. * rand_v2;
+    let speed = 0.0004 * rand_v1;
+    let offset = rand_v2;
+    let r_length = 0.3 * rand_v3;
+    let gap = params.mask_radius * (0.9 + 0.1 * rand_v1);
+
+    if d < r && d > (r * pow(gap, 0.7)) {
+      let v = fract(params.time * speed + offset) * 2. * PI;
+      let show1 = abs(d_angle - v) < r_length;
+      let show2 = abs(d_angle + 2. * PI - v) < r_length;
+      if show1 || show2 {
+        let idx = base_point.idx;
+        let light = vec3<f32>(rand_v1, rand_v2, rand_v3);
+        return vec4(light * opacity, 1.0);
+      } else {
+        continue;
+      }
     } else {
       continue;
     }
-
-
-    // // display lines
-
-    // // find perp direction and projection length on it
-    // let arm = base_point.arm.xyz;
-    // let n = cross(arm, ray_unit);
-
-    // let n0 = normalize(n);
-    // let d_min = abs(dot(n0, a));
-
-    // if d_min > 16.0 * params.maskRadius {
-    //   // too far from ray, contribute no light
-    //   continue;
-    // }
-
-    // let idx = base_point.idx;
-    // let light = vec3<f32>(rand11(idx + 1.0), rand11(idx + 2.0), rand11(idx + 3.0));
-    // return vec4(light * opacity, 1.0);
   }
 
   if opacity > 0.9 {

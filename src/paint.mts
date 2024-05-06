@@ -5,6 +5,7 @@ import { vNormalize, vCross } from "./quaternion.mjs";
 import { Number4, rand } from "./math.mjs";
 import { createBuffer, getComputeShaderModule } from "./utils.mjs";
 import solublePerspective from "../shaders/soluble-perspective.wgsl?raw";
+import solubleMath from "../shaders/soluble-math.wgsl?raw";
 
 let prevTime = Date.now();
 
@@ -55,7 +56,7 @@ export function computeBasePoints() {
   let { shaderModule } = atomSolubleTree.deref();
 
   let basePointsBuffer = atomPointsBuffer.deref();
-  let now = Date.now();
+  let now = Date.now() - startTime;
   let uniformBuffer = getUniformBuffer(now); // TODO t
   let paramsBuffer = createBuffer(new Float32Array([now, now - prevTime, 0, 0]), GPUBufferUsage.UNIFORM, device);
   prevTime = now;
@@ -170,7 +171,7 @@ let buildCommandBuffer = (t: number, params: number[], textures: GPUTexture[]): 
   // console.log("uniformData", uniformData);
 
   let device = atomDevice.deref();
-  let now = Date.now();
+  let now = Date.now() - startTime;
 
   let uniformBuffer = getUniformBuffer(t);
   let paramsBuffer = createBuffer(new Float32Array([now, now - prevTime, params[0] || 0, params[1] || 0]), GPUBufferUsage.UNIFORM, device);
@@ -255,6 +256,7 @@ let buildCommandBuffer = (t: number, params: number[], textures: GPUTexture[]): 
   return commandEncoder.finish();
 };
 
+/** default time too large, fractal part might be lost */
 let startTime = Date.now();
 
 /** send command buffer to device and render */
@@ -262,7 +264,7 @@ export function paintSolubleTree(
   /** extra params */
   params: number[]
 ) {
-  // console.log("paint", params);
+  // console.log("paint params", params);
   atomBufferNeedClear.reset(true);
   let device = atomDevice.deref();
 
@@ -283,7 +285,7 @@ export function resetCanvasHeight(canvas: HTMLCanvasElement) {
 }
 
 export let interpolateShader = (shader: string) => {
-  return shader.replace("#import soluble::perspective", solublePerspective);
+  return shader.replace("#import soluble::perspective", solublePerspective).replace("#import soluble::math", solubleMath);
 };
 
 /** unified API to call paint */
