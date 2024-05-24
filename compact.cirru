@@ -136,10 +136,14 @@
                   img-candy $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/c7367e21405d602c5ef5a8c55c35d512/candy.jpeg"
                   img-bubbles $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/20b39957d952bd189e4253369db30335/pasted-2024-04-17T17:00:49.301Z.png"
                   img-rugs $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/ceec218462f81744323e22dd2d04e94b/pasted-2024-04-17T17:12:29.234Z.png"
+                  img-pigment $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/4a932a1d8eaf46b4d9d8ec07538e8ee1/pigment.jpg"
+                  img-stripes $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/d090a685f03af9d31988a2a92b3b8a19/stripes.jpg"
                 js-set (.!deref solublejs/atomSharedTextures) "\"tiye" $ js-await img-tiye
                 js-set (.!deref solublejs/atomSharedTextures) "\"candy" $ js-await img-candy
                 js-set (.!deref solublejs/atomSharedTextures) "\"bubbles" $ js-await img-bubbles
                 js-set (.!deref solublejs/atomSharedTextures) "\"rugs" $ js-await img-rugs
+                js-set (.!deref solublejs/atomSharedTextures) "\"stripes" $ js-await img-stripes
+                js-set (.!deref solublejs/atomSharedTextures) "\"pigment" $ js-await img-pigment
         |loop-paint! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn loop-paint! () (solublejs/callFramePaint)

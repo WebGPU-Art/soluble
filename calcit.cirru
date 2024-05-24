@@ -787,6 +787,22 @@
                               |T $ %{} :Leaf (:at 1713891217583) (:by |rJG4IHzWf) (:text |solublejs/loadImageAsTexture)
                               |b $ %{} :Leaf (:at 1713891217583) (:by |rJG4IHzWf) (:text |device)
                               |h $ %{} :Leaf (:at 1713891217583) (:by |rJG4IHzWf) (:text "|\"https://cos-sh.tiye.me/cos-up/ceec218462f81744323e22dd2d04e94b/pasted-2024-04-17T17:12:29.234Z.png")
+                      |o $ %{} :Expr (:at 1713891216868) (:by |rJG4IHzWf)
+                        :data $ {}
+                          |T $ %{} :Leaf (:at 1716576676907) (:by |rJG4IHzWf) (:text |img-pigment)
+                          |b $ %{} :Expr (:at 1713891217583) (:by |rJG4IHzWf)
+                            :data $ {}
+                              |T $ %{} :Leaf (:at 1713891217583) (:by |rJG4IHzWf) (:text |solublejs/loadImageAsTexture)
+                              |b $ %{} :Leaf (:at 1713891217583) (:by |rJG4IHzWf) (:text |device)
+                              |h $ %{} :Leaf (:at 1716576679983) (:by |rJG4IHzWf) (:text "|\"https://cos-sh.tiye.me/cos-up/4a932a1d8eaf46b4d9d8ec07538e8ee1/pigment.jpg")
+                      |q $ %{} :Expr (:at 1713891216868) (:by |rJG4IHzWf)
+                        :data $ {}
+                          |T $ %{} :Leaf (:at 1716576687847) (:by |rJG4IHzWf) (:text |img-stripes)
+                          |b $ %{} :Expr (:at 1713891217583) (:by |rJG4IHzWf)
+                            :data $ {}
+                              |T $ %{} :Leaf (:at 1713891217583) (:by |rJG4IHzWf) (:text |solublejs/loadImageAsTexture)
+                              |b $ %{} :Leaf (:at 1713891217583) (:by |rJG4IHzWf) (:text |device)
+                              |h $ %{} :Leaf (:at 1716576689869) (:by |rJG4IHzWf) (:text "|\"https://cos-sh.tiye.me/cos-up/d090a685f03af9d31988a2a92b3b8a19/stripes.jpg")
                   |T $ %{} :Expr (:at 1713297765380) (:by |rJG4IHzWf)
                     :data $ {}
                       |D $ %{} :Leaf (:at 1713297784829) (:by |rJG4IHzWf) (:text |js-set)
@@ -835,6 +851,30 @@
                         :data $ {}
                           |T $ %{} :Leaf (:at 1713891224558) (:by |rJG4IHzWf) (:text |js-await)
                           |b $ %{} :Leaf (:at 1713891224558) (:by |rJG4IHzWf) (:text |img-rugs)
+                  |o $ %{} :Expr (:at 1713891224558) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1713891224558) (:by |rJG4IHzWf) (:text |js-set)
+                      |b $ %{} :Expr (:at 1713891224558) (:by |rJG4IHzWf)
+                        :data $ {}
+                          |T $ %{} :Leaf (:at 1713891224558) (:by |rJG4IHzWf) (:text |.!deref)
+                          |b $ %{} :Leaf (:at 1713891224558) (:by |rJG4IHzWf) (:text |solublejs/atomSharedTextures)
+                      |h $ %{} :Leaf (:at 1716576704541) (:by |rJG4IHzWf) (:text "|\"stripes")
+                      |l $ %{} :Expr (:at 1713891224558) (:by |rJG4IHzWf)
+                        :data $ {}
+                          |T $ %{} :Leaf (:at 1713891224558) (:by |rJG4IHzWf) (:text |js-await)
+                          |b $ %{} :Leaf (:at 1716576701153) (:by |rJG4IHzWf) (:text |img-stripes)
+                  |q $ %{} :Expr (:at 1713891224558) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1713891224558) (:by |rJG4IHzWf) (:text |js-set)
+                      |b $ %{} :Expr (:at 1713891224558) (:by |rJG4IHzWf)
+                        :data $ {}
+                          |T $ %{} :Leaf (:at 1713891224558) (:by |rJG4IHzWf) (:text |.!deref)
+                          |b $ %{} :Leaf (:at 1713891224558) (:by |rJG4IHzWf) (:text |solublejs/atomSharedTextures)
+                      |h $ %{} :Leaf (:at 1716576716738) (:by |rJG4IHzWf) (:text "|\"pigment")
+                      |l $ %{} :Expr (:at 1713891224558) (:by |rJG4IHzWf)
+                        :data $ {}
+                          |T $ %{} :Leaf (:at 1713891224558) (:by |rJG4IHzWf) (:text |js-await)
+                          |b $ %{} :Leaf (:at 1716576713661) (:by |rJG4IHzWf) (:text |img-pigment)
         |loop-paint! $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1699464116175) (:by |rJG4IHzWf)
             :data $ {}
