@@ -166,7 +166,7 @@ fn vertex_main(
 }
 
 /// maximum number of reflections
-const max_relect_times = 12u;
+const max_relect_times = 8u;
 
 
 @fragment
@@ -176,34 +176,44 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   let coord: vec2<f32> = vx_out.uv * uniforms.screen_wh;
   let p: vec2<f32> = coord * 0.0005 / uniforms.scale;
 
-  let width = 200.;
-  let height = 332.;
-  let depth = 200.;
+  let width = 400.;
+  let height = 400.;
+  let depth = 400.;
 
-  let segments_size = 3u;
-  let segments = array<Segment, 3>(
-    Segment(vec3<f32>(0.0, -height, 0.0), vec3<f32>(0.0, height, 0.0)),
-    Segment(vec3<f32>(-width, 0. - height, -depth), vec3<f32>(-width, 0. - height, depth)),
-    Segment(vec3<f32>(width, 0. - height, -depth), vec3<f32>(width, 0. - height, depth))
+  let p1 = vec3f(-width, 0., depth);
+  let p2 = vec3f(width, 0., depth);
+  let p3 = vec3f(width, 0., -depth);
+  let p4 = vec3f(-width, 0., -depth);
+  let p5 = vec3f(0., height * sqrt(2.), 0.);
+  let p6 = vec3f(0., -height * sqrt(2.), 0.);
+
+  let segments_size = 8u;
+  let segments = array<Segment, 8>(
+    Segment(p1, p2),
+    Segment(p1, p4),
+    Segment(p1, p5),
+    Segment(p1, p6),
+    Segment(p3, p2),
+    Segment(p3, p4),
+    Segment(p3, p5),
+    Segment(p3, p6)
   );
 
-  let p1 = vec3f(-width, -height, depth);
-  let p2 = vec3f(width, -height, depth);
-  let p3 = vec3f(width, -height, -depth);
-  let p4 = vec3f(-width, -height, -depth);
-  let p5 = vec3f(0., height, 0.);
+
   // let p6 = vec3f(width, height, depth);
   // let p7 = vec3f(width, height, -depth);
   // let p8 = vec3f(-width, height, -depth);
 
-  let mirrors_size = 6u;
-  let mirrors = array<MirrorTriangle, 6>(
-    MirrorTriangle(p1, p2, p3),
-    MirrorTriangle(p1, p3, p4),
+  let mirrors_size = 12u;
+  let mirrors = array<MirrorTriangle, 8>(
     MirrorTriangle(p1, p2, p5),
     MirrorTriangle(p2, p3, p5),
     MirrorTriangle(p3, p4, p5),
     MirrorTriangle(p4, p1, p5),
+    MirrorTriangle(p1, p2, p6),
+    MirrorTriangle(p2, p3, p6),
+    MirrorTriangle(p3, p4, p6),
+    MirrorTriangle(p4, p1, p6),
   );
 
   // create view ray
@@ -216,18 +226,21 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   var current_viewer = uniforms.viewer_position;
   var current_ray_unit = ray_unit;
+  var traveled = 0.0;
 
   for (var times = 0u; times < max_relect_times + 1u; times++) {
     for (var i = 0u; i < segments_size; i = i + 1u) {
       let segment = segments[i];
       let reach = ray_closest_point_to_line(current_viewer, current_ray_unit, segment);
-      let distance = reach.distance;
-      // let point = reach.point;
 
-      if distance < 2.0 && reach.positive_side {
-        return vec4<f32>(1.0, 0.8, 0.0, 1.0);
+      if reach.positive_side {
+        let distance = reach.distance;
+        // let factor = (0.1 + exp(-traveled));
+        if distance < 0.08 * (1. + pow(traveled * 0.3, 0.8)) && reach.positive_side {
+          return vec4<f32>(1.0, 0.8, 0.0, 1.0);
+        }
+        total_color += vec4<f32>(1., 1., 0.02, 0.0) / pow(distance, 1.8);
       }
-      total_color += vec4<f32>(1., 1., 0.02, 0.0) / pow(distance, 1.8);
     }
 
     var hit_mirror = false;
@@ -242,12 +255,13 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
         if hit.travel < nearest.travel {
           nearest = hit;
+          traveled = hit.travel;
         }
       }
     }
 
     if hit_mirror {
-      total_color += vec4<f32>(0.01, 0.01, .02, 0.);
+      total_color += vec4<f32>(0.02, 0.02, .04, 0.);
       current_viewer = nearest.point;
       current_ray_unit = nearest.next_ray_unit;
     } else {
