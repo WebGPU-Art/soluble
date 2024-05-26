@@ -65,7 +65,8 @@ struct Segment {
 }
 
 /// find out closest point of ray to the segment
-fn ray_closest_point_to_line(ray_unit: vec3f, s: Segment, viewer_position: vec3f) -> RayReachSegment {
+/// TODO remove hits behind the camera
+fn ray_closest_point_to_line(viewer_position: vec3f, ray_unit: vec3f, s: Segment) -> RayReachSegment {
   let a = s.start - viewer_position;
   let b = s.end - viewer_position;
 
@@ -103,6 +104,54 @@ fn ray_closest_point_to_line(ray_unit: vec3f, s: Segment, viewer_position: vec3f
   return RayReachSegment(nearest, viewer_position + ray_unit * a_proj);
 }
 
+/// holding information about ray reflection
+struct RayMirrorHit {
+  hit: bool,
+  point: vec3<f32>,
+  travel: f32,
+  next_ray_unit: vec3<f32>,
+}
+
+struct MirrorTriangle {
+  a: vec3f,
+  b: vec3f,
+  c: vec3f,
+}
+
+/// to find out if ray hits mirror, return RayMirrorHit.
+fn try_reflect_ray_with_mirror(viewer_position: vec3f, ray_unit: vec3f, mirror: MirrorTriangle) -> RayMirrorHit {
+  /// normal of the mirror
+  let n = normalize(cross(mirror.b - mirror.a, mirror.c - mirror.a));
+
+  // if abs(dot(normalize(mirror.a - viewer_position), ray_unit)) > 0.99999 {
+  //   return RayMirrorHit(true, vec3<f32>(0.0, 0.0, 0.0), vec3<f32>(0.0, 0.0, 0.0));
+  // }
+  // if abs(dot(normalize(mirror.b - viewer_position), ray_unit)) > 0.99999 {
+  //   return RayMirrorHit(true, vec3<f32>(0.0, 0.0, 0.0), vec3<f32>(0.0, 0.0, 0.0));
+  // }
+  // if abs(dot(normalize(mirror.c - viewer_position), ray_unit)) > 0.99999 {
+  //   return RayMirrorHit(true, vec3<f32>(0.0, 0.0, 0.0), vec3<f32>(0.0, 0.0, 0.0));
+  // }
+
+  /// distance from the mirror surface to the viewer
+  let d = dot(n, mirror.a - viewer_position);
+  let cos_v = dot(n, ray_unit);
+  let t = abs(d / cos_v);
+  let hit_point = viewer_position + t * ray_unit;
+
+  let spin_a = cross(hit_point - mirror.a, mirror.b - mirror.a);
+  let spin_b = cross(hit_point - mirror.b, mirror.c - mirror.b);
+  let spin_c = cross(hit_point - mirror.c, mirror.a - mirror.c);
+  let inside = dot(spin_a, spin_b) >= 0.0 && dot(spin_b, spin_c) >= 0.0 && dot(spin_c, spin_a) >= 0.0;
+
+  if inside {
+    let reflection = reflect_on_direction(ray_unit, n);
+    return RayMirrorHit(true, hit_point, t, reflection);
+  } else {
+    return RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), t, vec3<f32>(0.0, 0.0, 0.0));
+  }
+}
+
 // Render Pass
 
 struct VertexOut {
@@ -133,23 +182,69 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     Segment(vec3<f32>(0.0, 0.0, 0.0), vec3<f32>(-20.0, 100.0, 0.0))
   );
 
+  let mirrors = array<MirrorTriangle, 2>(
+    MirrorTriangle(
+      vec3<f32>(100.0, -100.0, -100.0),
+      vec3<f32>(100.0, -100.0, 100.),
+      vec3<f32>(100.0, 100.0, 100.),
+    ),
+    MirrorTriangle(
+      vec3<f32>(100.0, -100.0, -100.0),
+      vec3<f32>(100.0, 100.0, 100.),
+      vec3<f32>(100.0, 100.0, -100.),
+    ),
+  );
+
   // create view ray
   let ray_unit = normalize(
     p.x * uniforms.rightward + p.y * uniforms.upward + 2.0 * uniforms.forward
   );
 
-  for (var i = 0u; i < 2u; i = i + 1u) {
-    let segment = segments[i];
-    let reach = ray_closest_point_to_line(ray_unit, segment, uniforms.viewer_position);
-    let distance = reach.distance;
-    // let point = reach.point;
+  var total_color = vec4<f32>(0.2, 0.0, 0.3, 1.0);
 
-    if distance < 1.0 {
-      return vec4<f32>(1.0, 0.0, 0.0, 1.0);
+
+  var current_viewer = uniforms.viewer_position;
+  var current_ray_unit = ray_unit;
+
+  for (var times = 0u; times < 4u; times++) {
+    for (var i = 0u; i < 2u; i = i + 1u) {
+      let segment = segments[i];
+      let reach = ray_closest_point_to_line(uniforms.viewer_position, ray_unit, segment);
+      let distance = reach.distance;
+      // let point = reach.point;
+
+      if distance < 1.0 {
+        return vec4<f32>(1.0, 0.0, 0.0, 1.0);
+      }
+    }
+
+    var hit_mirror = false;
+    var nearest = RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 1000000., vec3<f32>(0.0, 0.0, 0.0));
+
+    for (var mi = 0u; mi < 2u; mi = mi + 1u) {
+      let mirror = mirrors[mi];
+      let hit = try_reflect_ray_with_mirror(uniforms.viewer_position, ray_unit, mirror);
+      if hit.hit {
+        hit_mirror = true;
+        total_color += vec4<f32>(0.02, 0.0, .0, 0.);
+
+        if hit.travel < nearest.travel {
+          nearest = hit;
+        }
+      }
+    }
+
+    if hit_mirror {
+      current_viewer = nearest.point;
+      current_ray_unit = nearest.next_ray_unit;
+    } else {
+      break;
     }
   }
 
 
 
-  return vec4<f32>(0.2, 0.0, 0.3, 1.0);
+
+
+  return total_color;
 }
