@@ -223,7 +223,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   for (var times = 0u; times < max_relect_times + 1u; times++) {
     for (var i = 0u; i < segments_size; i = i + 1u) {
       var segment = segments[i];
-      segment = rotate_segment(segment, vec3(0., 0., 0.), vec3(0., 1., 0.), params.time * 0.0004);
+      segment = rotate_segment(segment, vec3(0., 0., 0.), vec3(0., 1., 0.), params.time * 0.0008);
       let reach = ray_closest_point_to_line(current_viewer, current_ray_unit, segment);
 
       if reach.positive_side {
@@ -256,7 +256,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     }
 
     if hit_mirror {
-      total_color += vec4<f32>(0.02, 0.02, .04, 0.);
+      total_color += vec4<f32>(0.01, 0.01, .02, 0.);
       current_viewer = nearest.point;
       current_ray_unit = nearest.next_ray_unit;
     } else {
