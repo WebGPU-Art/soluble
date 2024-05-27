@@ -7,8 +7,9 @@ struct Params {
   time: f32,
   dt: f32,
   /// 1 to disable
-  disableLens: f32,
-  maskRadius: f32,
+  // disableLens: f32,
+  // maskRadius: f32,
+  lifetime: f32,
 }
 
 @group(0) @binding(1) var<uniform> params: Params;
@@ -19,11 +20,7 @@ struct BaseCell {
   position: vec4<f32>,
   arm: vec4<f32>,
   // offset
-  idx: f32,
-  offset: f32,
-  // duration
-  duration: f32,
-  time: f32,
+ params: vec4f
 };
 
 @group(1) @binding(0) var<storage, read_write> base_points: array<BaseCell>;
@@ -148,6 +145,21 @@ fn try_reflect_ray_with_mirror(viewer_position: vec3f, ray_unit: vec3f, mirror: 
   }
 }
 
+fn rotate_segment(segment: Segment, center: vec3<f32>, axis: vec3<f32>, angle: f32) -> Segment {
+  let a = segment.start - center;
+  let b = segment.end - center;
+
+  let a_along_axis = dot(a, axis) * axis;
+  let a_perp = a - a_along_axis;
+  let a_next = a_perp * cos(angle) + cross(axis, a_perp) * sin(angle) + a_along_axis;
+
+  let b_along_axis = dot(b, axis) * axis;
+  let b_perp = b - b_along_axis;
+  let b_next = b_perp * cos(angle) + cross(axis, b_perp) * sin(angle) + b_along_axis;
+
+  return Segment(a_next + center, b_next + center);
+}
+
 // Render Pass
 
 struct VertexOut {
@@ -187,34 +199,15 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   let p5 = vec3f(0., height * sqrt(2.), 0.);
   let p6 = vec3f(0., -height * sqrt(2.), 0.);
 
-  let segments_size = 8u;
-  let segments = array<Segment, 8>(
-    Segment(p1, p2),
-    Segment(p1, p4),
-    Segment(p1, p5),
-    Segment(p1, p6),
-    Segment(p3, p2),
-    Segment(p3, p4),
-    Segment(p3, p5),
-    Segment(p3, p6)
+  let segments_size = 4u;
+  let scale = 0.2;
+  let segments = array<Segment, 4>(
+    Segment(scale * p1, scale * p5),
+    Segment(scale * p5, scale * p3),
+    Segment(scale * p3, scale * p6),
+    Segment(scale * p6, scale * p1),
   );
 
-
-  // let p6 = vec3f(width, height, depth);
-  // let p7 = vec3f(width, height, -depth);
-  // let p8 = vec3f(-width, height, -depth);
-
-  let mirrors_size = 12u;
-  let mirrors = array<MirrorTriangle, 8>(
-    MirrorTriangle(p1, p2, p5),
-    MirrorTriangle(p2, p3, p5),
-    MirrorTriangle(p3, p4, p5),
-    MirrorTriangle(p4, p1, p5),
-    MirrorTriangle(p1, p2, p6),
-    MirrorTriangle(p2, p3, p6),
-    MirrorTriangle(p3, p4, p6),
-    MirrorTriangle(p4, p1, p6),
-  );
 
   // create view ray
   let ray_unit = normalize(
@@ -230,7 +223,8 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   for (var times = 0u; times < max_relect_times + 1u; times++) {
     for (var i = 0u; i < segments_size; i = i + 1u) {
-      let segment = segments[i];
+      var segment = segments[i];
+      segment = rotate_segment(segment, vec3(0., 0., 0.), vec3(0., 1., 0.), params.time * 0.0004);
       let reach = ray_closest_point_to_line(current_viewer, current_ray_unit, segment);
 
       if reach.positive_side {
@@ -246,8 +240,10 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     var hit_mirror = false;
     var nearest = RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 1000000., vec3<f32>(0.0, 0.0, 0.0));
 
-    for (var mi = 0u; mi < mirrors_size; mi = mi + 1u) {
-      let mirror = mirrors[mi];
+    let size = arrayLength(&base_points);
+    for (var mi = 0u; mi < size; mi = mi + 1u) {
+      let ceil = base_points[mi];
+      let mirror = MirrorTriangle(ceil.position.xyz, ceil.arm.xyz, ceil.params.xyz);
       let hit = try_reflect_ray_with_mirror(current_viewer, current_ray_unit, mirror);
 
       if hit.hit && hit.travel > .1 {

@@ -9,33 +9,43 @@ import { BaseCellParams } from "../paint.mjs";
 let store = {
   disableLens: 0, // or 1
   radius: 0.98,
+  startedAt: performance.now(),
 };
 
-let createKaleidoscopeBasePoint = (idx: number): BaseCellParams => {
-  let offset = 8000;
-  let position: Number4 = [randBalance(offset), randBalance(offset), randBalance(offset), 1];
-  let arm = [1000, 0, 0, 0] as Number4;
-  let params: Number4 = [idx, rand(20), 2 + rand(2), 0];
-  return { position, arm, params };
+let createOctahedron = () => {
+  let a = 400;
+  let p1 = [-a, 0, a, 0];
+  let p2 = [a, 0, a, 0];
+  let p3 = [a, 0, -a, 0];
+  let p4 = [-a, 0, -a, 0];
+  let p5 = [0, a * Math.SQRT2, 0, 0];
+  let p6 = [0, -a * Math.SQRT2, 0, 0];
+
+  return [
+    { position: p1, velocity: p2, arm: p5 },
+    { position: p2, velocity: p3, arm: p5 },
+    { position: p3, velocity: p4, arm: p5 },
+    { position: p4, velocity: p1, arm: p5 },
+    { position: p1, velocity: p2, arm: p6 },
+    { position: p2, velocity: p3, arm: p6 },
+    { position: p3, velocity: p4, arm: p6 },
+    { position: p4, velocity: p1, arm: p6 },
+  ] as {
+    position: Number4;
+    velocity: Number4;
+    arm: Number4;
+  }[];
 };
 
 export const surroundMirrorConfigs: SolubleApp = {
   initPointsBuffer: () => {
-    createGlobalPointsBuffer(160, createKaleidoscopeBasePoint);
+    let items = createOctahedron();
+    createGlobalPointsBuffer(items.length, (idx) => items[idx]);
   },
   useCompute: false,
   renderShader: mirrors,
-  onButtonEvent: (events: ButtonEvents) => {
-    if (events.face1) {
-      store.disableLens = store.disableLens < 0.5 ? 1 : 0;
-      console.log("face1 tapped", store.disableLens);
-    }
-    if (events.face2) {
-      store.radius = Math.max(0, store.radius - 0.1);
-      console.log("face2 tapped", store.radius);
-    }
-  },
+  // onButtonEvent: (events: ButtonEvents) => { },
   getParams: () => {
-    return [store.disableLens, store.radius];
+    return [performance.now() - store.startedAt];
   },
 };
