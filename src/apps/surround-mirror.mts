@@ -12,8 +12,39 @@ let store = {
   startedAt: performance.now(),
 };
 
+let a = 400;
+
+let createCube = () => {
+  let p1 = [-a, -a, a, 0];
+  let p2 = [a, -a, a, 0];
+  let p3 = [a, -a, -a, 0];
+  let p4 = [-a, -a, -a, 0];
+  let p5 = [-a, a, a, 0];
+  let p6 = [a, a, a, 0];
+  let p7 = [a, a, -a, 0];
+  let p8 = [-a, a, -a, 0];
+
+  return [
+    { position: p1, velocity: p2, arm: p3 },
+    { position: p1, velocity: p3, arm: p4 },
+    { position: p1, velocity: p2, arm: p6 },
+    { position: p1, velocity: p5, arm: p6 },
+    { position: p1, velocity: p8, arm: p4 },
+    { position: p1, velocity: p8, arm: p5 },
+    { position: p2, velocity: p7, arm: p3 },
+    { position: p2, velocity: p7, arm: p6 },
+    { position: p3, velocity: p8, arm: p4 },
+    { position: p3, velocity: p8, arm: p7 },
+    { position: p5, velocity: p7, arm: p6 },
+    { position: p5, velocity: p7, arm: p8 },
+  ] as {
+    position: Number4;
+    velocity: Number4;
+    arm: Number4;
+  }[];
+};
+
 let createOctahedron = () => {
-  let a = 400;
   let p1 = [-a, 0, a, 0];
   let p2 = [a, 0, a, 0];
   let p3 = [a, 0, -a, 0];
@@ -39,7 +70,8 @@ let createOctahedron = () => {
 
 export const surroundMirrorConfigs: SolubleApp = {
   initPointsBuffer: () => {
-    let items = createOctahedron();
+    // let items = createOctahedron();
+    let items = createCube();
     createGlobalPointsBuffer(items.length, (idx) => items[idx]);
   },
   useCompute: false,

@@ -52,7 +52,6 @@ struct Segment {
 }
 
 /// find out closest point of ray to the segment
-/// TODO remove hits behind the camera
 fn ray_closest_point_to_line(viewer_position: vec3f, ray_unit: vec3f, s: Segment) -> RayReachSegment {
   let a = s.start - viewer_position;
   let b = s.end - viewer_position;
