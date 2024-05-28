@@ -120,6 +120,137 @@ let createAngle = () => {
   ] as Cell[];
 };
 
+// 12 faces, 20 vertices, according to https://en.wikipedia.org/wiki/Regular_dodecahedron
+// TODO check each points
+let createRegularDodecahedron = () => {
+  let phi = (1 + Math.sqrt(5)) / 2;
+  let scaled = (v: Number4, s: number) => v.map((x) => x * s) as Number4;
+
+  let p1: Number4 = scaled([-1, -1, 1, 0], a);
+  let p2: Number4 = scaled([1, -1, 1, 0], a);
+  let p3: Number4 = scaled([1, -1, -1, 0], a);
+  let p4: Number4 = scaled([-1, -1, -1, 0], a);
+
+  let p5: Number4 = scaled([-1, 1, 1, 0], a);
+  let p6: Number4 = scaled([1, 1, 1, 0], a);
+  let p7: Number4 = scaled([1, 1, -1, 0], a);
+  let p8: Number4 = scaled([-1, 1, -1, 0], a);
+
+  let p9: Number4 = scaled([0, -1 / phi, phi, 0], a);
+  let p10: Number4 = scaled([0, 1 / phi, phi, 0], a);
+  let p11: Number4 = scaled([1 / phi, 0, -phi, 0], a);
+  let p12: Number4 = scaled([-1 / phi, 0, -phi, 0], a);
+
+  let p13: Number4 = scaled([0, -1 / phi, -phi, 0], a);
+  let p14: Number4 = scaled([0, 1 / phi, -phi, 0], a);
+  let p15: Number4 = scaled([-phi, 0, 1 / phi, 0], a);
+  let p16: Number4 = scaled([-phi, 0, -1 / phi, 0], a);
+
+  let p17: Number4 = scaled([phi, 0, 1 / phi, 0], a);
+  let p18: Number4 = scaled([phi, 0, -1 / phi, 0], a);
+  let p19: Number4 = scaled([1 / phi, phi, 0, 0], a);
+  let p20: Number4 = scaled([-1 / phi, phi, 0, 0], a);
+
+  // 12 faces, but 36 triangles
+  return [
+    /// 1st
+    // 1 9 2
+    { position: p1, velocity: p9, arm: p2 },
+    // 1 2 12
+    { position: p1, velocity: p2, arm: p12 },
+    // 2 11 12
+    { position: p2, velocity: p11, arm: p12 },
+
+    /// 2nd
+    // 1 5 15
+    { position: p1, velocity: p5, arm: p15 },
+    // 1 9 10
+    { position: p1, velocity: p9, arm: p10 },
+    // 1 5 10
+    { position: p1, velocity: p5, arm: p10 },
+
+    /// 3rd
+    // 9 10 2
+    { position: p9, velocity: p10, arm: p2 },
+    // 2 6 10
+    { position: p2, velocity: p6, arm: p10 },
+    // 2 6 17
+    { position: p2, velocity: p6, arm: p17 },
+
+    /// 4th
+    // 2 3 17
+    { position: p2, velocity: p3, arm: p17 },
+    // 3 17 18
+    { position: p3, velocity: p17, arm: p18 },
+    // 2 3 11
+    { position: p2, velocity: p3, arm: p11 },
+
+    /// 5th
+    // 3 11 12
+    { position: p3, velocity: p11, arm: p12 },
+    // 3 4 12
+    { position: p3, velocity: p4, arm: p12 },
+    // 3 4 13
+    { position: p3, velocity: p4, arm: p13 },
+
+    /// 6th
+    // 1 4 12
+    { position: p1, velocity: p4, arm: p12 },
+    // 1 4 16
+    { position: p1, velocity: p4, arm: p16 },
+    // 1 15 16
+    { position: p1, velocity: p15, arm: p16 },
+
+    /// 7th
+    // 7 8 14
+    { position: p7, velocity: p8, arm: p14 },
+    // 7 8 19
+    { position: p7, velocity: p8, arm: p19 },
+    // 8 19 20
+    { position: p8, velocity: p19, arm: p20 },
+
+    /// 8th
+    // 8 14 16
+    { position: p8, velocity: p14, arm: p16 },
+    // 14 16 4
+    { position: p14, velocity: p16, arm: p4 },
+    // 13 14 4
+    { position: p13, velocity: p14, arm: p4 },
+
+    /// 9th
+    // 13 14 7
+    { position: p13, velocity: p14, arm: p7 },
+    // 7 13 3
+    { position: p7, velocity: p13, arm: p3 },
+    // 3 7 18
+    { position: p3, velocity: p7, arm: p18 },
+
+    /// 10th
+    // 6 7 19
+    { position: p6, velocity: p7, arm: p19 },
+    // 6 7 17
+    { position: p6, velocity: p7, arm: p17 },
+    // 7 17 18
+    { position: p7, velocity: p17, arm: p18 },
+
+    /// 11th
+    // 6 19 20
+    { position: p6, velocity: p19, arm: p20 },
+    // 6 10 20
+    { position: p6, velocity: p10, arm: p20 },
+    // 5 10 20
+    { position: p5, velocity: p10, arm: p20 },
+
+    /// 12th
+    // 5 8 20
+    { position: p5, velocity: p8, arm: p20 },
+    // 5 8 16
+    { position: p5, velocity: p8, arm: p16 },
+    // 5 15 16
+    { position: p5, velocity: p15, arm: p16 },
+  ] as Cell[];
+};
+
 // 20 faces, thanks to https://math.stackexchange.com/a/2174924/54238
 let createRegularIcosahedron = () => {
   let sqrt5 = Math.sqrt(5);
@@ -174,7 +305,8 @@ export const surroundMirrorConfigs: SolubleApp = {
     // let items = createCone();
     // let items = createAngle();
     // let items = createRegularIcosahedron();
-    let items = createRegularTetrahedron();
+    // let items = createRegularTetrahedron();
+    let items = createRegularDodecahedron();
 
     createGlobalPointsBuffer(items.length, (idx) => items[idx]);
   },
