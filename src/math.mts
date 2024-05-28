@@ -26,6 +26,10 @@ export let rand = (n: number) => {
   return (Math.random() - 0.5) * n;
 };
 
+export let randBetween = (min: number, max: number) => {
+  return Math.random() * (max - min) + min;
+};
+
 export const randBalance = (max: number) => {
   return Math.floor(Math.random() * max) - max / 2;
 };

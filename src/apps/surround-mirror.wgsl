@@ -225,10 +225,10 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
       if reach.positive_side {
         let distance = reach.distance;
         // let factor = (0.1 + exp(-traveled));
-        if distance < 0.08 * (1. + pow(traveled * 0.3, 0.8)) && reach.positive_side {
-          return vec4<f32>(1.0, 0.8, 0.0, 1.0);
-        }
-        total_color += vec4<f32>(1., 1., 0.02, 0.0) / pow(distance, 1.8);
+        // if distance < 0.08 * (1. + pow(traveled * 0.3, 0.8)) && reach.positive_side {
+        //   return vec4<f32>(1.0, 0.8, 0.0, 1.0);
+        // }
+        total_color += vec4<f32>(1., 1., 0.02, 0.0) * 2. / pow(distance, 1.8);
       }
     }
 
@@ -252,7 +252,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     }
 
     if hit_mirror {
-      total_color += vec4<f32>(0.01, 0.01, .02, 0.);
+      total_color += vec4<f32>(0.02, 0.01, .04, 0.) ;
       current_viewer = nearest.point;
       current_ray_unit = nearest.next_ray_unit;
     } else {
