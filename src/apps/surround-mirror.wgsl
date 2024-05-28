@@ -17,10 +17,9 @@ struct Params {
 
 
 struct BaseCell {
-  position: vec4<f32>,
-  arm: vec4<f32>,
-  // offset
- params: vec4f
+  a: vec4<f32>,
+  b: vec4<f32>,
+ c: vec4<f32>,
 };
 
 @group(1) @binding(0) var<storage, read_write> base_points: array<BaseCell>;
@@ -35,8 +34,7 @@ fn compute_main(@builtin(global_invocation_id) global_id: vec3u) {
 fn reflect_on_direction(a: vec3<f32>, b: vec3<f32>) -> vec3<f32> {
   let b0 = normalize(b);
   let v_ = dot(a, b0) * b0;
-  let v_p = a - v_;
-  return v_p - v_ ;
+  return a - 2. * v_ ;
 }
 
 /// result holding information how ray is close to segment line
@@ -63,12 +61,10 @@ fn ray_closest_point_to_line(viewer_position: vec3f, ray_unit: vec3f, s: Segment
 
   // find projection of a of segment on ray direction, and use the Pythagorean theorem for another distance
   let a_proj = dot(ray_unit, a);
-  let a_proj_at = ray_unit * a_proj;
-  let shadow_a = a - a_proj_at;
+  let shadow_a = a - ray_unit * a_proj;
 
   let b_proj = dot(ray_unit, b);
-  let b_proj_at = ray_unit * b_proj;
-  let shadow_b = b - b_proj_at;
+  let shadow_b = b - ray_unit * b_proj;
 
   let direct_an = cross(shadow_a, n);
   let direct_bn = cross(shadow_b, n);
@@ -144,19 +140,19 @@ fn try_reflect_ray_with_mirror(viewer_position: vec3f, ray_unit: vec3f, mirror: 
   }
 }
 
-fn rotate_segment(segment: Segment, center: vec3<f32>, axis: vec3<f32>, angle: f32) -> Segment {
-  let a = segment.start - center;
-  let b = segment.end - center;
-
+fn rotate_vec3(v: vec3<f32>, center: vec3<f32>, axis: vec3<f32>, angle: f32) -> vec3<f32> {
+  let a = v - center;
   let a_along_axis = dot(a, axis) * axis;
   let a_perp = a - a_along_axis;
   let a_next = a_perp * cos(angle) + cross(axis, a_perp) * sin(angle) + a_along_axis;
+  return a_next + center;
+}
 
-  let b_along_axis = dot(b, axis) * axis;
-  let b_perp = b - b_along_axis;
-  let b_next = b_perp * cos(angle) + cross(axis, b_perp) * sin(angle) + b_along_axis;
+fn rotate_segment(segment: Segment, center: vec3<f32>, axis: vec3<f32>, angle: f32) -> Segment {
+  let next_start = rotate_vec3(segment.start, center, axis, angle);
+  let next_end = rotate_vec3(segment.end, center, axis, angle);
 
-  return Segment(a_next + center, b_next + center);
+  return Segment(next_start, next_end);
 }
 
 // Render Pass
@@ -242,7 +238,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     let size = arrayLength(&base_points);
     for (var mi = 0u; mi < size; mi = mi + 1u) {
       let ceil = base_points[mi];
-      let mirror = MirrorTriangle(ceil.position.xyz, ceil.arm.xyz, ceil.params.xyz);
+      let mirror = MirrorTriangle(ceil.a.xyz, ceil.b.xyz, ceil.c.xyz);
       let hit = try_reflect_ray_with_mirror(current_viewer, current_ray_unit, mirror);
 
       if hit.hit && hit.travel > .1 {
