@@ -123,6 +123,7 @@ let createAngle = () => {
 // 12 faces, 20 vertices, according to https://en.wikipedia.org/wiki/Regular_dodecahedron
 // TODO check each points
 let createRegularDodecahedron = () => {
+  let a = 200;
   let phi = (1 + Math.sqrt(5)) / 2;
   let scaled = (v: Number4, s: number) => v.map((x) => x * s) as Number4;
 
@@ -138,8 +139,8 @@ let createRegularDodecahedron = () => {
 
   let p9: Number4 = scaled([0, -1 / phi, phi, 0], a);
   let p10: Number4 = scaled([0, 1 / phi, phi, 0], a);
-  let p11: Number4 = scaled([1 / phi, 0, -phi, 0], a);
-  let p12: Number4 = scaled([-1 / phi, 0, -phi, 0], a);
+  let p11: Number4 = scaled([1 / phi, -phi, 0, 0], a);
+  let p12: Number4 = scaled([-1 / phi, -phi, 0, 0], a);
 
   let p13: Number4 = scaled([0, -1 / phi, -phi, 0], a);
   let p14: Number4 = scaled([0, 1 / phi, -phi, 0], a);
