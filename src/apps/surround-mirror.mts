@@ -12,8 +12,6 @@ let store = {
   startedAt: performance.now(),
 };
 
-let a = 400;
-
 type Cell = {
   position: Number4;
   velocity: Number4;
@@ -37,6 +35,7 @@ let createRegularTetrahedron = () => {
 
 // 6 faces
 let createCube = () => {
+  let a = 400;
   let p1: Number4 = [-a, -a, a, 0];
   let p2: Number4 = [a, -a, a, 0];
   let p3: Number4 = [a, -a, -a, 0];
@@ -64,6 +63,7 @@ let createCube = () => {
 
 // 8 faces
 let createOctahedron = () => {
+  let a = 400;
   let p1: Number4 = [-a, 0, a, 0];
   let p2: Number4 = [a, 0, a, 0];
   let p3: Number4 = [a, 0, -a, 0];
@@ -103,6 +103,7 @@ let createCone = () => {
 };
 
 let createAngle = () => {
+  let a = 400;
   let ratio = 0.6;
   let p1: Number4 = [0, -a, -a, 0];
   let p2: Number4 = [0, a, -a, 0];
@@ -248,6 +249,7 @@ let createRegularDodecahedron = () => {
 
 // 20 faces, thanks to https://math.stackexchange.com/a/2174924/54238
 let createRegularIcosahedron = () => {
+  let a = 400;
   let sqrt5 = Math.sqrt(5);
   let scaled = (v: Number4, s: number) => v.map((x) => x * s) as Number4;
 
@@ -312,6 +314,6 @@ export const surroundMirrorConfigs: SolubleApp = {
     return [performance.now() - store.startedAt];
   },
   getTextures: (obj) => {
-    return [obj["pigment"]];
+    return [obj["pigment"]].filter(Boolean);
   },
 };
