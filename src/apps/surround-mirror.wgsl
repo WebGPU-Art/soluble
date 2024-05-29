@@ -25,6 +25,9 @@ struct BaseCell {
 @group(1) @binding(0) var<storage, read_write> base_points: array<BaseCell>;
 
 
+@group(2) @binding(0) var mySampler : sampler;
+@group(2) @binding(1) var myTexture : texture_2d<f32>;
+
 @compute @workgroup_size(8, 8, 1)
 fn compute_main(@builtin(global_invocation_id) global_id: vec3u) {
   // not doint things
@@ -53,8 +56,6 @@ struct Segment {
 fn ray_closest_point_to_line(viewer_position: vec3f, ray_unit: vec3f, s: Segment) -> RayReachSegment {
   let a = s.start - viewer_position;
   let b = s.end - viewer_position;
-
-
 
   // find perp direction and projection length on it
   let n = cross(b - a, ray_unit);
@@ -140,20 +141,6 @@ fn try_reflect_ray_with_mirror(viewer_position: vec3f, ray_unit: vec3f, mirror: 
   }
 }
 
-fn rotate_vec3(v: vec3<f32>, center: vec3<f32>, axis: vec3<f32>, angle: f32) -> vec3<f32> {
-  let a = v - center;
-  let a_along_axis = dot(a, axis) * axis;
-  let a_perp = a - a_along_axis;
-  let a_next = a_perp * cos(angle) + cross(axis, a_perp) * sin(angle) + a_along_axis;
-  return a_next + center;
-}
-
-fn rotate_segment(segment: Segment, center: vec3<f32>, axis: vec3<f32>, angle: f32) -> Segment {
-  let next_start = rotate_vec3(segment.start, center, axis, angle);
-  let next_end = rotate_vec3(segment.end, center, axis, angle);
-
-  return Segment(next_start, next_end);
-}
 
 // Render Pass
 
@@ -183,27 +170,6 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   let coord: vec2<f32> = vx_out.uv * uniforms.screen_wh;
   let p: vec2<f32> = coord * 0.0005 / uniforms.scale;
 
-  let width = 400.;
-  let height = 400.;
-  let depth = 400.;
-
-  let p1 = vec3f(-width, 0., depth);
-  let p2 = vec3f(width, 0., depth);
-  let p3 = vec3f(width, 0., -depth);
-  let p4 = vec3f(-width, 0., -depth);
-  let p5 = vec3f(0., height * sqrt(2.), 0.);
-  let p6 = vec3f(0., -height * sqrt(2.), 0.);
-
-  let segments_size = 4u;
-  let scale = 0.2;
-  let segments = array<Segment, 4>(
-    Segment(scale * p1, scale * p5),
-    Segment(scale * p5, scale * p3),
-    Segment(scale * p3, scale * p6),
-    Segment(scale * p6, scale * p1),
-  );
-
-
   // create view ray
   let ray_unit = normalize(
     p.x * uniforms.rightward + p.y * uniforms.upward + 2.0 * uniforms.forward
@@ -211,24 +177,37 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   var total_color = vec4<f32>(0.2, 0.0, 0.3, 1.0);
 
+  let angle = params.time * 0.0008;
+
+  let image_center = vec3f(0., 0., 0.);
+  let image_y = vec3f(0., 1., 0.);
+  let image_x = rotate_vec3(vec3f(1., 0., 0.), image_center, image_y, angle);
+  let image_z = rotate_vec3(vec3f(0., 0., 1.), image_center, image_y, angle);
+  let image_radius = 120.0; // but rect
+
 
   var current_viewer = uniforms.viewer_position;
   var current_ray_unit = ray_unit;
   var traveled = 0.0;
 
-  for (var times = 0u; times < max_relect_times + 1u; times++) {
-    for (var i = 0u; i < segments_size; i = i + 1u) {
-      var segment = segments[i];
-      segment = rotate_segment(segment, vec3(0., 0., 0.), vec3(0., 1., 0.), params.time * 0.0008);
-      let reach = ray_closest_point_to_line(current_viewer, current_ray_unit, segment);
+  var hit_image_at = vec2<f32>(0.0, 0.0);
+  var hit_image = false;
 
-      if reach.positive_side {
-        let distance = reach.distance;
-        // let factor = (0.1 + exp(-traveled));
-        // if distance < 0.08 * (1. + pow(traveled * 0.3, 0.8)) && reach.positive_side {
-        //   return vec4<f32>(1.0, 0.8, 0.0, 1.0);
-        // }
-        total_color += vec4<f32>(1., 1., 0.02, 0.0) * 2. / pow(distance, 1.8);
+  for (var times = 0u; times < max_relect_times + 1u; times++) {
+
+    let view_to_image = image_center - current_viewer;
+    if dot(view_to_image, current_ray_unit) > 0. { // backface culling
+      // let view_to_image_unit = normalize(view_to_image);
+      let view_to_image_surface_distance = dot(image_z, view_to_image);
+      let view_hit_image_length = view_to_image_surface_distance / dot(image_z, current_ray_unit);
+      let hit_image_surface = current_viewer + view_hit_image_length * current_ray_unit - image_center;
+      let hit_image_surface_x = dot(hit_image_surface, image_x);
+      let hit_image_surface_y = dot(hit_image_surface, image_y);
+      let image_coord = vec2f(hit_image_surface_x, hit_image_surface_y) / image_radius;
+      if abs(image_coord.x) < 1.0 && abs(image_coord.y) < 1.0 {
+        hit_image = true;
+        hit_image_at = image_coord * 0.5 + 0.5;
+        break;
       }
     }
 
@@ -258,6 +237,12 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     } else {
       break;
     }
+  }
+
+  let img_pixel = textureSample(myTexture, mySampler, hit_image_at);
+
+  if hit_image {
+    return img_pixel;
   }
 
   return total_color;
