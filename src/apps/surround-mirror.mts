@@ -20,6 +20,10 @@ type Cell = {
   arm: Number4;
 };
 
+let makeCell = (a: Number4, b: Number4, c: Number4) => {
+  return { position: a, velocity: b, arm: c } as Cell;
+};
+
 // 4 faces
 let createRegularTetrahedron = () => {
   let a = 200;
@@ -28,59 +32,54 @@ let createRegularTetrahedron = () => {
   let p3: Number4 = [-a, a, -a, 0];
   let p4: Number4 = [a, a, a, 0];
 
-  return [
-    { position: p1, velocity: p2, arm: p3 },
-    { position: p1, velocity: p2, arm: p4 },
-    { position: p1, velocity: p3, arm: p4 },
-    { position: p2, velocity: p3, arm: p4 },
-  ] as Cell[];
+  return [makeCell(p1, p2, p3), makeCell(p1, p2, p4), makeCell(p1, p3, p4), makeCell(p2, p3, p4)] as Cell[];
 };
 
 // 6 faces
 let createCube = () => {
-  let p1 = [-a, -a, a, 0];
-  let p2 = [a, -a, a, 0];
-  let p3 = [a, -a, -a, 0];
-  let p4 = [-a, -a, -a, 0];
-  let p5 = [-a, a, a, 0];
-  let p6 = [a, a, a, 0];
-  let p7 = [a, a, -a, 0];
-  let p8 = [-a, a, -a, 0];
+  let p1: Number4 = [-a, -a, a, 0];
+  let p2: Number4 = [a, -a, a, 0];
+  let p3: Number4 = [a, -a, -a, 0];
+  let p4: Number4 = [-a, -a, -a, 0];
+  let p5: Number4 = [-a, a, a, 0];
+  let p6: Number4 = [a, a, a, 0];
+  let p7: Number4 = [a, a, -a, 0];
+  let p8: Number4 = [-a, a, -a, 0];
 
   return [
-    { position: p1, velocity: p2, arm: p3 },
-    { position: p1, velocity: p3, arm: p4 },
-    { position: p1, velocity: p2, arm: p6 },
-    { position: p1, velocity: p5, arm: p6 },
-    { position: p1, velocity: p8, arm: p4 },
-    { position: p1, velocity: p8, arm: p5 },
-    { position: p2, velocity: p7, arm: p3 },
-    { position: p2, velocity: p7, arm: p6 },
-    { position: p3, velocity: p8, arm: p4 },
-    { position: p3, velocity: p8, arm: p7 },
-    { position: p5, velocity: p7, arm: p6 },
-    { position: p5, velocity: p7, arm: p8 },
+    makeCell(p1, p2, p3),
+    makeCell(p1, p3, p4),
+    makeCell(p1, p2, p6),
+    makeCell(p1, p5, p6),
+    makeCell(p1, p8, p4),
+    makeCell(p1, p8, p5),
+    makeCell(p2, p7, p3),
+    makeCell(p2, p7, p6),
+    makeCell(p3, p8, p4),
+    makeCell(p3, p8, p7),
+    makeCell(p5, p7, p6),
+    makeCell(p5, p7, p8),
   ] as Cell[];
 };
 
 // 8 faces
 let createOctahedron = () => {
-  let p1 = [-a, 0, a, 0];
-  let p2 = [a, 0, a, 0];
-  let p3 = [a, 0, -a, 0];
-  let p4 = [-a, 0, -a, 0];
-  let p5 = [0, a * Math.SQRT2, 0, 0];
-  let p6 = [0, -a * Math.SQRT2, 0, 0];
+  let p1: Number4 = [-a, 0, a, 0];
+  let p2: Number4 = [a, 0, a, 0];
+  let p3: Number4 = [a, 0, -a, 0];
+  let p4: Number4 = [-a, 0, -a, 0];
+  let p5: Number4 = [0, a * Math.SQRT2, 0, 0];
+  let p6: Number4 = [0, -a * Math.SQRT2, 0, 0];
 
   return [
-    { position: p1, velocity: p2, arm: p5 },
-    { position: p2, velocity: p3, arm: p5 },
-    { position: p3, velocity: p4, arm: p5 },
-    { position: p4, velocity: p1, arm: p5 },
-    { position: p1, velocity: p2, arm: p6 },
-    { position: p2, velocity: p3, arm: p6 },
-    { position: p3, velocity: p4, arm: p6 },
-    { position: p4, velocity: p1, arm: p6 },
+    makeCell(p1, p2, p5),
+    makeCell(p2, p3, p5),
+    makeCell(p3, p4, p5),
+    makeCell(p4, p1, p5),
+    makeCell(p1, p2, p6),
+    makeCell(p2, p3, p6),
+    makeCell(p3, p4, p6),
+    makeCell(p4, p1, p6),
   ] as Cell[];
 };
 
@@ -96,8 +95,8 @@ let createCone = () => {
     let p2: Number4 = [r * Math.cos(angleNext), r * Math.sin(angleNext), 0, 0];
     let p3: Number4 = [0, 0, h, 0];
     let p4: Number4 = [0, 0, -0.1, 0];
-    cells.push({ position: p1, velocity: p2, arm: p3 });
-    cells.push({ position: p1, velocity: p2, arm: p4 });
+    cells.push(makeCell(p1, p2, p3));
+    cells.push(makeCell(p1, p2, p4));
   });
 
   return cells;
@@ -112,12 +111,7 @@ let createAngle = () => {
   let p5: Number4 = [ratio * a, -a, a, 0];
   let p6: Number4 = [ratio * a, a, a, 0];
 
-  return [
-    { position: p1, velocity: p2, arm: p3 },
-    { position: p2, velocity: p3, arm: p4 },
-    { position: p1, velocity: p2, arm: p5 },
-    { position: p2, velocity: p5, arm: p6 },
-  ] as Cell[];
+  return [makeCell(p1, p2, p3), makeCell(p2, p3, p4), makeCell(p1, p2, p5), makeCell(p2, p5, p6)] as Cell[];
 };
 
 // 12 faces, 20 vertices, according to https://en.wikipedia.org/wiki/Regular_dodecahedron
@@ -156,99 +150,99 @@ let createRegularDodecahedron = () => {
   return [
     /// 1st
     // 1 9 2
-    { position: p1, velocity: p9, arm: p2 },
+    makeCell(p1, p9, p2),
     // 1 2 12
-    { position: p1, velocity: p2, arm: p12 },
+    makeCell(p1, p2, p12),
     // 2 11 12
-    { position: p2, velocity: p11, arm: p12 },
+    makeCell(p2, p11, p12),
 
     /// 2nd
     // 1 5 15
-    { position: p1, velocity: p5, arm: p15 },
+    makeCell(p1, p5, p15),
     // 1 9 10
-    { position: p1, velocity: p9, arm: p10 },
+    makeCell(p1, p9, p10),
     // 1 5 10
-    { position: p1, velocity: p5, arm: p10 },
+    makeCell(p1, p5, p10),
 
     /// 3rd
     // 9 10 2
-    { position: p9, velocity: p10, arm: p2 },
+    makeCell(p9, p10, p2),
     // 2 6 10
-    { position: p2, velocity: p6, arm: p10 },
+    makeCell(p2, p6, p10),
     // 2 6 17
-    { position: p2, velocity: p6, arm: p17 },
+    makeCell(p2, p6, p17),
 
     /// 4th
     // 2 3 17
-    { position: p2, velocity: p3, arm: p17 },
+    makeCell(p2, p3, p17),
     // 3 17 18
-    { position: p3, velocity: p17, arm: p18 },
+    makeCell(p3, p17, p18),
     // 2 3 11
-    { position: p2, velocity: p3, arm: p11 },
+    makeCell(p2, p3, p11),
 
     /// 5th
     // 3 11 12
-    { position: p3, velocity: p11, arm: p12 },
+    makeCell(p3, p11, p12),
     // 3 4 12
-    { position: p3, velocity: p4, arm: p12 },
+    makeCell(p3, p4, p12),
     // 3 4 13
-    { position: p3, velocity: p4, arm: p13 },
+    makeCell(p3, p4, p13),
 
     /// 6th
     // 1 4 12
-    { position: p1, velocity: p4, arm: p12 },
+    makeCell(p1, p4, p12),
     // 1 4 16
-    { position: p1, velocity: p4, arm: p16 },
+    makeCell(p1, p4, p16),
     // 1 15 16
-    { position: p1, velocity: p15, arm: p16 },
+    makeCell(p1, p15, p16),
 
     /// 7th
     // 7 8 14
-    { position: p7, velocity: p8, arm: p14 },
+    makeCell(p7, p8, p14),
     // 7 8 19
-    { position: p7, velocity: p8, arm: p19 },
+    makeCell(p7, p8, p19),
     // 8 19 20
-    { position: p8, velocity: p19, arm: p20 },
+    makeCell(p8, p19, p20),
 
     /// 8th
     // 8 14 16
-    { position: p8, velocity: p14, arm: p16 },
+    makeCell(p8, p14, p16),
     // 14 16 4
-    { position: p14, velocity: p16, arm: p4 },
+    makeCell(p14, p16, p4),
     // 13 14 4
-    { position: p13, velocity: p14, arm: p4 },
+    makeCell(p13, p14, p4),
 
     /// 9th
     // 13 14 7
-    { position: p13, velocity: p14, arm: p7 },
+    makeCell(p13, p14, p7),
     // 7 13 3
-    { position: p7, velocity: p13, arm: p3 },
+    makeCell(p7, p13, p3),
     // 3 7 18
-    { position: p3, velocity: p7, arm: p18 },
+    makeCell(p3, p7, p18),
 
     /// 10th
     // 6 7 19
-    { position: p6, velocity: p7, arm: p19 },
+    makeCell(p6, p7, p19),
     // 6 7 17
-    { position: p6, velocity: p7, arm: p17 },
+    makeCell(p6, p7, p17),
     // 7 17 18
-    { position: p7, velocity: p17, arm: p18 },
+    makeCell(p7, p17, p18),
 
     /// 11th
     // 6 19 20
-    { position: p6, velocity: p19, arm: p20 },
+    makeCell(p6, p19, p20),
     // 6 10 20
-    { position: p6, velocity: p10, arm: p20 },
+    makeCell(p6, p10, p20),
     // 5 10 20
-    { position: p5, velocity: p10, arm: p20 },
+    makeCell(p5, p10, p20),
 
     /// 12th
     // 5 8 20
-    { position: p5, velocity: p8, arm: p20 },
+    makeCell(p5, p8, p20),
     // 5 8 16
-    { position: p5, velocity: p8, arm: p16 },
+    makeCell(p5, p8, p16),
     // 5 15 16
-    { position: p5, velocity: p15, arm: p16 },
+    makeCell(p5, p15, p16),
   ] as Cell[];
 };
 
@@ -273,41 +267,41 @@ let createRegularIcosahedron = () => {
 
   let a12: Number4 = scaled([-1, 0, 0, 0], a);
   return [
-    { position: a1, velocity: a2, arm: a3 },
-    { position: a1, velocity: a3, arm: a4 },
-    { position: a1, velocity: a4, arm: a5 },
-    { position: a1, velocity: a5, arm: a6 },
-    { position: a1, velocity: a6, arm: a2 },
+    makeCell(a1, a2, a3),
+    makeCell(a1, a3, a4),
+    makeCell(a1, a4, a5),
+    makeCell(a1, a5, a6),
+    makeCell(a1, a6, a2),
 
-    { position: a2, velocity: a3, arm: a8 },
-    { position: a3, velocity: a4, arm: a7 },
-    { position: a4, velocity: a5, arm: a11 },
-    { position: a5, velocity: a6, arm: a10 },
-    { position: a6, velocity: a2, arm: a9 },
+    makeCell(a2, a3, a8),
+    makeCell(a3, a4, a7),
+    makeCell(a4, a5, a11),
+    makeCell(a5, a6, a10),
+    makeCell(a6, a2, a9),
 
-    { position: a7, velocity: a8, arm: a3 },
-    { position: a8, velocity: a9, arm: a2 },
-    { position: a9, velocity: a10, arm: a6 },
-    { position: a10, velocity: a11, arm: a5 },
-    { position: a11, velocity: a7, arm: a4 },
+    makeCell(a7, a8, a3),
+    makeCell(a8, a9, a2),
+    makeCell(a9, a10, a6),
+    makeCell(a10, a11, a5),
+    makeCell(a11, a7, a4),
 
-    { position: a7, velocity: a12, arm: a8 },
-    { position: a8, velocity: a12, arm: a9 },
-    { position: a9, velocity: a12, arm: a10 },
-    { position: a10, velocity: a12, arm: a11 },
-    { position: a11, velocity: a12, arm: a7 },
+    makeCell(a7, a12, a8),
+    makeCell(a8, a12, a9),
+    makeCell(a9, a12, a10),
+    makeCell(a10, a12, a11),
+    makeCell(a11, a12, a7),
   ] as Cell[];
 };
 
 export const surroundMirrorConfigs: SolubleApp = {
   initPointsBuffer: () => {
     // let items = createOctahedron();
-    // let items = createCube();
+    let items = createCube();
     // let items = createCone();
     // let items = createAngle();
     // let items = createRegularIcosahedron();
     // let items = createRegularTetrahedron();
-    let items = createRegularDodecahedron();
+    // let items = createRegularDodecahedron();
 
     createGlobalPointsBuffer(items.length, (idx) => items[idx]);
   },
