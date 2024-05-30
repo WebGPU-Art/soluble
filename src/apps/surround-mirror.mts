@@ -299,10 +299,10 @@ export const surroundMirrorConfigs: SolubleApp = {
   initPointsBuffer: () => {
     // let items = createOctahedron();
     // let items = createCube();
-    // let items = createCone();
+    let items = createCone();
     // let items = createAngle();
     // let items = createRegularIcosahedron();
-    let items = createRegularTetrahedron();
+    // let items = createRegularTetrahedron();
     // let items = createRegularDodecahedron();
 
     createGlobalPointsBuffer(items.length, (idx) => items[idx]);
@@ -314,6 +314,6 @@ export const surroundMirrorConfigs: SolubleApp = {
     return [performance.now() - store.startedAt];
   },
   getTextures: (obj) => {
-    return [obj["pigment"]].filter(Boolean);
+    return [obj["bubbles"]].filter(Boolean);
   },
 };

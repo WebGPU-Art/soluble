@@ -183,7 +183,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   let image_y = vec3f(0., 1., 0.);
   let image_x = rotate_vec3(vec3f(1., 0., 0.), image_center, image_y, angle);
   let image_z = rotate_vec3(vec3f(0., 0., 1.), image_center, image_y, angle);
-  let image_radius = 120.0; // but rect
+  let image_radius = 160.0; // but rect
 
 
   var current_viewer = uniforms.viewer_position;

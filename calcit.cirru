@@ -996,8 +996,12 @@
                       |D $ %{} :Leaf (:at 1713891011862) (:by |rJG4IHzWf) (:text |if)
                       |L $ %{} :Expr (:at 1713891012743) (:by |rJG4IHzWf)
                         :data $ {}
-                          |T $ %{} :Leaf (:at 1713891014468) (:by |rJG4IHzWf) (:text |=)
-                          |X $ %{} :Leaf (:at 1713891462583) (:by |rJG4IHzWf) (:text |:image)
+                          |T $ %{} :Leaf (:at 1717002602380) (:by |rJG4IHzWf) (:text |contains?)
+                          |X $ %{} :Expr (:at 1717002636220) (:by |rJG4IHzWf)
+                            :data $ {}
+                              |T $ %{} :Leaf (:at 1717002638887) (:by |rJG4IHzWf) (:text |#{})
+                              |b $ %{} :Leaf (:at 1717002639327) (:by |rJG4IHzWf) (:text |:image)
+                              |h $ %{} :Leaf (:at 1717002642048) (:by |rJG4IHzWf) (:text |:surround-mirror)
                           |b $ %{} :Expr (:at 1713891032978) (:by |rJG4IHzWf)
                             :data $ {}
                               |D $ %{} :Leaf (:at 1713891036901) (:by |rJG4IHzWf) (:text |->)
