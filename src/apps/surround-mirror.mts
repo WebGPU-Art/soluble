@@ -102,6 +102,17 @@ let createCone = () => {
   return cells;
 };
 
+let createAwl = () => {
+  let a = 40;
+  let d = 200;
+  let SQRT_3 = Math.sqrt(3);
+  let p0: Number4 = [0, 0, -d, 0];
+  let p1: Number4 = [0, a, d, 0];
+  let p2: Number4 = [a * SQRT_3 * 0.5, -0.5 * a, d, 0];
+  let p3: Number4 = [-a * SQRT_3 * 0.5, -0.5 * a, d, 0];
+  return [makeCell(p0, p1, p2), makeCell(p0, p1, p3), makeCell(p0, p2, p3)] as Cell[];
+};
+
 let createAngle = () => {
   let a = 400;
   let ratio = 0.6;
@@ -299,7 +310,8 @@ export const surroundMirrorConfigs: SolubleApp = {
   initPointsBuffer: () => {
     // let items = createOctahedron();
     // let items = createCube();
-    let items = createCone();
+    // let items = createCone();
+    let items = createAwl();
     // let items = createAngle();
     // let items = createRegularIcosahedron();
     // let items = createRegularTetrahedron();

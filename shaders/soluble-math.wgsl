@@ -54,4 +54,5 @@ fn rotate_vec3(v: vec3<f32>, center: vec3<f32>, axis: vec3<f32>, angle: f32) -> 
   let a_perp = a - a_along_axis;
   let a_next = a_perp * cos(angle) + normalize(cross(axis, a_perp)) * length(a_perp) * sin(angle) + a_along_axis;
   return a_next;
+  // return v;
 }

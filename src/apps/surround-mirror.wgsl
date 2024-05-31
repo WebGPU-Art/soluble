@@ -124,7 +124,7 @@ fn try_reflect_ray_with_mirror(viewer_position: vec3f, ray_unit: vec3f, mirror: 
   if viewer_side * ray_side < 0.0 {
     return RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 0.0, vec3<f32>(0.0, 0.0, 0.0));
   }
-  if t < 1.0 {
+  if t < 0.0001 {
     return RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 0.0, vec3<f32>(0.0, 0.0, 0.0));
   }
 
@@ -160,7 +160,7 @@ fn vertex_main(
 }
 
 /// maximum number of reflections
-const max_relect_times = 8u;
+const max_relect_times = 20u;
 
 
 @fragment
@@ -179,11 +179,11 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   let angle = params.time * 0.0008;
 
-  let image_center = vec3f(0., 0., 0.);
+  let image_center = vec3f(20. * cos(angle * 0.7), 20. * sin(angle * 0.7), -120.);
   let image_y = vec3f(0., 1., 0.);
   let image_x = rotate_vec3(vec3f(1., 0., 0.), image_center, image_y, angle);
   let image_z = rotate_vec3(vec3f(0., 0., 1.), image_center, image_y, angle);
-  let image_radius = 160.0; // but rect
+  let image_radius = 40.0; // but rect
 
 
   var current_viewer = uniforms.viewer_position;
@@ -194,22 +194,6 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   var hit_image = false;
 
   for (var times = 0u; times < max_relect_times + 1u; times++) {
-
-    let view_to_image = image_center - current_viewer;
-    if dot(view_to_image, current_ray_unit) > 0. { // backface culling
-      // let view_to_image_unit = normalize(view_to_image);
-      let view_to_image_surface_distance = dot(image_z, view_to_image);
-      let view_hit_image_length = view_to_image_surface_distance / dot(image_z, current_ray_unit);
-      let hit_image_surface = current_viewer + view_hit_image_length * current_ray_unit - image_center;
-      let hit_image_surface_x = dot(hit_image_surface, image_x);
-      let hit_image_surface_y = dot(hit_image_surface, image_y);
-      let image_coord = vec2f(hit_image_surface_x, hit_image_surface_y) / image_radius;
-      if abs(image_coord.x) < 1.0 && abs(image_coord.y) < 1.0 {
-        hit_image = true;
-        hit_image_at = image_coord * 0.5 + 0.5;
-        break;
-      }
-    }
 
     var hit_mirror = false;
     var nearest = RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 1000000., vec3<f32>(0.0, 0.0, 0.0));
@@ -230,14 +214,34 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
       }
     }
 
+    let view_to_image = image_center - current_viewer;
+    if dot(view_to_image, current_ray_unit) > 0. { // backface culling
+      // let view_to_image_unit = normalize(view_to_image);
+      let view_to_image_surface_distance = dot(image_z, view_to_image);
+      let view_hit_image_length = view_to_image_surface_distance / dot(image_z, current_ray_unit);
+      let hit_image_surface = current_viewer + view_hit_image_length * current_ray_unit - image_center;
+      let hit_image_surface_x = dot(hit_image_surface, image_x);
+      let hit_image_surface_y = dot(hit_image_surface, image_y);
+      let image_coord = vec2f(hit_image_surface_x, hit_image_surface_y) / image_radius;
+      if abs(image_coord.x) < 1.0 && abs(image_coord.y) < 1.0 {
+        if view_hit_image_length < nearest.travel { // image is closer than mirror
+          hit_image = true;
+          hit_image_at = image_coord * 0.5 + 0.5;
+          break;
+        }
+      }
+    }
+
     if hit_mirror {
-      total_color += vec4<f32>(0.02, 0.01, .04, 0.) ;
+      total_color += vec4<f32>(0.01, 0.006, .02, 0.) ;
       current_viewer = nearest.point;
       current_ray_unit = nearest.next_ray_unit;
     } else {
       break;
     }
   }
+
+
 
   let img_pixel = textureSample(myTexture, mySampler, hit_image_at);
 
