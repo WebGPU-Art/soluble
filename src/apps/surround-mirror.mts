@@ -104,7 +104,7 @@ let createCone = () => {
 
 let createAwl = () => {
   let a = 40;
-  let d = 200;
+  let d = 160;
   let SQRT_3 = Math.sqrt(3);
   let p0: Number4 = [0, 0, -d, 0];
   let p1: Number4 = [0, a, d, 0];

@@ -50,9 +50,9 @@ fn is_outside_line(p: vec2f, p1: vec2f, p2: vec2f) -> bool {
 /// axis is luckily a unit vector
 fn rotate_vec3(v: vec3<f32>, center: vec3<f32>, axis: vec3<f32>, angle: f32) -> vec3<f32> {
   let a = v - center;
-  let a_along_axis = dot(a, axis);
+  let a_along_axis = dot(a, normalize(axis)) * axis;
   let a_perp = a - a_along_axis;
   let a_next = a_perp * cos(angle) + normalize(cross(axis, a_perp)) * length(a_perp) * sin(angle) + a_along_axis;
-  return a_next;
+  return a_next + center;
   // return v;
 }
