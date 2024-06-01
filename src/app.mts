@@ -13,6 +13,7 @@ import {} from "./apps/rings.mjs";
 import {} from "./apps/circles.mjs";
 import { rippleConfigs } from "./apps/ripple.mjs";
 import {} from "./apps/surround-mirror.mjs";
+import {} from "./apps/parallel-mirror.mjs";
 
 // const appConfigs = cubicFireConfigs;
 // const appConfigs = quaternionFractalConfigs;

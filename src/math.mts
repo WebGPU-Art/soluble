@@ -35,6 +35,7 @@ export const randBalance = (max: number) => {
 };
 
 export type Number4 = [number, number, number, number];
+export type Number2 = [number, number];
 
 export let normalize = (v: V4): V4 => {
   let len = Math.sqrt(sumSquares(v[0], v[1], v[2]));

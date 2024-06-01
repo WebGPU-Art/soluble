@@ -453,6 +453,12 @@
                       |b $ %{} :Leaf (:at 1716718542242) (:by |rJG4IHzWf) (:text |:surround-mirror)
                       |h $ %{} :Leaf (:at 1716718439892) (:by |rJG4IHzWf) (:text "|\"Surrond Mirror")
                       |l $ %{} :Leaf (:at 1712938641596) (:by |rJG4IHzWf) (:text |:dark)
+                  |zY $ %{} :Expr (:at 1712938631055) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1712938631792) (:by |rJG4IHzWf) (:text |::)
+                      |b $ %{} :Leaf (:at 1717259971868) (:by |rJG4IHzWf) (:text |:parallel-mirror)
+                      |h $ %{} :Leaf (:at 1717259976676) (:by |rJG4IHzWf) (:text "|\"Parallel Mirror")
+                      |l $ %{} :Leaf (:at 1712938641596) (:by |rJG4IHzWf) (:text |:dark)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ %{} :Expr (:at 1499755354983) (:by nil)
           :data $ {}
@@ -748,6 +754,10 @@
                     :data $ {}
                       |T $ %{} :Leaf (:at 1716718460954) (:by |rJG4IHzWf) (:text |:surround-mirror)
                       |b $ %{} :Leaf (:at 1716718476124) (:by |rJG4IHzWf) (:text |surroundMirrorConfigs)
+                  |zP $ %{} :Expr (:at 1716718449053) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1717260004166) (:by |rJG4IHzWf) (:text |:parallel-mirror)
+                      |b $ %{} :Leaf (:at 1717260007417) (:by |rJG4IHzWf) (:text |parallelMirrorConfigs)
         |load-textures! $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1713297574685) (:by |rJG4IHzWf)
             :data $ {}
@@ -1515,6 +1525,13 @@
                     |g $ %{} :Expr (:at 1714755629826) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1716718481604) (:by |rJG4IHzWf) (:text |surroundMirrorConfigs)
+                |zsz $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
+                  :data $ {}
+                    |T $ %{} :Leaf (:at 1717259994310) (:by |rJG4IHzWf) (:text "|\"../src/apps/parallel-mirror")
+                    |a $ %{} :Leaf (:at 1714755628974) (:by |rJG4IHzWf) (:text |:refer)
+                    |g $ %{} :Expr (:at 1714755629826) (:by |rJG4IHzWf)
+                      :data $ {}
+                        |T $ %{} :Leaf (:at 1717259997421) (:by |rJG4IHzWf) (:text |parallelMirrorConfigs)
                 |zt $ %{} :Expr (:at 1709657313552) (:by |rJG4IHzWf)
                   :data $ {}
                     |T $ %{} :Leaf (:at 1709657319126) (:by |rJG4IHzWf) (:text "|\"../src/global")
@@ -1542,7 +1559,7 @@
                             :data $ {}
                               |D $ %{} :Leaf (:at 1711260016101) (:by |rJG4IHzWf) (:text |get-env)
                               |L $ %{} :Leaf (:at 1711260020594) (:by |rJG4IHzWf) (:text "|\"tab")
-                              |T $ %{} :Leaf (:at 1716722001054) (:by |rJG4IHzWf) (:text "|\"surround-mirror")
+                              |T $ %{} :Leaf (:at 1717260156038) (:by |rJG4IHzWf) (:text "|\"parallel-mirror")
                   |j $ %{} :Expr (:at 1499755354983) (:by nil)
                     :data $ {}
                       |T $ %{} :Leaf (:at 1499755354983) (:by |root) (:text |:states)
