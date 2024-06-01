@@ -86,11 +86,22 @@ fn ray_closest_point_to_line(viewer_position: vec3f, ray_unit: vec3f, s: Segment
     /// smaller distance to segments ends
     let d_min = abs(dot(n0, a));
 
-    // let travel = d_min / dot(n0, ray_unit);
-    let travel = min(a_proj, b_proj); // very rough approximation
+    // let travel = min(a_proj, b_proj); // very rough approximation
+    let ab_unit = normalize(s.end - s.start);
+    let ac = (viewer_position - s.start);
+
+    let perp_reach: vec3f = dot(ac, n0) * n0;
+
+    /// tricky math to find out traveled distance before closest point
+    /// https://cos-sh.tiye.me/cos-up/342e0f6b7e3a7b1b4d18dad16cd84f79/IMG_20240601_113231.jpg
+    /// https://g.co/gemini/share/dbf766e185a7
+    let k = dot(
+      cross(s.start + perp_reach - viewer_position, ab_unit),
+      cross(ray_unit, ab_unit)
+    );
 
     let front = dot(a, ray_unit) >= 0.0 && dot(b, ray_unit) >= 0.0;
-    return RayReachSegment(d_min, front, travel);
+    return RayReachSegment(d_min, front, k);
   };
 }
 
@@ -201,12 +212,12 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   let image_radius = 40.0; // but rect
 
   let width = 20.;
-  let shift_z = 100.0;
+  let shift_z = 50.0;
 
-  let p1 = vec3f(-width, width, - shift_z);
-  let p2 = vec3f(width, width, - shift_z);
-  let p3 = vec3f(width, -width, - shift_z);
-  let p4 = vec3f(-width, -width, - shift_z);
+  let p1 = vec3f(width, .1, -shift_z);
+  let p2 = vec3f(.1, width, -shift_z);
+  let p3 = vec3f(-width, 0.1, -shift_z);
+  let p4 = vec3f(0.1, - width, -shift_z);
 
   let segments_size = 4u;
   let scale = 1.;
@@ -282,15 +293,15 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
       }
 
       let distance = reach.distance;
-        // let factor = (0.1 + exp(-traveled));
-        // if distance < 0.08 * (1. + pow(traveled * 0.3, 0.8)) && reach.positive_side {
-        //   return vec4<f32>(1.0, 0.8, 0.0, 1.0);
-        // }
-      total_color += vec4<f32>(1., 1., 0.02, 0.0) * .2 / pow(distance, 2.);
+      let factor = (0.1 + exp(-traveled));
+      // if distance < 0.2 && reach.positive_side {
+      //   total_color = vec4<f32>(1.0, 0.8, 0.0, 1.0);
+      // }
+      total_color += vec4<f32>(1., 1., 0.02, 0.0) * .1 / pow(0.1 + distance, 2.);
     }
 
     if hit_mirror {
-      total_color += vec4<f32>(0.01, 0.006, .02, 0.) ;
+      total_color += vec4<f32>(0.01, 0.006, .2, 0.) ;
       current_viewer = nearest.point;
       current_ray_unit = nearest.next_ray_unit;
     } else {
