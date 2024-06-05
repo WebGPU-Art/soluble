@@ -94,7 +94,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   let disableLens = params.disableLens > 0.5;
   if length(coord) < radius * 22.0 {
-    for (var i = 0u; i < 6u; i++) {
+    for (var i = 0u; i < 18u; i++) {
       let point_angle = atan2(coord.y, coord.x);
       let at_part = floor(point_angle / unit);
       let p1 = vec2(cos(at_part * unit), sin(at_part * unit)) * radius;

@@ -166,7 +166,8 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
       let n = cross(b - a, ray_unit);
 
       let n0 = normalize(n);
-      let d_min = abs(dot(n0, a));
+      // let d_min = abs(dot(n0, a));
+      let d_min = min(abs(dot(n0, a)), abs(dot(n0, b)));
 
       if d_min > 8.0 {
         // too far from ray, contribute no light

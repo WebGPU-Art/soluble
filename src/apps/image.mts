@@ -43,6 +43,6 @@ export const imageConfigs: SolubleApp = {
     return [store.disableLens, store.radius];
   },
   getTextures: (obj) => {
-    return [obj["tiye"], obj["candy"], obj["bubbles"], obj["rugs"]];
+    return [obj["tiye"], obj["candy"], obj["bubbles"], obj["rugs"], obj["pigment"], obj["stripes"]];
   },
 };

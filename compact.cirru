@@ -60,7 +60,7 @@
                 :color :white
         |tabs $ %{} :CodeEntry (:doc |)
           :code $ quote
-            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark) (:: :circles "\"Circles" :dark) (:: :kaleidoscope "\"Kaleidoscope" :dark) (:: :image "\"Image" :dark) (:: :clocking "\"Clocking" :dark) (:: :ripple "\"Ripple" :dark)
+            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark) (:: :circles "\"Circles" :dark) (:: :kaleidoscope "\"Kaleidoscope" :dark) (:: :image "\"Image" :dark) (:: :clocking "\"Clocking" :dark) (:: :ripple "\"Ripple" :dark) (:: :surround-mirror "\"Surrond Mirror" :dark) (:: :parallel-mirror "\"Parallel Mirror" :dark)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
           ns app.comp.container $ :require (respo-ui.css :as css)
@@ -128,6 +128,8 @@
                 :clocking clockingConfigs
                 :image imageConfigs
                 :ripple rippleConfigs
+                :surround-mirror surroundMirrorConfigs
+                :parallel-mirror parallelMirrorConfigs
         |load-textures! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn load-textures! (device) (hint-fn async)
@@ -136,10 +138,14 @@
                   img-candy $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/c7367e21405d602c5ef5a8c55c35d512/candy.jpeg"
                   img-bubbles $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/20b39957d952bd189e4253369db30335/pasted-2024-04-17T17:00:49.301Z.png"
                   img-rugs $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/ceec218462f81744323e22dd2d04e94b/pasted-2024-04-17T17:12:29.234Z.png"
+                  img-pigment $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/4a932a1d8eaf46b4d9d8ec07538e8ee1/pigment.jpg"
+                  img-stripes $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/d090a685f03af9d31988a2a92b3b8a19/stripes.jpg"
                 js-set (.!deref solublejs/atomSharedTextures) "\"tiye" $ js-await img-tiye
                 js-set (.!deref solublejs/atomSharedTextures) "\"candy" $ js-await img-candy
                 js-set (.!deref solublejs/atomSharedTextures) "\"bubbles" $ js-await img-bubbles
                 js-set (.!deref solublejs/atomSharedTextures) "\"rugs" $ js-await img-rugs
+                js-set (.!deref solublejs/atomSharedTextures) "\"stripes" $ js-await img-stripes
+                js-set (.!deref solublejs/atomSharedTextures) "\"pigment" $ js-await img-pigment
         |loop-paint! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn loop-paint! () (solublejs/callFramePaint)
@@ -157,7 +163,7 @@
               let
                   ret $ js-await (solublejs/initializeContext)
                 if
-                  = :image $ -> @*reel :store :tab
+                  contains? (#{} :image :surround-mirror) (-> @*reel :store :tab)
                   js-await $ load-textures! (.-device ret)
                   do
                     load-textures! $ .-device ret
@@ -175,7 +181,7 @@
               js/window.addEventListener |beforeunload $ fn (event) (persist-storage!)
               js/window.addEventListener |visibilitychange $ fn (event)
                 if (= "\"hidden" js/document.visibilityState) (persist-storage!)
-              flipped js/setInterval 60000 persist-storage!
+              ; flipped js/setInterval 60000 persist-storage!
               ; let
                   raw $ js/localStorage.getItem (:storage-key config/site)
                 when (some? raw)
@@ -238,13 +244,15 @@
             "\"../src/apps/circles" :as circles
             "\"../src/apps/clocking" :refer $ clockingConfigs
             "\"../src/apps/ripple" :refer $ rippleConfigs
+            "\"../src/apps/surround-mirror" :refer $ surroundMirrorConfigs
+            "\"../src/apps/parallel-mirror" :refer $ parallelMirrorConfigs
             "\"../src/global" :refer $ atomSolubleTree
     |app.schema $ %{} :FileEntry
       :defs $ {}
         |store $ %{} :CodeEntry (:doc |)
           :code $ quote
             def store $ {}
-              :tab $ turn-tag (get-env "\"tab" "\"ripple")
+              :tab $ turn-tag (get-env "\"tab" "\"parallel-mirror")
               :states $ {}
                 :cursor $ []
       :ns $ %{} :CodeEntry (:doc |)

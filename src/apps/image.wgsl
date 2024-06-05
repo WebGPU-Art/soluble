@@ -34,6 +34,8 @@ struct BaseCell {
 @group(2) @binding(2) var image2 : texture_2d<f32>;
 @group(2) @binding(3) var image_bubbles : texture_2d<f32>;
 @group(2) @binding(4) var image_rugs : texture_2d<f32>;
+@group(2) @binding(5) var image_pigment : texture_2d<f32>;
+@group(2) @binding(6) var image_stripes : texture_2d<f32>;
 
 @compute @workgroup_size(8, 8, 1)
 fn compute_main(@builtin(global_invocation_id) global_id: vec3u) {}
@@ -74,7 +76,8 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
     // divide circle by 6 segments
   // let parts = 2.286;
-  let parts = 2.333;
+  // let parts = 2.333;
+  let parts = 2. + 1. / 4.;
 
     // radius of the circle containing the shape
   let radius = 800.;
@@ -144,11 +147,15 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   let pixel2 = textureSample(image2, mySampler, small_coord - vec2f(1., 1.));
   let pixel3 = textureSample(image_bubbles, mySampler, small_coord - vec2f(1., 0.));
   let pixel4 = textureSample(image_rugs, mySampler, small_coord - vec2f(0., 1.));
+  let pixel5 = textureSample(image_pigment, mySampler, small_coord - vec2f(2., 0.));
+  let pixel6 = textureSample(image_stripes, mySampler, small_coord - vec2f(2., 1.));
 
   let inside_image = small_coord.x > 0.0 && small_coord.y > 0. && small_coord.x < 1. && small_coord.y < 1.;
   let inside_image2 = small_coord.x > 1.0 && small_coord.y > 1. && small_coord.x < 2. && small_coord.y < 2.;
   let inside_image3 = small_coord.x > 1.0 && small_coord.y > 0. && small_coord.x < 2. && small_coord.y < 1.;
   let inside_image4 = small_coord.x > 0.0 && small_coord.y > 1. && small_coord.x < 1. && small_coord.y < 2.;
+  let inside_image5 = small_coord.x > 2.0 && small_coord.y > 0. && small_coord.x < 3. && small_coord.y < 1.;
+  let inside_image6 = small_coord.x > 2.0 && small_coord.y > 1. && small_coord.x < 3. && small_coord.y < 2.;
 
   if disableLens {
     if inside_image {
@@ -159,6 +166,10 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
       return pixel3 * opacity;
     } else if inside_image4 {
       return pixel4 * opacity;
+    } else if inside_image5 {
+      return pixel5 * opacity;
+    } else if inside_image6 {
+      return pixel6 * opacity;
     } else {
       return  vec4(0.2, 0.2, 0.2, 1.0) * opacity;
     }
@@ -172,6 +183,10 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     return pixel3;
   } else if inside_image4 {
     return pixel4;
+  } else if inside_image5 {
+    return pixel5;
+  } else if inside_image6 {
+    return pixel6;
   } else {
     return vec4(0.0, 0.0, 0.0, 0.0);
   }

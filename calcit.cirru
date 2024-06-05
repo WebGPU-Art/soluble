@@ -447,6 +447,18 @@
                       |b $ %{} :Leaf (:at 1714883742296) (:by |rJG4IHzWf) (:text |:ripple)
                       |h $ %{} :Leaf (:at 1714883746119) (:by |rJG4IHzWf) (:text "|\"Ripple")
                       |l $ %{} :Leaf (:at 1712938641596) (:by |rJG4IHzWf) (:text |:dark)
+                  |zP $ %{} :Expr (:at 1712938631055) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1712938631792) (:by |rJG4IHzWf) (:text |::)
+                      |b $ %{} :Leaf (:at 1716718542242) (:by |rJG4IHzWf) (:text |:surround-mirror)
+                      |h $ %{} :Leaf (:at 1716718439892) (:by |rJG4IHzWf) (:text "|\"Surrond Mirror")
+                      |l $ %{} :Leaf (:at 1712938641596) (:by |rJG4IHzWf) (:text |:dark)
+                  |zY $ %{} :Expr (:at 1712938631055) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1712938631792) (:by |rJG4IHzWf) (:text |::)
+                      |b $ %{} :Leaf (:at 1717259971868) (:by |rJG4IHzWf) (:text |:parallel-mirror)
+                      |h $ %{} :Leaf (:at 1717259976676) (:by |rJG4IHzWf) (:text "|\"Parallel Mirror")
+                      |l $ %{} :Leaf (:at 1712938641596) (:by |rJG4IHzWf) (:text |:dark)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ %{} :Expr (:at 1499755354983) (:by nil)
           :data $ {}
@@ -738,6 +750,14 @@
                     :data $ {}
                       |T $ %{} :Leaf (:at 1714883754487) (:by |rJG4IHzWf) (:text |:ripple)
                       |b $ %{} :Leaf (:at 1714883759093) (:by |rJG4IHzWf) (:text |rippleConfigs)
+                  |zD $ %{} :Expr (:at 1716718449053) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1716718460954) (:by |rJG4IHzWf) (:text |:surround-mirror)
+                      |b $ %{} :Leaf (:at 1716718476124) (:by |rJG4IHzWf) (:text |surroundMirrorConfigs)
+                  |zP $ %{} :Expr (:at 1716718449053) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1717260004166) (:by |rJG4IHzWf) (:text |:parallel-mirror)
+                      |b $ %{} :Leaf (:at 1717260007417) (:by |rJG4IHzWf) (:text |parallelMirrorConfigs)
         |load-textures! $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1713297574685) (:by |rJG4IHzWf)
             :data $ {}
@@ -787,6 +807,22 @@
                               |T $ %{} :Leaf (:at 1713891217583) (:by |rJG4IHzWf) (:text |solublejs/loadImageAsTexture)
                               |b $ %{} :Leaf (:at 1713891217583) (:by |rJG4IHzWf) (:text |device)
                               |h $ %{} :Leaf (:at 1713891217583) (:by |rJG4IHzWf) (:text "|\"https://cos-sh.tiye.me/cos-up/ceec218462f81744323e22dd2d04e94b/pasted-2024-04-17T17:12:29.234Z.png")
+                      |o $ %{} :Expr (:at 1713891216868) (:by |rJG4IHzWf)
+                        :data $ {}
+                          |T $ %{} :Leaf (:at 1716576676907) (:by |rJG4IHzWf) (:text |img-pigment)
+                          |b $ %{} :Expr (:at 1713891217583) (:by |rJG4IHzWf)
+                            :data $ {}
+                              |T $ %{} :Leaf (:at 1713891217583) (:by |rJG4IHzWf) (:text |solublejs/loadImageAsTexture)
+                              |b $ %{} :Leaf (:at 1713891217583) (:by |rJG4IHzWf) (:text |device)
+                              |h $ %{} :Leaf (:at 1716576679983) (:by |rJG4IHzWf) (:text "|\"https://cos-sh.tiye.me/cos-up/4a932a1d8eaf46b4d9d8ec07538e8ee1/pigment.jpg")
+                      |q $ %{} :Expr (:at 1713891216868) (:by |rJG4IHzWf)
+                        :data $ {}
+                          |T $ %{} :Leaf (:at 1716576687847) (:by |rJG4IHzWf) (:text |img-stripes)
+                          |b $ %{} :Expr (:at 1713891217583) (:by |rJG4IHzWf)
+                            :data $ {}
+                              |T $ %{} :Leaf (:at 1713891217583) (:by |rJG4IHzWf) (:text |solublejs/loadImageAsTexture)
+                              |b $ %{} :Leaf (:at 1713891217583) (:by |rJG4IHzWf) (:text |device)
+                              |h $ %{} :Leaf (:at 1716576689869) (:by |rJG4IHzWf) (:text "|\"https://cos-sh.tiye.me/cos-up/d090a685f03af9d31988a2a92b3b8a19/stripes.jpg")
                   |T $ %{} :Expr (:at 1713297765380) (:by |rJG4IHzWf)
                     :data $ {}
                       |D $ %{} :Leaf (:at 1713297784829) (:by |rJG4IHzWf) (:text |js-set)
@@ -835,6 +871,30 @@
                         :data $ {}
                           |T $ %{} :Leaf (:at 1713891224558) (:by |rJG4IHzWf) (:text |js-await)
                           |b $ %{} :Leaf (:at 1713891224558) (:by |rJG4IHzWf) (:text |img-rugs)
+                  |o $ %{} :Expr (:at 1713891224558) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1713891224558) (:by |rJG4IHzWf) (:text |js-set)
+                      |b $ %{} :Expr (:at 1713891224558) (:by |rJG4IHzWf)
+                        :data $ {}
+                          |T $ %{} :Leaf (:at 1713891224558) (:by |rJG4IHzWf) (:text |.!deref)
+                          |b $ %{} :Leaf (:at 1713891224558) (:by |rJG4IHzWf) (:text |solublejs/atomSharedTextures)
+                      |h $ %{} :Leaf (:at 1716576704541) (:by |rJG4IHzWf) (:text "|\"stripes")
+                      |l $ %{} :Expr (:at 1713891224558) (:by |rJG4IHzWf)
+                        :data $ {}
+                          |T $ %{} :Leaf (:at 1713891224558) (:by |rJG4IHzWf) (:text |js-await)
+                          |b $ %{} :Leaf (:at 1716576701153) (:by |rJG4IHzWf) (:text |img-stripes)
+                  |q $ %{} :Expr (:at 1713891224558) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1713891224558) (:by |rJG4IHzWf) (:text |js-set)
+                      |b $ %{} :Expr (:at 1713891224558) (:by |rJG4IHzWf)
+                        :data $ {}
+                          |T $ %{} :Leaf (:at 1713891224558) (:by |rJG4IHzWf) (:text |.!deref)
+                          |b $ %{} :Leaf (:at 1713891224558) (:by |rJG4IHzWf) (:text |solublejs/atomSharedTextures)
+                      |h $ %{} :Leaf (:at 1716576716738) (:by |rJG4IHzWf) (:text "|\"pigment")
+                      |l $ %{} :Expr (:at 1713891224558) (:by |rJG4IHzWf)
+                        :data $ {}
+                          |T $ %{} :Leaf (:at 1713891224558) (:by |rJG4IHzWf) (:text |js-await)
+                          |b $ %{} :Leaf (:at 1716576713661) (:by |rJG4IHzWf) (:text |img-pigment)
         |loop-paint! $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1699464116175) (:by |rJG4IHzWf)
             :data $ {}
@@ -946,8 +1006,12 @@
                       |D $ %{} :Leaf (:at 1713891011862) (:by |rJG4IHzWf) (:text |if)
                       |L $ %{} :Expr (:at 1713891012743) (:by |rJG4IHzWf)
                         :data $ {}
-                          |T $ %{} :Leaf (:at 1713891014468) (:by |rJG4IHzWf) (:text |=)
-                          |X $ %{} :Leaf (:at 1713891462583) (:by |rJG4IHzWf) (:text |:image)
+                          |T $ %{} :Leaf (:at 1717002602380) (:by |rJG4IHzWf) (:text |contains?)
+                          |X $ %{} :Expr (:at 1717002636220) (:by |rJG4IHzWf)
+                            :data $ {}
+                              |T $ %{} :Leaf (:at 1717002638887) (:by |rJG4IHzWf) (:text |#{})
+                              |b $ %{} :Leaf (:at 1717002639327) (:by |rJG4IHzWf) (:text |:image)
+                              |h $ %{} :Leaf (:at 1717002642048) (:by |rJG4IHzWf) (:text |:surround-mirror)
                           |b $ %{} :Expr (:at 1713891032978) (:by |rJG4IHzWf)
                             :data $ {}
                               |D $ %{} :Leaf (:at 1713891036901) (:by |rJG4IHzWf) (:text |->)
@@ -1084,6 +1148,7 @@
                               |T $ %{} :Leaf (:at 1533919515671) (:by |rJG4IHzWf) (:text |persist-storage!)
               |yO $ %{} :Expr (:at 1646150039456) (:by |rJG4IHzWf)
                 :data $ {}
+                  |5 $ %{} :Leaf (:at 1716718960690) (:by |rJG4IHzWf) (:text |;)
                   |D $ %{} :Leaf (:at 1646150045747) (:by |rJG4IHzWf) (:text |flipped)
                   |T $ %{} :Leaf (:at 1646150042154) (:by |rJG4IHzWf) (:text |js/setInterval)
                   |b $ %{} :Leaf (:at 1646150175987) (:by |rJG4IHzWf) (:text |60000)
@@ -1453,6 +1518,20 @@
                     |g $ %{} :Expr (:at 1714755629826) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1714883764074) (:by |rJG4IHzWf) (:text |rippleConfigs)
+                |zsy $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
+                  :data $ {}
+                    |T $ %{} :Leaf (:at 1716718499573) (:by |rJG4IHzWf) (:text "|\"../src/apps/surround-mirror")
+                    |a $ %{} :Leaf (:at 1714755628974) (:by |rJG4IHzWf) (:text |:refer)
+                    |g $ %{} :Expr (:at 1714755629826) (:by |rJG4IHzWf)
+                      :data $ {}
+                        |T $ %{} :Leaf (:at 1716718481604) (:by |rJG4IHzWf) (:text |surroundMirrorConfigs)
+                |zsz $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
+                  :data $ {}
+                    |T $ %{} :Leaf (:at 1717259994310) (:by |rJG4IHzWf) (:text "|\"../src/apps/parallel-mirror")
+                    |a $ %{} :Leaf (:at 1714755628974) (:by |rJG4IHzWf) (:text |:refer)
+                    |g $ %{} :Expr (:at 1714755629826) (:by |rJG4IHzWf)
+                      :data $ {}
+                        |T $ %{} :Leaf (:at 1717259997421) (:by |rJG4IHzWf) (:text |parallelMirrorConfigs)
                 |zt $ %{} :Expr (:at 1709657313552) (:by |rJG4IHzWf)
                   :data $ {}
                     |T $ %{} :Leaf (:at 1709657319126) (:by |rJG4IHzWf) (:text "|\"../src/global")
@@ -1480,7 +1559,7 @@
                             :data $ {}
                               |D $ %{} :Leaf (:at 1711260016101) (:by |rJG4IHzWf) (:text |get-env)
                               |L $ %{} :Leaf (:at 1711260020594) (:by |rJG4IHzWf) (:text "|\"tab")
-                              |T $ %{} :Leaf (:at 1714883775787) (:by |rJG4IHzWf) (:text "|\"ripple")
+                              |T $ %{} :Leaf (:at 1717260156038) (:by |rJG4IHzWf) (:text "|\"parallel-mirror")
                   |j $ %{} :Expr (:at 1499755354983) (:by nil)
                     :data $ {}
                       |T $ %{} :Leaf (:at 1499755354983) (:by |root) (:text |:states)
