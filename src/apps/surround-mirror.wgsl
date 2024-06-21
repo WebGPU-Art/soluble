@@ -161,7 +161,7 @@ fn try_reflect_ray_with_mirror(viewer_position: vec3f, ray_unit: vec3f, mirror: 
 
   if inside {
     let reflection = reflect_on_direction(ray_unit, n);
-    return RayMirrorHit(true, hit_point, abs(t), reflection);
+    return RayMirrorHit(true, hit_point, t, reflection);
   } else {
     return RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), t, vec3<f32>(0.0, 0.0, 0.0));
   }
@@ -226,11 +226,13 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     Segment(scale * p2, scale * p3),
     Segment(scale * p3, scale * p4),
     Segment(scale * p4, scale * p1),
+    // Segment(vec3(0., 0., 100.), vec3(0., 0., -160.)),
   );
 
   var current_viewer = uniforms.viewer_position;
   var current_ray_unit = ray_unit;
   var traveled = 0.0;
+  var in_mirror = 0u;
 
   var hit_image_at = vec2<f32>(0.0, 0.0);
   var hit_image = false;
@@ -271,7 +273,6 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     //       break;
     //     }
     //   }
-
     // }
 
     let t = params.time * 0.0008;
@@ -282,7 +283,9 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
       segment = move_segment(segment, vec3(10. * sin(t * 0.9), 10. * sin(t * 0.7), 10. * sin(t * 0.6)));
       let reach = ray_closest_point_to_line(current_viewer, current_ray_unit, segment);
 
-      if !reach.positive_side {
+      if !reach.positive_side && in_mirror < 1u {
+        // I wanted to reduce light from back of camera,
+        // however, it does not apply to in-mirror world
         continue;
       }
 
@@ -292,18 +295,23 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
         }
       }
 
-      let distance = reach.distance;
-      let factor = (0.1 + exp(-traveled));
+      // let distance = reach.distance;
+      // let factor = (0.1 + exp(-traveled));
       // if distance < 0.2 && reach.positive_side {
       //   total_color = vec4<f32>(1.0, 0.8, 0.0, 1.0);
       // }
-      total_color += vec4<f32>(1., 1., 0.02, 0.0) * .1 / pow(0.1 + distance, 2.);
+
+      let distance = max(0., reach.distance - 0.6);
+      let f = pow(f32(in_mirror) / 2. + 2.0, 3.);
+      total_color += vec4<f32>(0.01, 0.02, 0.01, 0.0) * 1.2 / pow(distance * 0.07 + 0.01, 1.8) / f;
+      total_color = min(total_color, vec4<f32>(0.4, 1.0, 0., 1.0));
     }
 
     if hit_mirror {
       total_color += vec4<f32>(0.01, 0.006, .2, 0.) ;
       current_viewer = nearest.point;
       current_ray_unit = nearest.next_ray_unit;
+      in_mirror += 1u;
     } else {
       break;
     }
