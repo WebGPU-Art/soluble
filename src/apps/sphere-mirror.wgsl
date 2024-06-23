@@ -22,6 +22,9 @@ struct BaseCell {
 
 @group(1) @binding(0) var<storage, read_write> base_points: array<BaseCell>;
 
+@group(2) @binding(0) var mySampler : sampler;
+@group(2) @binding(1) var myTexture : texture_2d<f32>;
+
 
 @compute @workgroup_size(8, 8, 1)
 fn compute_main(@builtin(global_invocation_id) global_id: vec3u) {
@@ -179,18 +182,15 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   var total_color = vec4<f32>(0.2, 0.0, 0.3, 1.0);
 
-  let shift_z = 8.0;
-
-  let m_base = 100.;
-  let m1 = vec3f(m_base * 2., m_base, 1. * shift_z);
-  let m2 = vec3f(-m_base * 2., m_base, 1. * shift_z);
-  let m3 = vec3f(m_base * 2., -m_base, 1. * shift_z);
-  let m4 = vec3f(-m_base * 2., -m_base, 1. * shift_z);
-
-  let m5 = vec3f(m_base * 2., m_base, -1. * shift_z);
-  let m6 = vec3f(-m_base * 2., m_base, -1. * shift_z);
-  let m7 = vec3f(m_base * 2., -m_base, -1. * shift_z);
-  let m8 = vec3f(-m_base * 2., -m_base, -1. * shift_z);
+  let angle = params.time * 0.000;
+  // let image_center = vec3f(20. * cos(angle * 0.7), 20. * sin(angle * 0.7), -40.);
+  let image_center = vec3f(0., 0., 100.);
+  let image_x = vec3f(1., 0., 0.);
+  let image_y = vec3f(0., 1., 0.);
+  let image_z = vec3f(0., 0., 1.);
+  // let image_x = rotate_vec3(vec3f(1., 0., 0.), vec3(0., 0., 0.), image_y, angle);
+  // let image_z = rotate_vec3(vec3f(0., 0., 1.), vec3(0., 0., 0.), image_y, angle);
+  let image_radius = 100.0; // but rect
 
   var current_viewer = uniforms.viewer_position;
   var current_ray_unit = ray_unit;
@@ -201,7 +201,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   var hit_image = false;
 
   let sphere_center = vec3f(0., 0., 0.);
-  let sphere_radius = 100.;
+  let sphere_radius = 200.;
 
   for (var times = 0u; times < max_relect_times + 1u; times++) {
 
@@ -248,6 +248,26 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
       total_color = min(total_color, vec4<f32>(0.4, 1.0, 0., 1.0));
     }
 
+    let skip_direct_hit = in_mirror > 0u;
+
+    // let view_to_image = image_center - current_viewer;
+    // if dot(view_to_image, current_ray_unit) > 0. && skip_direct_hit { // backface culling
+    //   let view_to_image_surface_distance = dot(image_z, view_to_image);
+    //   let view_hit_image_length = view_to_image_surface_distance / dot(image_z, current_ray_unit);
+    //   let hit_image_surface = current_viewer + view_hit_image_length * current_ray_unit - image_center;
+    //   let hit_image_surface_x = dot(hit_image_surface, image_x);
+    //   let hit_image_surface_y = dot(hit_image_surface, image_y);
+    //   let image_coord = vec2f(hit_image_surface_x, hit_image_surface_y) / image_radius;
+    //   if abs(image_coord.x) < 1.0 && abs(image_coord.y) < 1.0 {
+    //     if view_hit_image_length < nearest.travel { // image is closer than mirror
+    //       hit_image = true;
+    //       hit_image_at = image_coord * 0.5 + 0.5;
+    //       break;
+    //     }
+    //   }
+    // }
+
+
     if hit_mirror {
       total_color += vec4<f32>(0.01, 0.006, .2, 0.) ;
       current_viewer = nearest.point;
@@ -256,6 +276,12 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     } else {
       break;
     }
+  }
+
+  let img_pixel = textureSample(myTexture, mySampler, hit_image_at);
+
+  if hit_image {
+    return img_pixel;
   }
 
   return total_color;

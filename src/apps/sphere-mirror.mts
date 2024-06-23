@@ -18,7 +18,7 @@ type Cell = {
 };
 
 let makeCell = (a: Number3, b: Number3) => {
-  let base = 60;
+  let base = 120;
   return { position: [a[0] * base, a[1] * base, a[2] * base, 0] as Number4, velocity: [b[0] * base, b[1] * base, b[2] * base, 0] as Number4 } as Cell;
 };
 
@@ -26,8 +26,8 @@ let createAwl = () => {
   return [
     // V
     makeCell([-1, -2, 0], [-1, 2, 0]),
-    makeCell([-2, 0, 0], [2, 0, 0]),
-    makeCell([-1, 0, -2], [-1, 0, 2]),
+    makeCell([-2, -1, 0], [2, -1, 0]),
+    makeCell([-1, -1, -2], [-1, -1, 2]),
   ] as Cell[];
 };
 
@@ -44,6 +44,7 @@ export const sphereMirrorConfigs: SolubleApp = {
     return [performance.now() - store.startedAt];
   },
   getTextures: (obj) => {
+    // console.log(obj["bubbles"]);
     return [obj["bubbles"]].filter(Boolean);
   },
 };
