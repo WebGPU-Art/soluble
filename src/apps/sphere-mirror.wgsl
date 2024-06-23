@@ -120,40 +120,28 @@ struct MirrorTriangle {
   c: vec3f,
 }
 
-/// to find out if ray hits mirror, return RayMirrorHit.
-fn try_reflect_ray_with_mirror(viewer_position: vec3f, ray_unit: vec3f, mirror: MirrorTriangle) -> RayMirrorHit {
-  /// normal of the mirror
-  let n = normalize(cross(mirror.b - mirror.a, mirror.c - mirror.a));
+fn try_reflect_ray_with_sphere(viewer_position: vec3f, ray_unit: vec3f, center: vec3f, radius: f32) -> RayMirrorHit {
 
-  /// distance from the mirror surface to the viewer
-  let d = dot(n, mirror.a - viewer_position);
-  let cos_v = dot(n, ray_unit);
-  let t = d / cos_v;
+  // sphere center to viewer
+  let center_to_viewer = center - viewer_position;
+  // distance from center to ray direction
+  let projection = dot(center_to_viewer, ray_unit);
+  let distance_to_ray = center_to_viewer - projection * ray_unit;
 
-  let hit_point = viewer_position + abs(t) * ray_unit;
-
-
-  /// need to skip case viewer and origin point on different sides of the mirror
-  let viewer_side = dot(n, ray_unit);
-  let ray_side = dot(n, hit_point);
-  if viewer_side * ray_side < 0.0 {
-    return RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 0.0, vec3<f32>(0.0, 0.0, 0.0));
-  }
-  if t < 0.0001 {
+  if projection < 0.0 {
+    // viewer is behind the sphere
     return RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 0.0, vec3<f32>(0.0, 0.0, 0.0));
   }
 
-  let spin_a = cross(hit_point - mirror.a, mirror.b - mirror.a);
-  let spin_b = cross(hit_point - mirror.b, mirror.c - mirror.b);
-  let spin_c = cross(hit_point - mirror.c, mirror.a - mirror.c);
-  let inside = dot(spin_a, spin_b) >= 0.0 && dot(spin_b, spin_c) >= 0.0 && dot(spin_c, spin_a) >= 0.0;
-
-  if inside {
-    let reflection = reflect_on_direction(ray_unit, n);
-    return RayMirrorHit(true, hit_point, t, reflection);
-  } else {
-    return RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), t, vec3<f32>(0.0, 0.0, 0.0));
+  if length(distance_to_ray) > radius {
+    // viewer is outside the sphere
+    return RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 0.0, vec3<f32>(0.0, 0.0, 0.0));
   }
+
+  let distance_to_hit = sqrt(radius * radius - dot(distance_to_ray, distance_to_ray));
+  let further_hit_point = viewer_position + (projection + distance_to_hit) * ray_unit;
+
+  return RayMirrorHit(true, further_hit_point, projection + distance_to_hit, reflect_on_direction(ray_unit, further_hit_point - center));
 }
 
 
@@ -204,14 +192,6 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   let m7 = vec3f(m_base * 2., -m_base, -1. * shift_z);
   let m8 = vec3f(-m_base * 2., -m_base, -1. * shift_z);
 
-  let mirrors_size = 4u;
-  let mirrors = array<MirrorTriangle, 4>(
-    MirrorTriangle(m1, m2, m3),
-    MirrorTriangle(m2, m3, m4),
-    MirrorTriangle(m5, m6, m7),
-    MirrorTriangle(m6, m7, m8),
-  );
-
   var current_viewer = uniforms.viewer_position;
   var current_ray_unit = ray_unit;
   var traveled = 0.0;
@@ -220,24 +200,23 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   var hit_image_at = vec2<f32>(0.0, 0.0);
   var hit_image = false;
 
+  let sphere_center = vec3f(0., 0., 0.);
+  let sphere_radius = 100.;
+
   for (var times = 0u; times < max_relect_times + 1u; times++) {
 
     var hit_mirror = false;
     var nearest = RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 1000000., vec3<f32>(0.0, 0.0, 0.0));
 
+    let hit_sphere = try_reflect_ray_with_sphere(current_viewer, current_ray_unit, sphere_center, sphere_radius);
+    if hit_sphere.hit && abs(hit_sphere.travel) > .01 {
+      hit_mirror = true;
 
-    for (var mi = 0u; mi < mirrors_size; mi = mi + 1u) {
-      let mirror = mirrors[mi];
-      let hit = try_reflect_ray_with_mirror(current_viewer, current_ray_unit, mirror);
-
-      if hit.hit && hit.travel > .01 {
-        hit_mirror = true;
-
-        if hit.travel < nearest.travel {
-          nearest = hit;
-          traveled = hit.travel;
-        }
+      if hit_sphere.travel < nearest.travel {
+        nearest = hit_sphere;
+        traveled = hit_sphere.travel;
       }
+      // return vec4<f32>(1.0, .0, 1.0, 1.0);
     }
 
     // let t = params.time * 0.0008;
