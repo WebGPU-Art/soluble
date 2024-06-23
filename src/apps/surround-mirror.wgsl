@@ -100,8 +100,8 @@ fn ray_closest_point_to_line(viewer_position: vec3f, ray_unit: vec3f, s: Segment
       cross(ray_unit, ab_unit)
     );
 
-    let front = dot(a, ray_unit) >= 0.0 && dot(b, ray_unit) >= 0.0;
-    return RayReachSegment(d_min, front, k);
+    // let front = dot(a, ray_unit) >= 0.0 && dot(b, ray_unit) >= 0.0;
+    return RayReachSegment(d_min, k > 0., k);
   };
 }
 

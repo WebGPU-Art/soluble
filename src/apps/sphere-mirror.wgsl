@@ -75,9 +75,9 @@ fn ray_closest_point_to_line(viewer_position: vec3f, ray_unit: vec3f, s: Segment
     let a_distance_min = sqrt(dot(a, a) - a_proj * a_proj);
     let b_distance_min = sqrt(dot(b, b) - b_proj * b_proj);
     if a_distance_min < b_distance_min {
-      return RayReachSegment(a_distance_min, a_proj > 0., a_proj);
+      return RayReachSegment(a_distance_min, true, a_proj);
     } else {
-      return RayReachSegment(b_distance_min, b_proj > 0., b_proj);
+      return RayReachSegment(b_distance_min, true, b_proj);
     }
   } else {
     let n0 = normalize(n);
@@ -98,8 +98,7 @@ fn ray_closest_point_to_line(viewer_position: vec3f, ray_unit: vec3f, s: Segment
       cross(ray_unit, ab_unit)
     ) + .0;
 
-    let front = dot(a, ray_unit) >= 0.0 && dot(b, ray_unit) >= 0.0;
-    return RayReachSegment(d_min, front, k);
+    return RayReachSegment(d_min, k > 0., k);
   };
 }
 
@@ -117,34 +116,67 @@ struct RayMirrorHit {
   next_ray_unit: vec3<f32>,
 }
 
-struct MirrorTriangle {
-  a: vec3f,
-  b: vec3f,
-  c: vec3f,
+/// the sphere mirror
+struct SphereMirror {
+  center: vec3f,
+  radius: f32,
+  /// which side to reflect
+  outside: bool,
 }
 
-fn try_reflect_ray_with_sphere(viewer_position: vec3f, ray_unit: vec3f, center: vec3f, radius: f32) -> RayMirrorHit {
+fn try_reflect_ray_with_sphere(viewer_position: vec3f, ray_unit: vec3f, center: vec3f, radius: f32, outside: bool) -> RayMirrorHit {
 
   // sphere center to viewer
   let center_to_viewer = center - viewer_position;
-  // distance from center to ray direction
-  let projection = dot(center_to_viewer, ray_unit);
-  let distance_to_ray = center_to_viewer - projection * ray_unit;
 
-  if projection < 0.0 {
-    // viewer is behind the sphere
-    return RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 0.0, vec3<f32>(0.0, 0.0, 0.0));
+  let viewer_inside = dot(center_to_viewer, center_to_viewer) < radius * radius;
+
+  if outside {
+    if viewer_inside {
+      return RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 0.0, vec3<f32>(0.0, 0.0, 0.0));
+    } else {
+
+      // distance from center to ray direction
+      let projection = dot(center_to_viewer, ray_unit);
+
+      if projection < 0.0 {
+        // viewer is behind the sphere
+        return RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 0.0, vec3<f32>(0.0, 0.0, 0.0));
+      }
+      let distance_to_ray = center_to_viewer - projection * ray_unit;
+
+      if length(distance_to_ray) > radius {
+        // viewer is outside the sphere
+        return RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 0.0, vec3<f32>(0.0, 0.0, 0.0));
+      }
+
+      let distance_to_hit = sqrt(radius * radius - dot(distance_to_ray, distance_to_ray));
+      let traveled = projection - distance_to_hit;
+      let nearer_hit_point = viewer_position + traveled * ray_unit;
+
+      return RayMirrorHit(true, nearer_hit_point, traveled, reflect_on_direction(ray_unit, nearer_hit_point - center));
+    }
+  } else {
+      // distance from center to ray direction
+    let projection = dot(center_to_viewer, ray_unit);
+
+    if projection < 0.0 {
+        // viewer is behind the sphere
+      return RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 0.0, vec3<f32>(0.0, 0.0, 0.0));
+    }
+    let distance_to_ray = center_to_viewer - projection * ray_unit;
+
+    if length(distance_to_ray) > radius {
+        // viewer is outside the sphere
+      return RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 0.0, vec3<f32>(0.0, 0.0, 0.0));
+    }
+
+    let distance_to_hit = sqrt(radius * radius - dot(distance_to_ray, distance_to_ray));
+    let traveled = projection + distance_to_hit;
+    let further_hit_point = viewer_position + traveled * ray_unit;
+
+    return RayMirrorHit(true, further_hit_point, traveled, reflect_on_direction(ray_unit, further_hit_point - center));
   }
-
-  if length(distance_to_ray) > radius {
-    // viewer is outside the sphere
-    return RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 0.0, vec3<f32>(0.0, 0.0, 0.0));
-  }
-
-  let distance_to_hit = sqrt(radius * radius - dot(distance_to_ray, distance_to_ray));
-  let further_hit_point = viewer_position + (projection + distance_to_hit) * ray_unit;
-
-  return RayMirrorHit(true, further_hit_point, projection + distance_to_hit, reflect_on_direction(ray_unit, further_hit_point - center));
 }
 
 
@@ -200,23 +232,37 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   var hit_image_at = vec2<f32>(0.0, 0.0);
   var hit_image = false;
 
-  let sphere_center = vec3f(0., 0., 0.);
-  let sphere_radius = 200.;
+  let mirrors_size = 9u;
+  let mirrors = array<SphereMirror, 9>(
+    SphereMirror(vec3f(0., 0., 0.), 100., true),
+    SphereMirror(vec3f(200., 0., 0.), 100., true),
+    SphereMirror(vec3f(0., 200., 0.), 100., true),
+    SphereMirror(vec3f(200., 200., 0.), 100., true),
+    // more
+    SphereMirror(vec3f(0., 0., 200.), 100., true),
+    SphereMirror(vec3f(200., 0., 200.), 100., true),
+    SphereMirror(vec3f(0., 200., 200.), 100., true),
+    SphereMirror(vec3f(200., 200., 200.), 100., true),
+    // container
+    SphereMirror(vec3f(100., 100., 100.), 240., false)
+  );
 
   for (var times = 0u; times < max_relect_times + 1u; times++) {
 
     var hit_mirror = false;
     var nearest = RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 1000000., vec3<f32>(0.0, 0.0, 0.0));
 
-    let hit_sphere = try_reflect_ray_with_sphere(current_viewer, current_ray_unit, sphere_center, sphere_radius);
-    if hit_sphere.hit && abs(hit_sphere.travel) > .01 {
-      hit_mirror = true;
+    for (var i = 0u; i < mirrors_size; i = i + 1u) {
+      let mirror = mirrors[i];
+      let hit_sphere = try_reflect_ray_with_sphere(current_viewer, current_ray_unit, mirror.center, mirror.radius, mirror.outside);
+      if hit_sphere.hit && abs(hit_sphere.travel) > .01 {
+        hit_mirror = true;
 
-      if hit_sphere.travel < nearest.travel {
-        nearest = hit_sphere;
-        traveled = hit_sphere.travel;
+        if hit_sphere.travel < nearest.travel {
+          nearest = hit_sphere;
+          traveled = hit_sphere.travel;
+        }
       }
-      // return vec4<f32>(1.0, .0, 1.0, 1.0);
     }
 
     // let t = params.time * 0.0008;
@@ -230,7 +276,9 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
       // segment = move_segment(segment, vec3(10. * sin(t * 0.9), 10. * sin(t * 0.7), 10. * sin(t * 0.6)));
       let reach = ray_closest_point_to_line(current_viewer, current_ray_unit, segment);
 
-      if !reach.positive_side && in_mirror < 1u {
+      // let in_real = in_mirror < 1u;
+      let in_real = true;
+      if !reach.positive_side && in_real {
         // I want to reduce light from back of camera,
         // however, it does not apply to in-mirror world
         continue;
@@ -243,9 +291,12 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
       }
 
       let distance = max(0., reach.distance - 0.6);
-      let f = pow(f32(in_mirror) / 2. + 2.0, 3.);
-      total_color += vec4<f32>(0.01, 0.02, 0.01, 0.0) * 1.2 / pow(distance * 0.07 + 0.01, 1.8) / f;
-      total_color = min(total_color, vec4<f32>(0.4, 1.0, 0., 1.0));
+      // let f = pow(f32(in_mirror) / 2. + 2.0, 3.);
+      // total_color += vec4<f32>(0.01, 0.02, 0.01, 0.0) * 1.2 / pow(distance * 0.07 + 0.01, 1.8) / f;
+      // total_color = min(total_color, vec4<f32>(0.4, 1.0, 0., 1.0));
+      if distance < 0.01 {
+        total_color += vec4(0.2, 0.2, 0.2, 0.);
+      }
     }
 
     let skip_direct_hit = in_mirror > 0u;
@@ -269,7 +320,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
 
     if hit_mirror {
-      total_color += vec4<f32>(0.01, 0.006, .2, 0.) ;
+      total_color = min(vec4(0.6, 0.6, 0.6, 1.), total_color + vec4<f32>(0.05, 0.05, 0.05, 0.2)) ;
       current_viewer = nearest.point;
       current_ray_unit = nearest.next_ray_unit;
       in_mirror += 1u;
