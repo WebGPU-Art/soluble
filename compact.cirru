@@ -60,7 +60,7 @@
                 :color :white
         |tabs $ %{} :CodeEntry (:doc |)
           :code $ quote
-            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark) (:: :circles "\"Circles" :dark) (:: :kaleidoscope "\"Kaleidoscope" :dark) (:: :image "\"Image" :dark) (:: :clocking "\"Clocking" :dark) (:: :ripple "\"Ripple" :dark) (:: :surround-mirror "\"Surrond Mirror" :dark) (:: :parallel-mirror "\"Parallel Mirror" :dark)
+            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark) (:: :circles "\"Circles" :dark) (:: :kaleidoscope "\"Kaleidoscope" :dark) (:: :image "\"Image" :dark) (:: :clocking "\"Clocking" :dark) (:: :ripple "\"Ripple" :dark) (:: :surround-mirror "\"Surrond Mirror" :dark) (:: :parallel-mirror "\"Parallel Mirror" :dark) (:: :sphere-mirror "\"Sphere Mirror" :dark)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
           ns app.comp.container $ :require (respo-ui.css :as css)
@@ -130,6 +130,7 @@
                 :ripple rippleConfigs
                 :surround-mirror surroundMirrorConfigs
                 :parallel-mirror parallelMirrorConfigs
+                :sphere-mirror sphereMirrorConfigs
         |load-textures! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn load-textures! (device) (hint-fn async)
@@ -163,7 +164,7 @@
               let
                   ret $ js-await (solublejs/initializeContext)
                 if
-                  contains? (#{} :image :surround-mirror) (-> @*reel :store :tab)
+                  contains? (#{} :image :surround-mirror :sphere-mirror) (-> @*reel :store :tab)
                   js-await $ load-textures! (.-device ret)
                   do
                     load-textures! $ .-device ret
@@ -246,13 +247,14 @@
             "\"../src/apps/ripple" :refer $ rippleConfigs
             "\"../src/apps/surround-mirror" :refer $ surroundMirrorConfigs
             "\"../src/apps/parallel-mirror" :refer $ parallelMirrorConfigs
+            "\"../src/apps/sphere-mirror" :refer $ sphereMirrorConfigs
             "\"../src/global" :refer $ atomSolubleTree
     |app.schema $ %{} :FileEntry
       :defs $ {}
         |store $ %{} :CodeEntry (:doc |)
           :code $ quote
             def store $ {}
-              :tab $ turn-tag (get-env "\"tab" "\"parallel-mirror")
+              :tab $ turn-tag (get-env "\"tab" "\"sphere-mirror")
               :states $ {}
                 :cursor $ []
       :ns $ %{} :CodeEntry (:doc |)
