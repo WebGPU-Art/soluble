@@ -251,6 +251,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
     var hit_mirror = false;
     var nearest = RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 1000000., vec3<f32>(0.0, 0.0, 0.0));
+    var mirror_outside = false;
 
     for (var i = 0u; i < mirrors_size; i = i + 1u) {
       let mirror = mirrors[i];
@@ -261,6 +262,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
         if hit_sphere.travel < nearest.travel {
           nearest = hit_sphere;
           traveled = hit_sphere.travel;
+          mirror_outside = mirror.outside;
         }
       }
     }
@@ -320,7 +322,9 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
 
     if hit_mirror {
-      total_color = min(vec4(0.6, 0.6, 0.6, 1.), total_color + vec4<f32>(0.05, 0.05, 0.05, 0.2)) ;
+      if mirror_outside {
+        total_color += vec4<f32>(0.05, 0.05, 0.05, 0.2);
+      }
       current_viewer = nearest.point;
       current_ray_unit = nearest.next_ray_unit;
       in_mirror += 1u;
