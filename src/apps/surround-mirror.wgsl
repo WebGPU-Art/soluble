@@ -220,7 +220,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   let p4 = vec3f(0.1, - width, -shift_z);
 
   let segments_size = 4u;
-  let scale = 1.;
+  let scale = 3.;
   let segments = array<Segment, 4>(
     Segment(scale * p1, scale * p2),
     Segment(scale * p2, scale * p3),
@@ -280,7 +280,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     for (var i = 0u; i < segments_size; i = i + 1u) {
       var segment = segments[i];
       segment = rotate_segment(segment, vec3(0., 0., - shift_z), vec3(0., 1., 0.), t);
-      segment = move_segment(segment, vec3(10. * sin(t * 0.9), 10. * sin(t * 0.7), 10. * sin(t * 0.6)));
+      segment = move_segment(segment, vec3(2. * sin(t * 0.9), 10. * sin(t * 0.7), 2. * sin(t * 0.6)));
       let reach = ray_closest_point_to_line(current_viewer, current_ray_unit, segment);
 
       if !reach.positive_side && in_mirror < 1u {
