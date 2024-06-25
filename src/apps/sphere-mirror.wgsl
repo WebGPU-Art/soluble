@@ -234,17 +234,17 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   let mirrors_size = 9u;
   let mirrors = array<SphereMirror, 9>(
-    SphereMirror(vec3f(0., 0., 0.), 100., true),
-    SphereMirror(vec3f(200., 0., 0.), 100., true),
-    SphereMirror(vec3f(0., 200., 0.), 100., true),
-    SphereMirror(vec3f(200., 200., 0.), 100., true),
+    SphereMirror(vec3f(0., 0., 0.), 200., true),
+    SphereMirror(vec3f(400., 0., 0.), 200., true),
+    SphereMirror(vec3f(0., 400., 0.), 200., true),
+    SphereMirror(vec3f(400., 400., 0.), 200., true),
     // more
-    SphereMirror(vec3f(0., 0., 200.), 100., true),
-    SphereMirror(vec3f(200., 0., 200.), 100., true),
-    SphereMirror(vec3f(0., 200., 200.), 100., true),
-    SphereMirror(vec3f(200., 200., 200.), 100., true),
+    SphereMirror(vec3f(0., 0., 400.), 200., true),
+    SphereMirror(vec3f(400., 0., 400.), 200., true),
+    SphereMirror(vec3f(0., 400., 400.), 200., true),
+    SphereMirror(vec3f(400., 400., 400.), 200., true),
     // container
-    SphereMirror(vec3f(100., 100., 100.), 30., true)
+    SphereMirror(vec3f(200., 200., 200.), 40., true)
   );
 
   for (var times = 0u; times < max_relect_times + 1u; times++) {
