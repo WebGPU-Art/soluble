@@ -164,7 +164,9 @@
               let
                   ret $ js-await (solublejs/initializeContext)
                 if
-                  contains? (#{} :image :surround-mirror :sphere-mirror) (-> @*reel :store :tab)
+                  contains?
+                    #{} :image :surround-mirror $ ; :sphere-mirror
+                    -> @*reel :store :tab
                   js-await $ load-textures! (.-device ret)
                   do
                     load-textures! $ .-device ret

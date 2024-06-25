@@ -1022,7 +1022,10 @@
                               |T $ %{} :Leaf (:at 1717002638887) (:by |rJG4IHzWf) (:text |#{})
                               |b $ %{} :Leaf (:at 1717002639327) (:by |rJG4IHzWf) (:text |:image)
                               |h $ %{} :Leaf (:at 1717002642048) (:by |rJG4IHzWf) (:text |:surround-mirror)
-                              |l $ %{} :Leaf (:at 1719137088264) (:by |rJG4IHzWf) (:text |:sphere-mirror)
+                              |l $ %{} :Expr (:at 1719334954137) (:by |rJG4IHzWf)
+                                :data $ {}
+                                  |D $ %{} :Leaf (:at 1719334955699) (:by |rJG4IHzWf) (:text |;)
+                                  |T $ %{} :Leaf (:at 1719137088264) (:by |rJG4IHzWf) (:text |:sphere-mirror)
                           |b $ %{} :Expr (:at 1713891032978) (:by |rJG4IHzWf)
                             :data $ {}
                               |D $ %{} :Leaf (:at 1713891036901) (:by |rJG4IHzWf) (:text |->)

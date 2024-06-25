@@ -22,8 +22,8 @@ struct BaseCell {
 
 @group(1) @binding(0) var<storage, read_write> base_points: array<BaseCell>;
 
-@group(2) @binding(0) var mySampler : sampler;
-@group(2) @binding(1) var myTexture : texture_2d<f32>;
+// @group(2) @binding(0) var mySampler : sampler;
+// @group(2) @binding(1) var myTexture : texture_2d<f32>;
 
 
 @compute @workgroup_size(8, 8, 1)
@@ -244,7 +244,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     SphereMirror(vec3f(0., 200., 200.), 100., true),
     SphereMirror(vec3f(200., 200., 200.), 100., true),
     // container
-    SphereMirror(vec3f(100., 100., 100.), 240., false)
+    SphereMirror(vec3f(100., 100., 100.), 30., true)
   );
 
   for (var times = 0u; times < max_relect_times + 1u; times++) {
@@ -269,37 +269,37 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
     // let t = params.time * 0.0008;
 
-    let s_size = arrayLength(&base_points);
-    for (var i = 0u; i < s_size; i = i + 1u) {
-      var segment = Segment(
-        base_points[i].a.xyz,
-        base_points[i].b.xyz
-      );
-      // segment = move_segment(segment, vec3(10. * sin(t * 0.9), 10. * sin(t * 0.7), 10. * sin(t * 0.6)));
-      let reach = ray_closest_point_to_line(current_viewer, current_ray_unit, segment);
+    // let s_size = arrayLength(&base_points);
+    // for (var i = 0u; i < s_size; i = i + 1u) {
+    //   var segment = Segment(
+    //     base_points[i].a.xyz,
+    //     base_points[i].b.xyz
+    //   );
+    //   // segment = move_segment(segment, vec3(10. * sin(t * 0.9), 10. * sin(t * 0.7), 10. * sin(t * 0.6)));
+    //   let reach = ray_closest_point_to_line(current_viewer, current_ray_unit, segment);
 
-      // let in_real = in_mirror < 1u;
-      let in_real = true;
-      if !reach.positive_side && in_real {
-        // I want to reduce light from back of camera,
-        // however, it does not apply to in-mirror world
-        continue;
-      }
+    //   // let in_real = in_mirror < 1u;
+    //   let in_real = true;
+    //   if !reach.positive_side && in_real {
+    //     // I want to reduce light from back of camera,
+    //     // however, it does not apply to in-mirror world
+    //     continue;
+    //   }
 
-      if hit_mirror {
-        if reach.traveled > traveled {
-          continue;
-        }
-      }
+    //   if hit_mirror {
+    //     if reach.traveled > traveled {
+    //       continue;
+    //     }
+    //   }
 
-      let distance = max(0., reach.distance - 0.6);
-      // let f = pow(f32(in_mirror) / 2. + 2.0, 3.);
-      // total_color += vec4<f32>(0.01, 0.02, 0.01, 0.0) * 1.2 / pow(distance * 0.07 + 0.01, 1.8) / f;
-      // total_color = min(total_color, vec4<f32>(0.4, 1.0, 0., 1.0));
-      if distance < 0.01 {
-        total_color += vec4(0.2, 0.2, 0.2, 0.);
-      }
-    }
+    //   let distance = max(0., reach.distance - 0.6);
+    //   // let f = pow(f32(in_mirror) / 2. + 2.0, 3.);
+    //   // total_color += vec4<f32>(0.01, 0.02, 0.01, 0.0) * 1.2 / pow(distance * 0.07 + 0.01, 1.8) / f;
+    //   // total_color = min(total_color, vec4<f32>(0.4, 1.0, 0., 1.0));
+    //   if distance < 0.01 {
+    //     total_color += vec4(0.2, 0.2, 0.2, 0.);
+    //   }
+    // }
 
     let skip_direct_hit = in_mirror > 0u;
 
@@ -333,11 +333,11 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     }
   }
 
-  let img_pixel = textureSample(myTexture, mySampler, hit_image_at);
+  // let img_pixel = textureSample(myTexture, mySampler, hit_image_at);
 
-  if hit_image {
-    return img_pixel;
-  }
+  // if hit_image {
+  //   return img_pixel;
+  // }
 
   return total_color;
 }
