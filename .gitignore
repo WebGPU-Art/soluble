@@ -11,3 +11,5 @@ js-out/
 
 .compact-inc.cirru
 .calcit-error.cirru
+
+.DS_Store

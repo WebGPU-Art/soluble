@@ -465,6 +465,12 @@
                       |b $ %{} :Leaf (:at 1719132374213) (:by |rJG4IHzWf) (:text |:sphere-mirror)
                       |h $ %{} :Leaf (:at 1719132379623) (:by |rJG4IHzWf) (:text "|\"Sphere Mirror")
                       |l $ %{} :Leaf (:at 1712938641596) (:by |rJG4IHzWf) (:text |:dark)
+                  |zj $ %{} :Expr (:at 1712938631055) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1712938631792) (:by |rJG4IHzWf) (:text |::)
+                      |b $ %{} :Leaf (:at 1721236360129) (:by |rJG4IHzWf) (:text |:hollow-mirror)
+                      |h $ %{} :Leaf (:at 1721236361924) (:by |rJG4IHzWf) (:text "|\"Hollow Mirror")
+                      |l $ %{} :Leaf (:at 1712938641596) (:by |rJG4IHzWf) (:text |:dark)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ %{} :Expr (:at 1499755354983) (:by nil)
           :data $ {}
@@ -768,6 +774,10 @@
                     :data $ {}
                       |T $ %{} :Leaf (:at 1719132389274) (:by |rJG4IHzWf) (:text |:sphere-mirror)
                       |b $ %{} :Leaf (:at 1719132392722) (:by |rJG4IHzWf) (:text |sphereMirrorConfigs)
+                  |ze $ %{} :Expr (:at 1716718449053) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1721236355611) (:by |rJG4IHzWf) (:text |:hollow-mirror)
+                      |b $ %{} :Leaf (:at 1721236353122) (:by |rJG4IHzWf) (:text |hollowMirrorConfigs)
         |load-textures! $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1713297574685) (:by |rJG4IHzWf)
             :data $ {}
@@ -1553,6 +1563,13 @@
                     |g $ %{} :Expr (:at 1714755629826) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1719132398736) (:by |rJG4IHzWf) (:text |sphereMirrorConfigs)
+                |zszP $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
+                  :data $ {}
+                    |T $ %{} :Leaf (:at 1721236345722) (:by |rJG4IHzWf) (:text "|\"../src/apps/hollow-mirror")
+                    |a $ %{} :Leaf (:at 1714755628974) (:by |rJG4IHzWf) (:text |:refer)
+                    |g $ %{} :Expr (:at 1714755629826) (:by |rJG4IHzWf)
+                      :data $ {}
+                        |T $ %{} :Leaf (:at 1721236343369) (:by |rJG4IHzWf) (:text |hollowMirrorConfigs)
                 |zt $ %{} :Expr (:at 1709657313552) (:by |rJG4IHzWf)
                   :data $ {}
                     |T $ %{} :Leaf (:at 1709657319126) (:by |rJG4IHzWf) (:text "|\"../src/global")
@@ -1580,7 +1597,7 @@
                             :data $ {}
                               |D $ %{} :Leaf (:at 1711260016101) (:by |rJG4IHzWf) (:text |get-env)
                               |L $ %{} :Leaf (:at 1711260020594) (:by |rJG4IHzWf) (:text "|\"tab")
-                              |T $ %{} :Leaf (:at 1719132519859) (:by |rJG4IHzWf) (:text "|\"sphere-mirror")
+                              |T $ %{} :Leaf (:at 1721238252418) (:by |rJG4IHzWf) (:text "|\"hollow-mirror")
                   |j $ %{} :Expr (:at 1499755354983) (:by nil)
                     :data $ {}
                       |T $ %{} :Leaf (:at 1499755354983) (:by |root) (:text |:states)
