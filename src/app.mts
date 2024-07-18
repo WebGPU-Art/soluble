@@ -7,11 +7,13 @@ import { slowFractalConfigs } from "./apps/slow-fractal.mjs";
 import { imageConfigs } from "./apps/image.mjs";
 import { orbitsConfigs } from "./apps/orbits.mjs";
 import { clockingConfigs } from "./apps/clocking.mjs";
+
+// import all files to load types
 import {} from "./apps/kaleidoscope.mjs";
 import {} from "./apps/stars.mjs";
 import {} from "./apps/rings.mjs";
 import {} from "./apps/circles.mjs";
-import { rippleConfigs } from "./apps/ripple.mjs";
+import {} from "./apps/ripple.mjs";
 import {} from "./apps/surround-mirror.mjs";
 import {} from "./apps/parallel-mirror.mjs";
 import {} from "./apps/sphere-mirror.mjs";

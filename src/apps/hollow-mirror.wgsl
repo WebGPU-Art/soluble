@@ -6,9 +6,6 @@
 struct Params {
   time: f32,
   dt: f32,
-  /// 1 to disable
-  // disableLens: f32,
-  // maskRadius: f32,
   lifetime: f32,
 }
 
