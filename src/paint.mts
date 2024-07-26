@@ -6,6 +6,7 @@ import { Number4, rand } from "./math.mjs";
 import { createBuffer, getComputeShaderModule } from "./utils.mjs";
 import solublePerspective from "../shaders/soluble-perspective.wgsl?raw";
 import solubleMath from "../shaders/soluble-math.wgsl?raw";
+import solubleMirror from "../shaders/soluble-mirror.wgsl?raw";
 
 let prevTime = Date.now();
 
@@ -285,7 +286,10 @@ export function resetCanvasHeight(canvas: HTMLCanvasElement) {
 }
 
 export let interpolateShader = (shader: string) => {
-  return shader.replace("#import soluble::perspective", solublePerspective).replace("#import soluble::math", solubleMath);
+  return shader
+    .replace("#import soluble::perspective", solublePerspective)
+    .replace("#import soluble::math", solubleMath)
+    .replace("#import soluble::mirror", solubleMirror);
 };
 
 /** unified API to call paint */

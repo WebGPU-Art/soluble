@@ -39,6 +39,14 @@ Vertex shader:
 @group(2) @binding(1) var myTexture : texture_2d<f32>; // optionally more
 ```
 
+### Imports
+
+```wgsl
+#import soluble::perspective
+#import soluble::math
+#import soluble::mirror
+```
+
 ### License
 
 MIT
