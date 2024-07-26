@@ -27,7 +27,6 @@ struct BaseCell {
 
 @compute @workgroup_size(8, 8, 1)
 fn compute_main(@builtin(global_invocation_id) global_id: vec3u) {
-  // not doint things
 }
 
 
