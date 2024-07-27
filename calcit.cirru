@@ -453,6 +453,12 @@
                       |b $ %{} :Leaf (:at 1716718542242) (:by |rJG4IHzWf) (:text |:surround-mirror)
                       |h $ %{} :Leaf (:at 1716718439892) (:by |rJG4IHzWf) (:text "|\"Surrond Mirror")
                       |l $ %{} :Leaf (:at 1712938641596) (:by |rJG4IHzWf) (:text |:dark)
+                  |zT $ %{} :Expr (:at 1712938631055) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1712938631792) (:by |rJG4IHzWf) (:text |::)
+                      |b $ %{} :Leaf (:at 1722106566687) (:by |rJG4IHzWf) (:text |:kaleidoscope-mirror)
+                      |h $ %{} :Leaf (:at 1722106573757) (:by |rJG4IHzWf) (:text "|\"Kaleidoscope Mirror")
+                      |l $ %{} :Leaf (:at 1712938641596) (:by |rJG4IHzWf) (:text |:dark)
                   |zY $ %{} :Expr (:at 1712938631055) (:by |rJG4IHzWf)
                     :data $ {}
                       |T $ %{} :Leaf (:at 1712938631792) (:by |rJG4IHzWf) (:text |::)
@@ -750,6 +756,10 @@
                     :data $ {}
                       |T $ %{} :Leaf (:at 1712938931280) (:by |rJG4IHzWf) (:text |:kaleidoscope)
                       |b $ %{} :Leaf (:at 1712938938104) (:by |rJG4IHzWf) (:text |kaleidoscopeConfigs)
+                  |xD $ %{} :Expr (:at 1712938927592) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1722106582528) (:by |rJG4IHzWf) (:text |:kaleidoscope-mirror)
+                      |b $ %{} :Leaf (:at 1722106707210) (:by |rJG4IHzWf) (:text |kaleidoscopeMirrorConfigs)
                   |xT $ %{} :Expr (:at 1712938927592) (:by |rJG4IHzWf)
                     :data $ {}
                       |T $ %{} :Leaf (:at 1714755661461) (:by |rJG4IHzWf) (:text |:clocking)
@@ -1506,6 +1516,13 @@
                     |h $ %{} :Expr (:at 1699464561369) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1712938794112) (:by |rJG4IHzWf) (:text |kaleidoscopeConfigs)
+                |zsH $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
+                  :data $ {}
+                    |T $ %{} :Leaf (:at 1722106716538) (:by |rJG4IHzWf) (:text "|\"../src/apps/kaleidoscope-mirror")
+                    |b $ %{} :Leaf (:at 1699464556816) (:by |rJG4IHzWf) (:text |:refer)
+                    |h $ %{} :Expr (:at 1699464561369) (:by |rJG4IHzWf)
+                      :data $ {}
+                        |T $ %{} :Leaf (:at 1722106713410) (:by |rJG4IHzWf) (:text |kaleidoscopeMirrorConfigs)
                 |zsL $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
                     |T $ %{} :Leaf (:at 1713296824837) (:by |rJG4IHzWf) (:text "|\"../src/apps/image")

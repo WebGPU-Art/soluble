@@ -10,6 +10,7 @@ import { clockingConfigs } from "./apps/clocking.mjs";
 
 // import all files to load types
 import {} from "./apps/kaleidoscope.mjs";
+import {} from "./apps/kaleidoscope-mirror.mjs";
 import {} from "./apps/stars.mjs";
 import {} from "./apps/rings.mjs";
 import {} from "./apps/circles.mjs";
