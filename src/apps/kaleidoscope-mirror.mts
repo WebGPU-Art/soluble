@@ -23,34 +23,26 @@ let makeCell = (a: Number4, b: Number4, c: Number4) => {
 };
 
 let createAwl = () => {
-  let a = 80;
-  let d = 2000;
+  let radius = 80;
+  let depth = 2000;
 
   let cells = [] as Cell[];
   let sides = 5;
   let unit = (Math.PI * 2) / 5;
-  let p0: Number4 = [0, 0, -d, 0];
+  let farPoint: Number4 = [0, 0, -depth, 0];
   for (let i = 0; i < sides; i++) {
-    let angle1 = i * unit;
-    let angle2 = (i + 1) * unit;
-    let p1: Number4 = [a * Math.cos(angle1), a * Math.sin(-angle1), d, 0];
-    let p2: Number4 = [a * Math.cos(angle2), a * Math.sin(-angle2), d, 0];
-    cells.push(makeCell(p0, p1, p2));
+    let angleStart = i * unit;
+    let angleEnd = (i + 1) * unit;
+    let p1: Number4 = [radius * Math.cos(angleStart), radius * Math.sin(-angleStart), depth, 0];
+    let p2: Number4 = [radius * Math.cos(angleEnd), radius * Math.sin(-angleEnd), depth, 0];
+    cells.push(makeCell(farPoint, p1, p2));
   }
   return cells;
 };
 
 export const kaleidoscopeMirrorConfigs: SolubleApp = {
   initPointsBuffer: () => {
-    // let items = createOctahedron();
-    // let items = createCube();
-    // let items = createCone();
     let items = createAwl();
-    // let items = createAngle();
-    // let items = createRegularIcosahedron();
-    // let items = createRegularTetrahedron();
-    // let items = createRegularDodecahedron();
-
     createGlobalPointsBuffer(items.length, (idx) => items[idx]);
   },
   useCompute: false,
