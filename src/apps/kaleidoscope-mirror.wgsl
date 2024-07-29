@@ -14,11 +14,10 @@ struct Params {
 @group(0) @binding(1) var<uniform> params: Params;
 
 
-
 struct BaseCell {
   a: vec4<f32>,
   b: vec4<f32>,
- c: vec4<f32>,
+  c: vec4<f32>,
 };
 
 @group(1) @binding(0) var<storage, read_write> base_points: array<BaseCell>;

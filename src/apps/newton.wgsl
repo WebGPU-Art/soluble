@@ -67,16 +67,22 @@ struct FoldRet {
 /// stops when iteration reaches a fixed point(<0.001) or iteration steps reaches 200
 fn fold_approach(v0: vec2f) -> FoldRet {
   let offset = vec2<f32>(1., 0.);
-  var v = v0 * 2.4;
+  var v = v0 * 2.1;
   for (var i = 0u; i < 200u; i = i + 1u) {
     // use z^3 - 1
     // let p_next = complex_power(v, 3.) - offset;
     // let p_diff = 3. * complex_power(v, 2.);
     // z8 + 15z4 − 16
-    let p_next = complex_power(v, 8.) + 15. * complex_power(v, 4.) - 16.;
-    let p_diff = 8. * complex_power(v, 7.) + 60. * complex_power(v, 3.);
+    // let p_next = complex_power(v, 8.) + 15. * complex_power(v, 4.) - 16.;
+    // let p_diff = 8. * complex_power(v, 7.) + 60. * complex_power(v, 3.);
+    // z^4 * sin(z) - 1
+    // let p_next = complex_multiply(complex_power(v, 4.), sin(v)) - vec2(1.0, 0.);
+    // let p_diff = complex_multiply(4. * complex_power(v, 3.), sin(v)) + complex_multiply(complex_power(v, 4.), cos(v));
+    // cosh(z) - 1
+    let p_next = cosh(v) - offset;
+    let p_diff = sinh(v);
     let v_next = v - complex_divide(p_next, p_diff);
-    if length(v_next - v) < 0.01 {
+    if distance(v_next, v) < 0.01 {
       return FoldRet(length(v_next), i, v_next);
     }
     v = v_next;
@@ -115,9 +121,9 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     let base1 = dot(arm, v1);
     let base2 = dot(arm, v2);
     if abs(base1) <= 4000. && abs(base2) <= 4000. {
-      let value = vec4(join_point * 0.002, 1.0);
+      let value = vec4(join_point * 0.006, 1.0);
       let ret = fold_approach(value.xy);
-      let c = fract(f32(ret.step) / 60.0);
+      let c = fract(f32(ret.step) / 10.0);
       return vec4f(c, c, c, 1.);
         // return vec4(1. * fract(f32(ret.step) * 0.045), 1. * fract(f32(ret.step) * 0.073), 1. * fract(f32(ret.step) * 0.08), 1.0);
       // return vec4(fract(value.xyz), 1.0);
