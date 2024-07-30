@@ -41,10 +41,16 @@ fn complex_multiply(a: vec2<f32>, b: vec2<f32>) -> vec2<f32> {
 }
 
 fn complex_divide(a: vec2<f32>, b: vec2<f32>) -> vec2<f32> {
-  let d = dot(b, b);
+  // let d = dot(b, b);
+  // return vec2<f32>(
+  //   dot(a, b) / d,
+  //   dot(vec2<f32>(a.y, -a.x), b) / d
+  // );
+
+  let d = b.x * b.x + b.y * b.y;
   return vec2<f32>(
-    dot(a, b) / d,
-    dot(vec2<f32>(a.y, -a.x), b) / d
+    (a.x * b.x + a.y * b.y) / d,
+    (a.y * b.x - a.x * b.y) / d
   );
 }
 
@@ -63,12 +69,34 @@ struct FoldRet {
   value: vec2<f32>,
 }
 
+fn rect_distance(b: vec2<f32>) -> f32 {
+  return max(abs(b.x), abs(b.y));
+}
+
+const PI = 3.1415926535897932384626433832795;
+
+/// built in cosh(complex) does not work as expected
+fn cosh_complex(a: vec2<f32>) -> vec2<f32> {
+  return vec2<f32>(
+    cosh(a.x) * cos(a.y),
+    sinh(a.x) * sin(a.y)
+  );
+}
+
+/// built in sinh(complex) does not work as expected
+fn sinh_complex(a: vec2<f32>) -> vec2<f32> {
+  return vec2<f32>(
+    sinh(a.x) * cos(a.y),
+    cosh(a.x) * sin(a.y)
+  );
+}
 
 /// stops when iteration reaches a fixed point(<0.001) or iteration steps reaches 200
 fn fold_approach(v0: vec2f) -> FoldRet {
-  let offset = vec2<f32>(1., 0.);
-  var v = v0 * 2.1;
-  for (var i = 0u; i < 200u; i = i + 1u) {
+  let offset = vec2<f32>(1.0, 0.);
+  let TAU = 2. * PI;
+  var v = v0 * 10.1;
+  for (var i = 0u; i < 50u; i = i + 1u) {
     // use z^3 - 1
     // let p_next = complex_power(v, 3.) - offset;
     // let p_diff = 3. * complex_power(v, 2.);
@@ -79,15 +107,17 @@ fn fold_approach(v0: vec2f) -> FoldRet {
     // let p_next = complex_multiply(complex_power(v, 4.), sin(v)) - vec2(1.0, 0.);
     // let p_diff = complex_multiply(4. * complex_power(v, 3.), sin(v)) + complex_multiply(complex_power(v, 4.), cos(v));
     // cosh(z) - 1
-    let p_next = cosh(v) - offset;
-    let p_diff = sinh(v);
+    let p_next = cosh_complex(v) - offset;
+    let p_diff = sinh_complex(v);
     let v_next = v - complex_divide(p_next, p_diff);
-    if distance(v_next, v) < 0.01 {
-      return FoldRet(length(v_next), i, v_next);
+    // if distance(v_next, v) < 0.01 {
+    let near_attractor = vec2<f32>(0., round(v_next.y / TAU) * TAU);
+    if rect_distance(v_next - near_attractor) < 0.01 {
+      return FoldRet(length(v_next), i, near_attractor);
     }
     v = v_next;
   }
-  return FoldRet(1000.0, 10000u, v);
+  return FoldRet(2000.0, 1002u, v);
 }
 
 
@@ -121,11 +151,11 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     let base1 = dot(arm, v1);
     let base2 = dot(arm, v2);
     if abs(base1) <= 4000. && abs(base2) <= 4000. {
-      let value = vec4(join_point * 0.006, 1.0);
+      let value = vec4(join_point * 0.0002, 1.0);
       let ret = fold_approach(value.xy);
-      let c = fract(f32(ret.step) / 10.0);
+      let c = fract(f32(ret.step) / 40.0);
       return vec4f(c, c, c, 1.);
-        // return vec4(1. * fract(f32(ret.step) * 0.045), 1. * fract(f32(ret.step) * 0.073), 1. * fract(f32(ret.step) * 0.08), 1.0);
+      // return vec4(1. * fract(f32(ret.step) * 0.045), 1. * fract(f32(ret.step) * 0.073), 1. * fract(f32(ret.step) * 0.08), 1.0);
       // return vec4(fract(value.xyz), 1.0);
       // return vec4(fract(q4_result.xyz), 1.0);
     }
