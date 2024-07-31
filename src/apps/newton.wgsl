@@ -41,12 +41,6 @@ fn complex_multiply(a: vec2<f32>, b: vec2<f32>) -> vec2<f32> {
 }
 
 fn complex_divide(a: vec2<f32>, b: vec2<f32>) -> vec2<f32> {
-  // let d = dot(b, b);
-  // return vec2<f32>(
-  //   dot(a, b) / d,
-  //   dot(vec2<f32>(a.y, -a.x), b) / d
-  // );
-
   let d = b.x * b.x + b.y * b.y;
   return vec2<f32>(
     (a.x * b.x + a.y * b.y) / d,
@@ -100,12 +94,15 @@ fn fold_approach(v0: vec2f) -> FoldRet {
     // use z^3 - 1
     // let p_next = complex_power(v, 3.) - offset;
     // let p_diff = 3. * complex_power(v, 2.);
+
     // z8 + 15z4 − 16
     // let p_next = complex_power(v, 8.) + 15. * complex_power(v, 4.) - 16.;
     // let p_diff = 8. * complex_power(v, 7.) + 60. * complex_power(v, 3.);
+
     // z^4 * sin(z) - 1
     // let p_next = complex_multiply(complex_power(v, 4.), sin(v)) - vec2(1.0, 0.);
     // let p_diff = complex_multiply(4. * complex_power(v, 3.), sin(v)) + complex_multiply(complex_power(v, 4.), cos(v));
+
     // cosh(z) - 1
     let p_next = cosh_complex(v) - offset;
     let p_diff = sinh_complex(v);
@@ -155,9 +152,6 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
       let ret = fold_approach(value.xy);
       let c = fract(f32(ret.step) / 40.0);
       return vec4f(c, c, c, 1.);
-      // return vec4(1. * fract(f32(ret.step) * 0.045), 1. * fract(f32(ret.step) * 0.073), 1. * fract(f32(ret.step) * 0.08), 1.0);
-      // return vec4(fract(value.xyz), 1.0);
-      // return vec4(fract(q4_result.xyz), 1.0);
     }
   }
 
