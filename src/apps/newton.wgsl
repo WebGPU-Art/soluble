@@ -90,7 +90,7 @@ fn fold_approach(v0: vec2f) -> FoldRet {
   let offset = vec2<f32>(1.0, 0.);
   let TAU = 2. * PI;
   var v = v0 * 10.1;
-  for (var i = 0u; i < 50u; i = i + 1u) {
+  for (var i = 0u; i < 100u; i = i + 1u) {
     // use z^3 - 1
     // let p_next = complex_power(v, 3.) - offset;
     // let p_diff = 3. * complex_power(v, 2.);
@@ -109,12 +109,12 @@ fn fold_approach(v0: vec2f) -> FoldRet {
     let v_next = v - complex_divide(p_next, p_diff);
     // if distance(v_next, v) < 0.01 {
     let near_attractor = vec2<f32>(0., round(v_next.y / TAU) * TAU);
-    if rect_distance(v_next - near_attractor) < 0.01 {
+    if rect_distance(v_next - near_attractor) < 0.001 {
       return FoldRet(length(v_next), i, near_attractor);
     }
     v = v_next;
   }
-  return FoldRet(2000.0, 1002u, v);
+  return FoldRet(2000.0, 10u, vec2<f32>(0.0, 0.0));
 }
 
 
@@ -150,8 +150,13 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     if abs(base1) <= 4000. && abs(base2) <= 4000. {
       let value = vec4(join_point * 0.0002, 1.0);
       let ret = fold_approach(value.xy);
-      let c = fract(f32(ret.step) / 40.0);
-      return vec4f(c, c, c, 1.);
+      let c = fract(f32(ret.step) / 10.0);
+      return vec4f(
+        fract(ret.value.y * 20.0 + c * 10. + 0.5),
+        fract(ret.value.y * 20. + 0.5),
+        fract(c * 5.0 + 0.5),
+        1.
+      );
     }
   }
 
