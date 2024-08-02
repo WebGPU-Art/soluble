@@ -20,6 +20,7 @@ import {} from "./apps/parallel-mirror.mjs";
 import {} from "./apps/sphere-mirror.mjs";
 import {} from "./apps/hollow-mirror.mjs";
 import {} from "./apps/newton.mjs";
+import {} from "./apps/newton-cosh.mjs";
 
 // const appConfigs = cubicFireConfigs;
 // const appConfigs = quaternionFractalConfigs;

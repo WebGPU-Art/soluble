@@ -387,6 +387,12 @@
                       |b $ %{} :Leaf (:at 1722186740245) (:by |rJG4IHzWf) (:text |:newton-fractal)
                       |h $ %{} :Leaf (:at 1722186742904) (:by |rJG4IHzWf) (:text "|\"Newton Fractal")
                       |l $ %{} :Leaf (:at 1699463306212) (:by |rJG4IHzWf) (:text |:dark)
+                  |n $ %{} :Expr (:at 1699463295143) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1699463295535) (:by |rJG4IHzWf) (:text |::)
+                      |b $ %{} :Leaf (:at 1722621190307) (:by |rJG4IHzWf) (:text |:newton-cosh-fractal)
+                      |h $ %{} :Leaf (:at 1722621193398) (:by |rJG4IHzWf) (:text "|\"Newton Cosh Fractal")
+                      |l $ %{} :Leaf (:at 1699463306212) (:by |rJG4IHzWf) (:text |:dark)
                   |o $ %{} :Expr (:at 1699463295143) (:by |rJG4IHzWf)
                     :data $ {}
                       |T $ %{} :Leaf (:at 1699463295535) (:by |rJG4IHzWf) (:text |::)
@@ -734,6 +740,10 @@
                     :data $ {}
                       |T $ %{} :Leaf (:at 1722186750996) (:by |rJG4IHzWf) (:text |:newton-fractal)
                       |b $ %{} :Leaf (:at 1722186754722) (:by |rJG4IHzWf) (:text |newtonFractalConfigs)
+                  |pT $ %{} :Expr (:at 1699464610730) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1722621207951) (:by |rJG4IHzWf) (:text |:newton-cosh-fractal)
+                      |b $ %{} :Leaf (:at 1722621211745) (:by |rJG4IHzWf) (:text |newtonCoshFractalConfigs)
                   |q $ %{} :Expr (:at 1699464610730) (:by |rJG4IHzWf)
                     :data $ {}
                       |T $ %{} :Leaf (:at 1699464695179) (:by |rJG4IHzWf) (:text |:space-fractal)
@@ -1498,6 +1508,13 @@
                     |h $ %{} :Expr (:at 1699464561369) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1722186769756) (:by |rJG4IHzWf) (:text |newtonFractalConfigs)
+                |zh $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
+                  :data $ {}
+                    |T $ %{} :Leaf (:at 1722621224968) (:by |rJG4IHzWf) (:text "|\"../src/apps/newton-cosh")
+                    |b $ %{} :Leaf (:at 1699464556816) (:by |rJG4IHzWf) (:text |:refer)
+                    |h $ %{} :Expr (:at 1699464561369) (:by |rJG4IHzWf)
+                      :data $ {}
+                        |T $ %{} :Leaf (:at 1722621221510) (:by |rJG4IHzWf) (:text |newtonCoshFractalConfigs)
                 |zj $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
                     |T $ %{} :Leaf (:at 1699464659079) (:by |rJG4IHzWf) (:text "|\"../src/apps/space-fractal")

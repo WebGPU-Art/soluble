@@ -63,6 +63,10 @@ struct FoldRet {
   value: vec2<f32>,
 }
 
+fn rect_distance(b: vec2<f32>) -> f32 {
+  return max(abs(b.x), abs(b.y));
+}
+
 const PI = 3.1415926535897932384626433832795;
 
 /// built in cosh(complex) does not work as expected
@@ -85,26 +89,16 @@ fn sinh_complex(a: vec2<f32>) -> vec2<f32> {
 fn fold_approach(v0: vec2f) -> FoldRet {
   let offset = vec2<f32>(1.0, 0.);
   let TAU = 2. * PI;
-  var v = v0 * 10.;
-  for (var i = 0u; i < 100u; i = i + 1u) {
-    // use z^3 - 1
-    // let p_next = complex_power(v, 3.) - offset;
-    // let p_diff = 3. * complex_power(v, 2.);
+  var v = v0 * 10.1;
+  for (var i = 0u; i < 160u; i = i + 1u) {
 
-    // z8 + 15z4 − 16
-    // let p_next = complex_power(v, 8.) + 15. * complex_power(v, 4.) - 16.;
-    // let p_diff = 8. * complex_power(v, 7.) + 60. * complex_power(v, 3.);
-
-    // z^4 * sin(z) - 1
-    // let p_next = complex_multiply(complex_power(v, 4.), sin(v)) - vec2(1.0, 0.);
-    // let p_diff = complex_multiply(4. * complex_power(v, 3.), sin(v)) + complex_multiply(complex_power(v, 4.), cos(v));
-
-    // p(z) = z5*Sin(Z) - 1
-    let p_next = complex_multiply(complex_power(v, 5.), sin(v)) - vec2(1.0, 0.);
-    let p_diff = complex_multiply(5. * complex_power(v, 4.), sin(v)) + complex_multiply(complex_power(v, 5.), cos(v));
+    // cosh(z) - 1
+    let p_next = cosh_complex(v) - offset;
+    let p_diff = sinh_complex(v);
 
     let v_next = v - complex_divide(p_next, p_diff);
-    if distance(v_next, v) < 0.002 {
+    let near_attractor = vec2<f32>(0., round(v_next.y / TAU) * TAU);
+    if rect_distance(v_next - near_attractor) < 0.001 {
       return FoldRet(length(v_next), i, v_next);
     }
     v = v_next;
@@ -143,15 +137,13 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     let base1 = dot(arm, v1);
     let base2 = dot(arm, v2);
     if abs(base1) <= 4000. && abs(base2) <= 4000. {
-      let value = vec4(join_point * 0.00004, 1.0);
+      let value = vec4(join_point * 0.0002, 1.0);
       let ret = fold_approach(value.xy);
-      let c = fract(f32(ret.step) / 200.0);
+      let c = fract(f32(ret.step) / 100.0);
       return vec4f(
-        fract(ret.value.x * 0.02 + 0.8),
-        fract(ret.value.y * 0.01 + 0.8),
-        // fract(c * 1.0 + 0.8),
-        // fract(c * 1.0 + 0.8),
-        fract(c * 1. + 0.8),
+        fract(c * 40.0 + 0.8),
+        fract(ret.value.y * 0.8 + .9),
+        fract(ret.value.y * 0.8 + .9),
         1.
       );
     }
