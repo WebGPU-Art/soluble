@@ -3,6 +3,8 @@
 
 #import soluble::math
 
+#import soluble::mirror
+
 struct Params {
   time: f32,
   dt: f32,
@@ -25,78 +27,6 @@ struct BaseCell {
 
 @compute @workgroup_size(8, 8, 1)
 fn compute_main(@builtin(global_invocation_id) global_id: vec3u) {
-  // not doint things
-}
-
-/// reflect line A upon the part that is parrallel to B
-fn reflect_on_direction(a: vec3<f32>, b: vec3<f32>) -> vec3<f32> {
-  let b0 = normalize(b);
-  let v_ = dot(a, b0) * b0;
-  return a - 2. * v_ ;
-}
-
-/// result holding information how ray is close to segment line
-struct RayReachSegment {
-  distance: f32,
-  positive_side: bool,
-  traveled: f32,
-}
-
-
-struct Segment {
-  start: vec3<f32>,
-  end: vec3<f32>,
-}
-
-/// find out closest point of ray to the segment
-fn ray_closest_point_to_line(viewer_position: vec3f, ray_unit: vec3f, s: Segment) -> RayReachSegment {
-  let a = s.start - viewer_position;
-  let b = s.end - viewer_position;
-
-  // find perp direction and projection length on it
-  let n = cross(b - a, ray_unit);
-
-  // find projection of a of segment on ray direction, and use the Pythagorean theorem for another distance
-  let a_proj = dot(ray_unit, a);
-  let shadow_a = a - ray_unit * a_proj;
-
-  let b_proj = dot(ray_unit, b);
-  let shadow_b = b - ray_unit * b_proj;
-
-  let direct_an = cross(shadow_a, n);
-  let direct_bn = cross(shadow_b, n);
-      // a and b on the same side of N
-  let same_side = dot(direct_an, direct_bn) >= 0.0;
-
-  if same_side {
-    let a_distance_min = sqrt(dot(a, a) - a_proj * a_proj);
-    let b_distance_min = sqrt(dot(b, b) - b_proj * b_proj);
-    if a_distance_min < b_distance_min {
-      return RayReachSegment(a_distance_min, true, a_proj);
-    } else {
-      return RayReachSegment(b_distance_min, true, b_proj);
-    }
-  } else {
-    let n0 = normalize(n);
-    /// smaller distance to segments ends
-    let d_min = abs(dot(n0, a));
-
-    // let travel = min(a_proj, b_proj); // very rough approximation
-    let ab_unit = normalize(s.end - s.start);
-    let ac = (viewer_position - s.start);
-
-    let perp_reach: vec3f = dot(ac, n0) * n0;
-
-    /// tricky math to find out traveled distance before closest point
-    /// https://cos-sh.tiye.me/cos-up/342e0f6b7e3a7b1b4d18dad16cd84f79/IMG_20240601_113231.jpg
-    /// https://g.co/gemini/share/dbf766e185a7
-    let k = dot(
-      cross(s.start + perp_reach - viewer_position, ab_unit),
-      cross(ray_unit, ab_unit)
-    ) + .0;
-
-    return RayReachSegment(d_min, k > 0., k);
-  };
 }
 
 // fn move_segment(segment: Segment, shifts: vec3f) -> Segment {
@@ -105,75 +35,12 @@ fn ray_closest_point_to_line(viewer_position: vec3f, ray_unit: vec3f, s: Segment
 //   return Segment(next_start, next_end);
 // }
 
-/// holding information about ray reflection
-struct RayMirrorHit {
-  hit: bool,
-  point: vec3<f32>,
-  travel: f32,
-  next_ray_unit: vec3<f32>,
-}
-
 /// the sphere mirror
 struct SphereMirror {
   center: vec3f,
   radius: f32,
   /// which side to reflect
   outside: bool,
-}
-
-fn try_reflect_ray_with_sphere(viewer_position: vec3f, ray_unit: vec3f, center: vec3f, radius: f32, outside: bool) -> RayMirrorHit {
-
-  // sphere center to viewer
-  let center_to_viewer = center - viewer_position;
-
-  let viewer_inside = dot(center_to_viewer, center_to_viewer) < radius * radius;
-
-  if outside {
-    if viewer_inside {
-      return RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 0.0, vec3<f32>(0.0, 0.0, 0.0));
-    } else {
-
-      // distance from center to ray direction
-      let projection = dot(center_to_viewer, ray_unit);
-
-      if projection < 0.0 {
-        // viewer is behind the sphere
-        return RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 0.0, vec3<f32>(0.0, 0.0, 0.0));
-      }
-      let distance_to_ray = center_to_viewer - projection * ray_unit;
-
-      if length(distance_to_ray) > radius {
-        // viewer is outside the sphere
-        return RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 0.0, vec3<f32>(0.0, 0.0, 0.0));
-      }
-
-      let distance_to_hit = sqrt(radius * radius - dot(distance_to_ray, distance_to_ray));
-      let traveled = projection - distance_to_hit;
-      let nearer_hit_point = viewer_position + traveled * ray_unit;
-
-      return RayMirrorHit(true, nearer_hit_point, traveled, reflect_on_direction(ray_unit, nearer_hit_point - center));
-    }
-  } else {
-      // distance from center to ray direction
-    let projection = dot(center_to_viewer, ray_unit);
-
-    if projection < 0.0 {
-        // viewer is behind the sphere
-      return RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 0.0, vec3<f32>(0.0, 0.0, 0.0));
-    }
-    let distance_to_ray = center_to_viewer - projection * ray_unit;
-
-    if length(distance_to_ray) > radius {
-        // viewer is outside the sphere
-      return RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 0.0, vec3<f32>(0.0, 0.0, 0.0));
-    }
-
-    let distance_to_hit = sqrt(radius * radius - dot(distance_to_ray, distance_to_ray));
-    let traveled = projection + distance_to_hit;
-    let further_hit_point = viewer_position + traveled * ray_unit;
-
-    return RayMirrorHit(true, further_hit_point, traveled, reflect_on_direction(ray_unit, further_hit_point - center));
-  }
 }
 
 
@@ -252,7 +119,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
     for (var i = 0u; i < mirrors_size; i = i + 1u) {
       let mirror = mirrors[i];
-      let hit_sphere = try_reflect_ray_with_sphere(current_viewer, current_ray_unit, mirror.center, mirror.radius, mirror.outside);
+      let hit_sphere = reflect_ray_with_sphere(current_viewer, current_ray_unit, mirror.center, mirror.radius, mirror.outside);
       if hit_sphere.hit && abs(hit_sphere.travel) > .01 {
         hit_mirror = true;
 

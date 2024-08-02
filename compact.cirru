@@ -60,7 +60,7 @@
                 :color :white
         |tabs $ %{} :CodeEntry (:doc |)
           :code $ quote
-            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark) (:: :circles "\"Circles" :dark) (:: :kaleidoscope "\"Kaleidoscope" :dark) (:: :image "\"Image" :dark) (:: :clocking "\"Clocking" :dark) (:: :ripple "\"Ripple" :dark) (:: :surround-mirror "\"Surrond Mirror" :dark) (:: :parallel-mirror "\"Parallel Mirror" :dark) (:: :sphere-mirror "\"Sphere Mirror" :dark) (:: :hollow-mirror "\"Hollow Mirror" :dark)
+            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :newton-fractal "\"Newton Fractal" :dark) (:: :newton-cosh-fractal "\"Newton Cosh Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark) (:: :circles "\"Circles" :dark) (:: :kaleidoscope "\"Kaleidoscope" :dark) (:: :image "\"Image" :dark) (:: :clocking "\"Clocking" :dark) (:: :ripple "\"Ripple" :dark) (:: :surround-mirror "\"Surrond Mirror" :dark) (:: :kaleidoscope-mirror "\"Kaleidoscope Mirror" :dark) (:: :parallel-mirror "\"Parallel Mirror" :dark) (:: :sphere-mirror "\"Sphere Mirror" :dark) (:: :hollow-mirror "\"Hollow Mirror" :dark)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
           ns app.comp.container $ :require (respo-ui.css :as css)
@@ -117,6 +117,8 @@
                 :cubic-fire cubicFireConfigs
                 :quaternion-fractal quaternionFractalConfigs
                 :complex-fractal complexFractalConfigs
+                :newton-fractal newtonFractalConfigs
+                :newton-cosh-fractal newtonCoshFractalConfigs
                 :space-fractal spaceFractalConfigs
                 :sphere-fractal sphereFractalConfigs
                 :slow-fractal slowFractalConfigs
@@ -125,6 +127,7 @@
                 :rings rings/configs
                 :circles circles/configs
                 :kaleidoscope kaleidoscopeConfigs
+                :kaleidoscope-mirror kaleidoscopeMirrorConfigs
                 :clocking clockingConfigs
                 :image imageConfigs
                 :ripple rippleConfigs
@@ -237,11 +240,14 @@
             "\"../src/apps/cubic-fire" :refer $ cubicFireConfigs
             "\"../src/apps/quaternion-fractal" :refer $ quaternionFractalConfigs
             "\"../src/apps/complex-fractal" :refer $ complexFractalConfigs
+            "\"../src/apps/newton" :refer $ newtonFractalConfigs
+            "\"../src/apps/newton-cosh" :refer $ newtonCoshFractalConfigs
             "\"../src/apps/space-fractal" :refer $ spaceFractalConfigs
             "\"../src/apps/sphere-fractal" :refer $ sphereFractalConfigs
             "\"../src/apps/slow-fractal" :refer $ slowFractalConfigs
             "\"../src/apps/orbits" :refer $ orbitsConfigs
             "\"../src/apps/kaleidoscope" :refer $ kaleidoscopeConfigs
+            "\"../src/apps/kaleidoscope-mirror" :refer $ kaleidoscopeMirrorConfigs
             "\"../src/apps/image" :refer $ imageConfigs
             "\"../src/apps/stars" :as stars
             "\"../src/apps/rings" :as rings
