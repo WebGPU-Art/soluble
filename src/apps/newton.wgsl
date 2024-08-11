@@ -81,6 +81,21 @@ fn sinh_complex(a: vec2<f32>) -> vec2<f32> {
   );
 }
 
+// sin_complex
+fn sin_complex(a: vec2<f32>) -> vec2<f32> {
+  return vec2<f32>(
+    sin(a.x) * cosh(a.y),
+    cos(a.x) * sinh(a.y)
+  );
+}
+
+fn cos_complex(a: vec2<f32>) -> vec2<f32> {
+  return vec2<f32>(
+    cos(a.x) * cosh(a.y),
+    -sin(a.x) * sinh(a.y)
+  );
+}
+
 /// stops when iteration reaches a fixed point(<0.001) or iteration steps reaches 200
 fn fold_approach(v0: vec2f) -> FoldRet {
   let offset = vec2<f32>(1.0, 0.);
@@ -91,6 +106,10 @@ fn fold_approach(v0: vec2f) -> FoldRet {
     // let p_next = complex_power(v, 3.) - offset;
     // let p_diff = 3. * complex_power(v, 2.);
 
+    // use z^7 - 1
+    // let p_next = complex_power(v, 7.) - offset;
+    // let p_diff = 7. * complex_power(v, 6.);
+
     // z8 + 15z4 − 16
     // let p_next = complex_power(v, 8.) + 15. * complex_power(v, 4.) - 16.;
     // let p_diff = 8. * complex_power(v, 7.) + 60. * complex_power(v, 3.);
@@ -99,12 +118,28 @@ fn fold_approach(v0: vec2f) -> FoldRet {
     // let p_next = complex_multiply(complex_power(v, 4.), sin(v)) - vec2(1.0, 0.);
     // let p_diff = complex_multiply(4. * complex_power(v, 3.), sin(v)) + complex_multiply(complex_power(v, 4.), cos(v));
 
-    // p(z) = z5*Sin(Z) - 1
-    let p_next = complex_multiply(complex_power(v, 5.), sin(v)) - vec2(1.0, 0.);
-    let p_diff = complex_multiply(5. * complex_power(v, 4.), sin(v)) + complex_multiply(complex_power(v, 5.), cos(v));
+    // p(z) = z^5*sin(z) - 1
+    // let p_next = complex_multiply(complex_power(v, 5.), sin(v)) - vec2(1.0, 0.);
+    // let p_diff = complex_multiply(5. * complex_power(v, 4.), sin(v)) + complex_multiply(complex_power(v, 5.), cos_complex(v));
+
+    // p(z) = 2 * cos(z) - 1
+    // let p_next = 2. * cos_complex(v) - vec2(1.0, 0.);
+    // let p_diff = -2. * sin_complex(v);
+
+    // p(z) = cosh(z) + cos(z) - 1
+    let p_next = cosh_complex(v) + cos_complex(v) - vec2(1., 0.);
+    let p_diff = sinh_complex(v) - sin_complex(v);
+
+    // z^7 - 14z^5 + 49z^3 - 36z
+    // let p_next = complex_power(v, 7.) - 14. * complex_power(v, 5.) + 49. * complex_power(v, 3.) - 36. * v;
+    // let p_diff = 7. * complex_power(v, 6.) - 70. * complex_power(v, 4.) + 147. * complex_power(v, 2.) - 36.;
+
+    // 4z - 5z^3 + z^5
+    // let p_next = 4. * v - 5. * complex_power(v, 3.) + complex_power(v, 5.);
+    // let p_diff = 4. - 15. * complex_power(v, 2.) + 5. * complex_power(v, 4.);
 
     let v_next = v - complex_divide(p_next, p_diff);
-    if distance(v_next, v) < 0.002 {
+    if distance(v_next, v) < 0.001 {
       return FoldRet(length(v_next), i, v_next);
     }
     v = v_next;
@@ -142,17 +177,18 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     let arm = join_point - p0;
     let base1 = dot(arm, v1);
     let base2 = dot(arm, v2);
-    if abs(base1) <= 4000. && abs(base2) <= 4000. {
+    if abs(base1) <= 6000. && abs(base2) <= 6000. {
       let value = vec4(join_point * 0.00004, 1.0);
       let ret = fold_approach(value.xy);
-      let c = fract(f32(ret.step) / 200.0);
+      let c = fract(f32(ret.step) / 20.0);
       return vec4f(
-        fract(ret.value.x * 0.02 + 0.8),
-        fract(ret.value.y * 0.01 + 0.8),
-        // fract(c * 1.0 + 0.8),
-        // fract(c * 1.0 + 0.8),
-        fract(c * 1. + 0.8),
-        1.
+        // fract(ret.value.x * 10. + 0.3),
+        // fract(ret.value.y * 10. + 0.5),
+        // fract(ret.value.y * 100. + 0.7),
+        fract(c * c * .8 + 0.0),
+        fract(c * c * .8 + 0.0),
+        // fract(c * c * .8 + 0.0),
+        0., 1.
       );
     }
   }

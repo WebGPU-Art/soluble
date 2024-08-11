@@ -139,11 +139,11 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     if abs(base1) <= 4000. && abs(base2) <= 4000. {
       let value = vec4(join_point * 0.0002, 1.0);
       let ret = fold_approach(value.xy);
-      let c = fract(f32(ret.step) / 100.0);
+      let c = pow(fract(f32(ret.step) / 20.0 + 0.2), 3.) * 0.99;
       return vec4f(
-        fract(c * 40.0 + 0.8),
-        fract(ret.value.y * 0.8 + .9),
-        fract(ret.value.y * 0.8 + .9),
+        c,
+        c,
+        c,
         1.
       );
     }
