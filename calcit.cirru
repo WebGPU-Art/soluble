@@ -489,6 +489,12 @@
                       |b $ %{} :Leaf (:at 1721236360129) (:by |rJG4IHzWf) (:text |:hollow-mirror)
                       |h $ %{} :Leaf (:at 1721236361924) (:by |rJG4IHzWf) (:text "|\"Hollow Mirror")
                       |l $ %{} :Leaf (:at 1712938641596) (:by |rJG4IHzWf) (:text |:dark)
+                  |zn $ %{} :Expr (:at 1712938631055) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1712938631792) (:by |rJG4IHzWf) (:text |::)
+                      |b $ %{} :Leaf (:at 1724345106003) (:by |rJG4IHzWf) (:text |:box-mirror)
+                      |h $ %{} :Leaf (:at 1724345107962) (:by |rJG4IHzWf) (:text "|\"Box Mirror")
+                      |l $ %{} :Leaf (:at 1712938641596) (:by |rJG4IHzWf) (:text |:dark)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ %{} :Expr (:at 1499755354983) (:by nil)
           :data $ {}
@@ -808,6 +814,10 @@
                     :data $ {}
                       |T $ %{} :Leaf (:at 1721236355611) (:by |rJG4IHzWf) (:text |:hollow-mirror)
                       |b $ %{} :Leaf (:at 1721236353122) (:by |rJG4IHzWf) (:text |hollowMirrorConfigs)
+                  |zj $ %{} :Expr (:at 1716718449053) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1724345124486) (:by |rJG4IHzWf) (:text |:box-mirror)
+                      |b $ %{} :Leaf (:at 1724345125986) (:by |rJG4IHzWf) (:text |boxMirrorConfigs)
         |load-textures! $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1713297574685) (:by |rJG4IHzWf)
             :data $ {}
@@ -1621,6 +1631,13 @@
                     |g $ %{} :Expr (:at 1714755629826) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1721236343369) (:by |rJG4IHzWf) (:text |hollowMirrorConfigs)
+                |zszY $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
+                  :data $ {}
+                    |T $ %{} :Leaf (:at 1724345133397) (:by |rJG4IHzWf) (:text "|\"../src/apps/box-mirror")
+                    |a $ %{} :Leaf (:at 1714755628974) (:by |rJG4IHzWf) (:text |:refer)
+                    |g $ %{} :Expr (:at 1714755629826) (:by |rJG4IHzWf)
+                      :data $ {}
+                        |T $ %{} :Leaf (:at 1724345131767) (:by |rJG4IHzWf) (:text |boxMirrorConfigs)
                 |zt $ %{} :Expr (:at 1709657313552) (:by |rJG4IHzWf)
                   :data $ {}
                     |T $ %{} :Leaf (:at 1709657319126) (:by |rJG4IHzWf) (:text "|\"../src/global")
