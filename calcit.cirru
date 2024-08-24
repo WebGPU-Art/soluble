@@ -1665,7 +1665,7 @@
                             :data $ {}
                               |D $ %{} :Leaf (:at 1711260016101) (:by |rJG4IHzWf) (:text |get-env)
                               |L $ %{} :Leaf (:at 1711260020594) (:by |rJG4IHzWf) (:text "|\"tab")
-                              |T $ %{} :Leaf (:at 1721238252418) (:by |rJG4IHzWf) (:text "|\"hollow-mirror")
+                              |T $ %{} :Leaf (:at 1724484811872) (:by |rJG4IHzWf) (:text "|\"box-mirror")
                   |j $ %{} :Expr (:at 1499755354983) (:by nil)
                     :data $ {}
                       |T $ %{} :Leaf (:at 1499755354983) (:by |root) (:text |:states)

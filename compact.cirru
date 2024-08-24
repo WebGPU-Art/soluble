@@ -266,7 +266,7 @@
         |store $ %{} :CodeEntry (:doc |)
           :code $ quote
             def store $ {}
-              :tab $ turn-tag (get-env "\"tab" "\"hollow-mirror")
+              :tab $ turn-tag (get-env "\"tab" "\"box-mirror")
               :states $ {}
                 :cursor $ []
       :ns $ %{} :CodeEntry (:doc |)

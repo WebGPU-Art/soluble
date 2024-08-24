@@ -1,4 +1,14 @@
-import { atomDepthTexture, atomContext, atomDevice, atomBufferNeedClear, atomSolubleTree, wLog, atomPointsBuffer, atomSharedTextures } from "./global.mjs";
+import {
+  atomDepthTexture,
+  atomContext,
+  atomDevice,
+  atomBufferNeedClear,
+  atomSolubleTree,
+  wLog,
+  atomPointsBuffer,
+  atomSharedTextures,
+  atomSecondaryBuffer,
+} from "./global.mjs";
 import { atomViewerPosition, atomViewerScale, atomViewerUpward, newLookatPoint } from "./perspective.mjs";
 import { vNormalize, vCross } from "./quaternion.mjs";
 
@@ -19,6 +29,9 @@ export type BaseCellParams = {
 };
 
 let cachedBaseSize = 0;
+let identity = <T,>(x: T): T => x;
+
+/** hold item data */
 export const createGlobalPointsBuffer = (baseSize: number, f: (idx: number) => BaseCellParams): GPUBuffer => {
   if (atomPointsBuffer.deref() && baseSize === cachedBaseSize) {
     return atomPointsBuffer.deref();
@@ -45,9 +58,37 @@ export const createGlobalPointsBuffer = (baseSize: number, f: (idx: number) => B
   atomPointsBuffer.reset(createBuffer(new Float32Array(items), GPUBufferUsage.STORAGE, device));
   return atomPointsBuffer.deref();
 };
+/** hold secondary data, possible not called since not used */
+export const createSecondaryDataBuffer = (baseSize: number, f: (idx: number) => BaseCellParams): GPUBuffer => {
+  if (atomSecondaryBuffer.deref() && baseSize === cachedBaseSize) {
+    return atomSecondaryBuffer.deref();
+  }
+  cachedBaseSize = baseSize;
+  let device = atomDevice.deref();
+  let items: number[] = [];
+  for (let i = 0; i < baseSize; i++) {
+    let info = f(i);
+    items.push(...info.position);
+    if (info.velocity) {
+      items.push(...info.velocity);
+    }
+    if (info.arm) {
+      items.push(...info.arm);
+    }
+    if (info.params) {
+      items.push(...info.params);
+    }
+    if (info.extendParams) {
+      items.push(...info.extendParams);
+    }
+  }
+  atomSecondaryBuffer.reset(createBuffer(new Float32Array(items), GPUBufferUsage.STORAGE, device));
+  return atomSecondaryBuffer.deref();
+};
 
 export function clearPointsBuffer() {
   atomPointsBuffer.reset(null);
+  atomSecondaryBuffer.reset(null);
 }
 
 export function computeBasePoints() {
@@ -192,14 +233,21 @@ let buildCommandBuffer = (t: number, params: number[], textures: GPUTexture[]): 
       { binding: 1, resource: { buffer: paramsBuffer } },
     ],
   });
+  let secondaryBuffer = atomSecondaryBuffer.deref();
+  let hasSecondary = secondaryBuffer != null;
 
   let particlesBindGroupLayout = device.createBindGroupLayout({
-    entries: [{ binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { type: "storage" } }],
+    entries: [
+      { binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { type: "storage" } } as GPUBindGroupLayoutEntry,
+      (hasSecondary ? { binding: 1, visibility: GPUShaderStage.FRAGMENT, buffer: { type: "storage" } } : undefined) as GPUBindGroupLayoutEntry,
+    ].filter(Boolean),
   });
 
   let particlesBindGroup = device.createBindGroup({
     layout: particlesBindGroupLayout,
-    entries: [{ binding: 0, resource: { buffer: atomPointsBuffer.deref() } }],
+    entries: [{ binding: 0, resource: { buffer: atomPointsBuffer.deref() } }, hasSecondary && { binding: 1, resource: { buffer: secondaryBuffer } }].filter(
+      Boolean
+    ),
   });
 
   let texturesInfo = prepareTextures(device, textures, "texturesInfo");

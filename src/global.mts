@@ -19,4 +19,7 @@ export function wLog<T extends any>(message: string, a: T): T {
 
 export let atomPointsBuffer: Atom<GPUBuffer> = new Atom(null);
 
+/** optional buffer for another sets of data */
+export let atomSecondaryBuffer: Atom<GPUBuffer> = new Atom(null);
+
 export var atomSharedTextures: Atom<Record<string, GPUTexture>> = new Atom({});
