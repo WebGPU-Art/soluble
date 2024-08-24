@@ -76,13 +76,14 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   /// maximum number of reflections
   let max_relect_times = 8u;
+  let size = arrayLength(&base_points);
+  let segments_size = arrayLength(&secondary_points);
 
   for (var times = 0u; times < max_relect_times + 1u; times++) {
 
     var hit_mirror = false;
     var nearest = RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 1000000., vec3<f32>(0.0, 0.0, 0.0));
 
-    let size = arrayLength(&base_points);
     for (var mi = 0u; mi < size; mi = mi + 1u) {
       let ceil = base_points[mi];
       let mirror = MirrorTriangle(ceil.a.xyz, ceil.b.xyz, ceil.c.xyz);
@@ -100,7 +101,6 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
 
     let t = params.time * 0.000;
-    let segments_size = arrayLength(&secondary_points);
 
     for (var i = 0u; i < segments_size; i = i + 1u) {
       var segment = Segment(secondary_points[i].a.xyz, secondary_points[i].b.xyz);
@@ -125,11 +125,11 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
       // }
 
       let seg_len = length(segment.end - segment.start);
-      let distance = max(0., reach.distance - 0.6);
+      let distance = max(0.001, reach.distance - 0.6);
       let f = pow(f32(in_mirror) / 2. + 2.0, 3.);
       var color_scale = 1.2 / pow(distance * 0.07 + 0.01, 1.8) / f;
       if seg_len > 2.2 * d {
-        color_scale *= .05;
+        color_scale *= .1;
       }
 
       total_color += vec4<f32>(0.01, 0.02, 0.01, 0.0) * color_scale;
