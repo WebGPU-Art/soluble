@@ -1,5 +1,5 @@
 
-/// reflect line A upon the part that is parrallel to B
+/// reflect line A upon the part that is parallel to B
 fn reflect_on_direction(a: vec3<f32>, b: vec3<f32>) -> vec3<f32> {
   let b0 = normalize(b);
   let v_ = dot(a, b0) * b0;
@@ -37,15 +37,15 @@ fn ray_closest_point_to_line(viewer_position: vec3f, ray_unit: vec3f, s: Segment
   let direct_an = cross(shadow_a, n);
   let direct_bn = cross(shadow_b, n);
       // a and b on the same side of N
-  let same_side = dot(direct_an, direct_bn) >= 0.0;
+  let same_side = dot(direct_an, direct_bn) > 0.0;
 
   if same_side {
-    let a_distance_min = sqrt(dot(a, a) - a_proj * a_proj);
-    let b_distance_min = sqrt(dot(b, b) - b_proj * b_proj);
-    if a_distance_min < b_distance_min {
-      return RayReachSegment(a_distance_min, a_proj > 0., a_proj);
+    let a_distance2_min = dot(a, a) - a_proj * a_proj;
+    let b_distance2_min = dot(b, b) - b_proj * b_proj;
+    if a_distance2_min < b_distance2_min {
+      return RayReachSegment(sqrt(a_distance2_min), a_proj > 0., a_proj);
     } else {
-      return RayReachSegment(b_distance_min, b_proj > 0., b_proj);
+      return RayReachSegment(sqrt(b_distance2_min), b_proj > 0., b_proj);
     }
   } else {
     let n0 = normalize(n);
@@ -54,7 +54,7 @@ fn ray_closest_point_to_line(viewer_position: vec3f, ray_unit: vec3f, s: Segment
 
     // let travel = min(a_proj, b_proj); // very rough approximation
     let ab_unit = normalize(s.end - s.start);
-    let ac = (viewer_position - s.start);
+    let ac = viewer_position - s.start;
 
     let perp_reach: vec3f = dot(ac, n0) * n0;
 
@@ -171,7 +171,7 @@ fn try_reflect_ray_with_mirror(viewer_position: vec3f, ray_unit: vec3f, mirror: 
   let spin_a = cross(hit_point - mirror.a, mirror.b - mirror.a);
   let spin_b = cross(hit_point - mirror.b, mirror.c - mirror.b);
   let spin_c = cross(hit_point - mirror.c, mirror.a - mirror.c);
-  let inside = dot(spin_a, spin_b) >= 0.0 && dot(spin_b, spin_c) >= 0.0 && dot(spin_c, spin_a) >= 0.0;
+  let inside = dot(spin_a, spin_b) > 0.0 && dot(spin_b, spin_c) > 0.0 && dot(spin_c, spin_a) > 0.0;
 
   if inside {
     let reflection = reflect_on_direction(ray_unit, n);

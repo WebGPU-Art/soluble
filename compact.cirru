@@ -60,7 +60,7 @@
                 :color :white
         |tabs $ %{} :CodeEntry (:doc |)
           :code $ quote
-            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :newton-fractal "\"Newton Fractal" :dark) (:: :newton-cosh-fractal "\"Newton Cosh Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark) (:: :circles "\"Circles" :dark) (:: :kaleidoscope "\"Kaleidoscope" :dark) (:: :image "\"Image" :dark) (:: :clocking "\"Clocking" :dark) (:: :ripple "\"Ripple" :dark) (:: :surround-mirror "\"Surrond Mirror" :dark) (:: :kaleidoscope-mirror "\"Kaleidoscope Mirror" :dark) (:: :parallel-mirror "\"Parallel Mirror" :dark) (:: :sphere-mirror "\"Sphere Mirror" :dark) (:: :hollow-mirror "\"Hollow Mirror" :dark)
+            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :newton-fractal "\"Newton Fractal" :dark) (:: :newton-cosh-fractal "\"Newton Cosh Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark) (:: :circles "\"Circles" :dark) (:: :kaleidoscope "\"Kaleidoscope" :dark) (:: :image "\"Image" :dark) (:: :clocking "\"Clocking" :dark) (:: :ripple "\"Ripple" :dark) (:: :surround-mirror "\"Surrond Mirror" :dark) (:: :kaleidoscope-mirror "\"Kaleidoscope Mirror" :dark) (:: :parallel-mirror "\"Parallel Mirror" :dark) (:: :sphere-mirror "\"Sphere Mirror" :dark) (:: :hollow-mirror "\"Hollow Mirror" :dark) (:: :box-mirror "\"Box Mirror" :dark)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
           ns app.comp.container $ :require (respo-ui.css :as css)
@@ -135,6 +135,7 @@
                 :parallel-mirror parallelMirrorConfigs
                 :sphere-mirror sphereMirrorConfigs
                 :hollow-mirror hollowMirrorConfigs
+                :box-mirror boxMirrorConfigs
         |load-textures! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn load-textures! (device) (hint-fn async)
@@ -258,13 +259,14 @@
             "\"../src/apps/parallel-mirror" :refer $ parallelMirrorConfigs
             "\"../src/apps/sphere-mirror" :refer $ sphereMirrorConfigs
             "\"../src/apps/hollow-mirror" :refer $ hollowMirrorConfigs
+            "\"../src/apps/box-mirror" :refer $ boxMirrorConfigs
             "\"../src/global" :refer $ atomSolubleTree
     |app.schema $ %{} :FileEntry
       :defs $ {}
         |store $ %{} :CodeEntry (:doc |)
           :code $ quote
             def store $ {}
-              :tab $ turn-tag (get-env "\"tab" "\"hollow-mirror")
+              :tab $ turn-tag (get-env "\"tab" "\"box-mirror")
               :states $ {}
                 :cursor $ []
       :ns $ %{} :CodeEntry (:doc |)
