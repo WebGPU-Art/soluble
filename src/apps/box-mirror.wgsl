@@ -104,6 +104,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
     for (var i = 0u; i < segments_size; i = i + 1u) {
       var segment = Segment(secondary_points[i].a.xyz, secondary_points[i].b.xyz);
+      // let ray_segment = Segment(ray_unit, ray_unit + ray_unit);
       let reach = ray_closest_point_to_line(current_viewer, current_ray_unit, segment);
 
       if !reach.positive_side && in_mirror < 1u {

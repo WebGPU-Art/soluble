@@ -19,6 +19,14 @@ struct Segment {
   end: vec3<f32>,
 }
 
+/// just calulate some smallest distance between two lines
+fn min_distance_lines(a: Segment, b: Segment) -> f32 {
+  let perp_line = cross(a.start - b.start, a.end - b.end);
+  let n0 = normalize(perp_line);
+  let d = abs(dot(n0, a.start - b.start));
+  return d;
+}
+
 /// find out closest point of ray to the segment
 fn ray_closest_point_to_line(viewer_position: vec3f, ray_unit: vec3f, s: Segment) -> RayReachSegment {
   let a = s.start - viewer_position;

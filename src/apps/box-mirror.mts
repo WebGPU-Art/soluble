@@ -24,7 +24,7 @@ let makeCell = (a: Number4, b: Number4, c: Number4) => {
 
 let createBox = () => {
   let a = 80;
-  // a bube
+  // a cube
   let p0: Number4 = [-a, -a, a, 0];
   let p1: Number4 = [a, -a, a, 0];
   let p2: Number4 = [a, -a, -a, 0];
