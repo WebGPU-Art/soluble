@@ -8,9 +8,9 @@
     "prepare": "yarn compile"
   },
   "devDependencies": {
-    "@calcit/procs": "^0.9.5",
-    "@types/node": "^22.8.7",
-    "@webgpu/types": "^0.1.50",
+    "@calcit/procs": "^0.9.6",
+    "@types/node": "^22.9.0",
+    "@webgpu/types": "^0.1.51",
     "bottom-tip": "^0.1.5",
     "prettier": "^3.3.3",
     "typescript": "^5.6.3",
