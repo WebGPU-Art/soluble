@@ -238,31 +238,31 @@
             app.config :as config
             "\"./calcit.build-errors" :default build-errors
             "\"bottom-tip" :default hud!
-            "\"../src/index" :as solublejs
-            "\"../src/apps/cubic-fire" :refer $ cubicFireConfigs
-            "\"../src/apps/quaternion-fractal" :refer $ quaternionFractalConfigs
-            "\"../src/apps/complex-fractal" :refer $ complexFractalConfigs
-            "\"../src/apps/newton" :refer $ newtonFractalConfigs
-            "\"../src/apps/newton-cosh" :refer $ newtonCoshFractalConfigs
-            "\"../src/apps/space-fractal" :refer $ spaceFractalConfigs
-            "\"../src/apps/sphere-fractal" :refer $ sphereFractalConfigs
-            "\"../src/apps/slow-fractal" :refer $ slowFractalConfigs
-            "\"../src/apps/orbits" :refer $ orbitsConfigs
-            "\"../src/apps/kaleidoscope" :refer $ kaleidoscopeConfigs
-            "\"../src/apps/kaleidoscope-mirror" :refer $ kaleidoscopeMirrorConfigs
-            "\"../src/apps/image" :refer $ imageConfigs
-            "\"../src/apps/stars" :as stars
-            "\"../src/apps/rings" :as rings
-            "\"../src/apps/circles" :as circles
-            "\"../src/apps/clocking" :refer $ clockingConfigs
-            "\"../src/apps/ripple" :refer $ rippleConfigs
-            "\"../src/apps/surround-mirror" :refer $ surroundMirrorConfigs
-            "\"../src/apps/parallel-mirror" :refer $ parallelMirrorConfigs
-            "\"../src/apps/sphere-mirror" :refer $ sphereMirrorConfigs
-            "\"../src/apps/hollow-mirror" :refer $ hollowMirrorConfigs
-            "\"../src/apps/box-mirror" :refer $ boxMirrorConfigs
-            "\"../src/apps/rhombic-mirror" :refer $ rhombicMirrorConfigs
-            "\"../src/global" :refer $ atomSolubleTree
+            "\"../src/index.mts" :as solublejs
+            "\"../src/apps/cubic-fire.mts" :refer $ cubicFireConfigs
+            "\"../src/apps/quaternion-fractal.mts" :refer $ quaternionFractalConfigs
+            "\"../src/apps/complex-fractal.mts" :refer $ complexFractalConfigs
+            "\"../src/apps/newton.mts" :refer $ newtonFractalConfigs
+            "\"../src/apps/newton-cosh.mts" :refer $ newtonCoshFractalConfigs
+            "\"../src/apps/space-fractal.mts" :refer $ spaceFractalConfigs
+            "\"../src/apps/sphere-fractal.mts" :refer $ sphereFractalConfigs
+            "\"../src/apps/slow-fractal.mts" :refer $ slowFractalConfigs
+            "\"../src/apps/orbits.mts" :refer $ orbitsConfigs
+            "\"../src/apps/kaleidoscope.mts" :refer $ kaleidoscopeConfigs
+            "\"../src/apps/kaleidoscope-mirror.mts" :refer $ kaleidoscopeMirrorConfigs
+            "\"../src/apps/image.mts" :refer $ imageConfigs
+            "\"../src/apps/stars.mts" :as stars
+            "\"../src/apps/rings.mts" :as rings
+            "\"../src/apps/circles.mts" :as circles
+            "\"../src/apps/clocking.mts" :refer $ clockingConfigs
+            "\"../src/apps/ripple.mts" :refer $ rippleConfigs
+            "\"../src/apps/surround-mirror.mts" :refer $ surroundMirrorConfigs
+            "\"../src/apps/parallel-mirror.mts" :refer $ parallelMirrorConfigs
+            "\"../src/apps/sphere-mirror.mts" :refer $ sphereMirrorConfigs
+            "\"../src/apps/hollow-mirror.mts" :refer $ hollowMirrorConfigs
+            "\"../src/apps/box-mirror.mts" :refer $ boxMirrorConfigs
+            "\"../src/apps/rhombic-mirror.mts" :refer $ rhombicMirrorConfigs
+            "\"../src/global.mts" :refer $ atomSolubleTree
     |app.schema $ %{} :FileEntry
       :defs $ {}
         |store $ %{} :CodeEntry (:doc |)

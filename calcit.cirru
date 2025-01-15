@@ -1497,167 +1497,167 @@
                     |r $ %{} :Leaf (:at 1626290825711) (:by |rJG4IHzWf) (:text |hud!)
                 |zB $ %{} :Expr (:at 1713005537384) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1713005539806) (:by |rJG4IHzWf) (:text "|\"../src/index")
+                    |T $ %{} :Leaf (:at 1736961030464) (:by |rJG4IHzWf) (:text "|\"../src/index.mts")
                     |b $ %{} :Leaf (:at 1713005541648) (:by |rJG4IHzWf) (:text |:as)
                     |h $ %{} :Leaf (:at 1713005549093) (:by |rJG4IHzWf) (:text |solublejs)
                 |zP $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1699464543817) (:by |rJG4IHzWf) (:text "|\"../src/apps/cubic-fire")
+                    |T $ %{} :Leaf (:at 1736961028933) (:by |rJG4IHzWf) (:text "|\"../src/apps/cubic-fire.mts")
                     |b $ %{} :Leaf (:at 1699464556816) (:by |rJG4IHzWf) (:text |:refer)
                     |h $ %{} :Expr (:at 1699464561369) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1699464560849) (:by |rJG4IHzWf) (:text |cubicFireConfigs)
                 |zY $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1699464642468) (:by |rJG4IHzWf) (:text "|\"../src/apps/quaternion-fractal")
+                    |T $ %{} :Leaf (:at 1736961027546) (:by |rJG4IHzWf) (:text "|\"../src/apps/quaternion-fractal.mts")
                     |b $ %{} :Leaf (:at 1699464556816) (:by |rJG4IHzWf) (:text |:refer)
                     |h $ %{} :Expr (:at 1699464561369) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1699464631123) (:by |rJG4IHzWf) (:text |quaternionFractalConfigs)
                 |ze $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1699464649953) (:by |rJG4IHzWf) (:text "|\"../src/apps/complex-fractal")
+                    |T $ %{} :Leaf (:at 1736961025795) (:by |rJG4IHzWf) (:text "|\"../src/apps/complex-fractal.mts")
                     |b $ %{} :Leaf (:at 1699464556816) (:by |rJG4IHzWf) (:text |:refer)
                     |h $ %{} :Expr (:at 1699464561369) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1699464653125) (:by |rJG4IHzWf) (:text |complexFractalConfigs)
                 |zg $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1722186862338) (:by |rJG4IHzWf) (:text "|\"../src/apps/newton")
+                    |T $ %{} :Leaf (:at 1736961023705) (:by |rJG4IHzWf) (:text "|\"../src/apps/newton.mts")
                     |b $ %{} :Leaf (:at 1699464556816) (:by |rJG4IHzWf) (:text |:refer)
                     |h $ %{} :Expr (:at 1699464561369) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1722186769756) (:by |rJG4IHzWf) (:text |newtonFractalConfigs)
                 |zh $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1722621224968) (:by |rJG4IHzWf) (:text "|\"../src/apps/newton-cosh")
+                    |T $ %{} :Leaf (:at 1736961021837) (:by |rJG4IHzWf) (:text "|\"../src/apps/newton-cosh.mts")
                     |b $ %{} :Leaf (:at 1699464556816) (:by |rJG4IHzWf) (:text |:refer)
                     |h $ %{} :Expr (:at 1699464561369) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1722621221510) (:by |rJG4IHzWf) (:text |newtonCoshFractalConfigs)
                 |zj $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1699464659079) (:by |rJG4IHzWf) (:text "|\"../src/apps/space-fractal")
+                    |T $ %{} :Leaf (:at 1736961020522) (:by |rJG4IHzWf) (:text "|\"../src/apps/space-fractal.mts")
                     |b $ %{} :Leaf (:at 1699464556816) (:by |rJG4IHzWf) (:text |:refer)
                     |h $ %{} :Expr (:at 1699464561369) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1699464661741) (:by |rJG4IHzWf) (:text |spaceFractalConfigs)
                 |zn $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1699464667420) (:by |rJG4IHzWf) (:text "|\"../src/apps/sphere-fractal")
+                    |T $ %{} :Leaf (:at 1736961019233) (:by |rJG4IHzWf) (:text "|\"../src/apps/sphere-fractal.mts")
                     |b $ %{} :Leaf (:at 1699464556816) (:by |rJG4IHzWf) (:text |:refer)
                     |h $ %{} :Expr (:at 1699464561369) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1699464670237) (:by |rJG4IHzWf) (:text |sphereFractalConfigs)
                 |zq $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1699464676871) (:by |rJG4IHzWf) (:text "|\"../src/apps/slow-fractal")
+                    |T $ %{} :Leaf (:at 1736961017970) (:by |rJG4IHzWf) (:text "|\"../src/apps/slow-fractal.mts")
                     |b $ %{} :Leaf (:at 1699464556816) (:by |rJG4IHzWf) (:text |:refer)
                     |h $ %{} :Expr (:at 1699464561369) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1699464679191) (:by |rJG4IHzWf) (:text |slowFractalConfigs)
                 |zs $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1709313836434) (:by |rJG4IHzWf) (:text "|\"../src/apps/orbits")
+                    |T $ %{} :Leaf (:at 1736961016396) (:by |rJG4IHzWf) (:text "|\"../src/apps/orbits.mts")
                     |b $ %{} :Leaf (:at 1699464556816) (:by |rJG4IHzWf) (:text |:refer)
                     |h $ %{} :Expr (:at 1699464561369) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1709313859906) (:by |rJG4IHzWf) (:text |orbitsConfigs)
                 |zsD $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1712938783044) (:by |rJG4IHzWf) (:text "|\"../src/apps/kaleidoscope")
+                    |T $ %{} :Leaf (:at 1736961014664) (:by |rJG4IHzWf) (:text "|\"../src/apps/kaleidoscope.mts")
                     |b $ %{} :Leaf (:at 1699464556816) (:by |rJG4IHzWf) (:text |:refer)
                     |h $ %{} :Expr (:at 1699464561369) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1712938794112) (:by |rJG4IHzWf) (:text |kaleidoscopeConfigs)
                 |zsH $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1722106716538) (:by |rJG4IHzWf) (:text "|\"../src/apps/kaleidoscope-mirror")
+                    |T $ %{} :Leaf (:at 1736961013166) (:by |rJG4IHzWf) (:text "|\"../src/apps/kaleidoscope-mirror.mts")
                     |b $ %{} :Leaf (:at 1699464556816) (:by |rJG4IHzWf) (:text |:refer)
                     |h $ %{} :Expr (:at 1699464561369) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1722106713410) (:by |rJG4IHzWf) (:text |kaleidoscopeMirrorConfigs)
                 |zsL $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1713296824837) (:by |rJG4IHzWf) (:text "|\"../src/apps/image")
+                    |T $ %{} :Leaf (:at 1736961011780) (:by |rJG4IHzWf) (:text "|\"../src/apps/image.mts")
                     |b $ %{} :Leaf (:at 1699464556816) (:by |rJG4IHzWf) (:text |:refer)
                     |h $ %{} :Expr (:at 1699464561369) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1713296827330) (:by |rJG4IHzWf) (:text |imageConfigs)
                 |zsT $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1709658651477) (:by |rJG4IHzWf) (:text "|\"../src/apps/stars")
+                    |T $ %{} :Leaf (:at 1736961010589) (:by |rJG4IHzWf) (:text "|\"../src/apps/stars.mts")
                     |a $ %{} :Leaf (:at 1709658652379) (:by |rJG4IHzWf) (:text |:as)
                     |g $ %{} :Leaf (:at 1709658654167) (:by |rJG4IHzWf) (:text |stars)
                 |zsj $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1710871544077) (:by |rJG4IHzWf) (:text "|\"../src/apps/rings")
+                    |T $ %{} :Leaf (:at 1736961009257) (:by |rJG4IHzWf) (:text "|\"../src/apps/rings.mts")
                     |a $ %{} :Leaf (:at 1709658652379) (:by |rJG4IHzWf) (:text |:as)
                     |g $ %{} :Leaf (:at 1710871546430) (:by |rJG4IHzWf) (:text |rings)
                 |zsr $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1711166657440) (:by |rJG4IHzWf) (:text "|\"../src/apps/circles")
+                    |T $ %{} :Leaf (:at 1736961007896) (:by |rJG4IHzWf) (:text "|\"../src/apps/circles.mts")
                     |a $ %{} :Leaf (:at 1709658652379) (:by |rJG4IHzWf) (:text |:as)
                     |g $ %{} :Leaf (:at 1711166659086) (:by |rJG4IHzWf) (:text |circles)
                 |zsv $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1714755623911) (:by |rJG4IHzWf) (:text "|\"../src/apps/clocking")
+                    |T $ %{} :Leaf (:at 1736961006653) (:by |rJG4IHzWf) (:text "|\"../src/apps/clocking.mts")
                     |a $ %{} :Leaf (:at 1714755628974) (:by |rJG4IHzWf) (:text |:refer)
                     |g $ %{} :Expr (:at 1714755629826) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1714755654538) (:by |rJG4IHzWf) (:text |clockingConfigs)
                 |zsx $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1714883766148) (:by |rJG4IHzWf) (:text "|\"../src/apps/ripple")
+                    |T $ %{} :Leaf (:at 1736961005439) (:by |rJG4IHzWf) (:text "|\"../src/apps/ripple.mts")
                     |a $ %{} :Leaf (:at 1714755628974) (:by |rJG4IHzWf) (:text |:refer)
                     |g $ %{} :Expr (:at 1714755629826) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1714883764074) (:by |rJG4IHzWf) (:text |rippleConfigs)
                 |zsy $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1716718499573) (:by |rJG4IHzWf) (:text "|\"../src/apps/surround-mirror")
+                    |T $ %{} :Leaf (:at 1736961003320) (:by |rJG4IHzWf) (:text "|\"../src/apps/surround-mirror.mts")
                     |a $ %{} :Leaf (:at 1714755628974) (:by |rJG4IHzWf) (:text |:refer)
                     |g $ %{} :Expr (:at 1714755629826) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1716718481604) (:by |rJG4IHzWf) (:text |surroundMirrorConfigs)
                 |zsz $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1717259994310) (:by |rJG4IHzWf) (:text "|\"../src/apps/parallel-mirror")
+                    |T $ %{} :Leaf (:at 1736961002172) (:by |rJG4IHzWf) (:text "|\"../src/apps/parallel-mirror.mts")
                     |a $ %{} :Leaf (:at 1714755628974) (:by |rJG4IHzWf) (:text |:refer)
                     |g $ %{} :Expr (:at 1714755629826) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1717259997421) (:by |rJG4IHzWf) (:text |parallelMirrorConfigs)
                 |zszD $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1719132403472) (:by |rJG4IHzWf) (:text "|\"../src/apps/sphere-mirror")
+                    |T $ %{} :Leaf (:at 1736961000740) (:by |rJG4IHzWf) (:text "|\"../src/apps/sphere-mirror.mts")
                     |a $ %{} :Leaf (:at 1714755628974) (:by |rJG4IHzWf) (:text |:refer)
                     |g $ %{} :Expr (:at 1714755629826) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1719132398736) (:by |rJG4IHzWf) (:text |sphereMirrorConfigs)
                 |zszP $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1721236345722) (:by |rJG4IHzWf) (:text "|\"../src/apps/hollow-mirror")
+                    |T $ %{} :Leaf (:at 1736960999358) (:by |rJG4IHzWf) (:text "|\"../src/apps/hollow-mirror.mts")
                     |a $ %{} :Leaf (:at 1714755628974) (:by |rJG4IHzWf) (:text |:refer)
                     |g $ %{} :Expr (:at 1714755629826) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1721236343369) (:by |rJG4IHzWf) (:text |hollowMirrorConfigs)
                 |zszY $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1724345133397) (:by |rJG4IHzWf) (:text "|\"../src/apps/box-mirror")
+                    |T $ %{} :Leaf (:at 1736960992026) (:by |rJG4IHzWf) (:text "|\"../src/apps/box-mirror.mts")
                     |a $ %{} :Leaf (:at 1714755628974) (:by |rJG4IHzWf) (:text |:refer)
                     |g $ %{} :Expr (:at 1714755629826) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1724345131767) (:by |rJG4IHzWf) (:text |boxMirrorConfigs)
                 |zsze $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1731209244647) (:by |rJG4IHzWf) (:text "|\"../src/apps/rhombic-mirror")
+                    |T $ %{} :Leaf (:at 1736960993648) (:by |rJG4IHzWf) (:text "|\"../src/apps/rhombic-mirror.mts")
                     |a $ %{} :Leaf (:at 1714755628974) (:by |rJG4IHzWf) (:text |:refer)
                     |g $ %{} :Expr (:at 1714755629826) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1731209247779) (:by |rJG4IHzWf) (:text |rhombicMirrorConfigs)
                 |zt $ %{} :Expr (:at 1709657313552) (:by |rJG4IHzWf)
                   :data $ {}
-                    |T $ %{} :Leaf (:at 1709657319126) (:by |rJG4IHzWf) (:text "|\"../src/global")
+                    |T $ %{} :Leaf (:at 1736960997397) (:by |rJG4IHzWf) (:text "|\"../src/global.mts")
                     |b $ %{} :Leaf (:at 1709657320182) (:by |rJG4IHzWf) (:text |:refer)
                     |h $ %{} :Expr (:at 1709657320531) (:by |rJG4IHzWf)
                       :data $ {}
