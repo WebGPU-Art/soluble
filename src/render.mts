@@ -20,7 +20,7 @@ export const initializeContext = async (): Promise<any> => {
   const device = await adapter.requestDevice();
   device.lost.then(() => {
     console.error("WebGPU cannot be initialized - Device has been lost");
-    return null;
+    return null as any;
   });
 
   // set as a shared device
