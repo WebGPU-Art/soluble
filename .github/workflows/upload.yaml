@@ -15,11 +15,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'yarn'
+          cache: "yarn"
 
-      - uses: calcit-lang/setup-cr@0.0.7
-        with:
-          bundler: false
+      - uses: calcit-lang/setup-cr@0.0.8
 
       - name: "compiles calcit to js"
         run: >

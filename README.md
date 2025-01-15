@@ -47,6 +47,10 @@ Vertex shader:
 #import soluble::mirror
 ```
 
+### Gamepad Controls
+
+![gamepad](./assets/soluble.png)
+
 ### License
 
 MIT
