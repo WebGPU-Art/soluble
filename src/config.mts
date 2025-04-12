@@ -14,3 +14,7 @@ export let useRemoteControl = parsed["remote-control"];
 export let useGamepad = parsed["gamepad"];
 
 export let threshold = parseFloat((parsed["threshold"] as string) || "0.016");
+
+export let pixelRatio = parseFloat(parsed["pixel-ratio"] as string) || window.devicePixelRatio || 1;
+
+console.log("Pixel Ratio: ", pixelRatio);

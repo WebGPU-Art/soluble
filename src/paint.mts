@@ -17,6 +17,7 @@ import { createBuffer, getComputeShaderModule } from "./utils.mjs";
 import solublePerspective from "../shaders/soluble-perspective.wgsl?raw";
 import solubleMath from "../shaders/soluble-math.wgsl?raw";
 import solubleMirror from "../shaders/soluble-mirror.wgsl?raw";
+import { pixelRatio } from "./config.mjs";
 
 let prevTime = Date.now();
 
@@ -181,8 +182,8 @@ let getUniformBuffer = (t: number): GPUBuffer => {
   let viewerPosition = atomViewerPosition.deref();
   // 👔 Uniform Data
   const uniformData = new Float32Array([
-    window.innerWidth * window.devicePixelRatio,
-    window.innerHeight * window.devicePixelRatio,
+    window.innerWidth * pixelRatio,
+    window.innerHeight * pixelRatio,
     atomViewerScale.deref(),
     t,
     // lookpoint

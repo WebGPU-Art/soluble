@@ -3,6 +3,7 @@ import { atomDepthTexture, atomContext, atomDevice, atomSolubleTree, wLog } from
 import { createBuffer } from "./utils.mjs";
 import { newBufferFormatLength, u32buffer } from "./alias.mjs";
 import { interpolateShader } from "./paint.mjs";
+import { pixelRatio } from "./config.mjs";
 import { type ButtonEvents } from "./control.mjs";
 
 /** init canvas context */
@@ -34,11 +35,11 @@ export const initializeContext = async (): Promise<any> => {
   }
 
   // ~~ CONFIGURE THE SWAP CHAIN ~~
-  const devicePixelRatio = window.devicePixelRatio || 1;
+
   const presentationFormat = window.navigator.gpu.getPreferredCanvasFormat();
 
-  canvas.width = window.innerWidth * devicePixelRatio;
-  canvas.height = window.innerHeight * devicePixelRatio;
+  canvas.width = window.innerWidth * pixelRatio;
+  canvas.height = window.innerHeight * pixelRatio;
 
   context.configure({
     device,
@@ -51,7 +52,7 @@ export const initializeContext = async (): Promise<any> => {
   atomContext.reset(context);
 
   const depthTexture = device.createTexture({
-    size: [window.innerWidth * devicePixelRatio, window.innerHeight * devicePixelRatio],
+    size: [window.innerWidth * pixelRatio, window.innerHeight * pixelRatio],
     // format: "depth24plus",
     // usage: GPUTextureUsage.RENDER_ATTACHMENT,
     dimension: "2d",
