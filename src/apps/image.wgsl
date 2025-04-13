@@ -30,15 +30,15 @@ struct BaseCell {
 
 
 @group(2) @binding(0) var mySampler : sampler;
-@group(2) @binding(1) var myTexture : texture_2d<f32>;
-@group(2) @binding(2) var image2 : texture_2d<f32>;
-@group(2) @binding(3) var image_bubbles : texture_2d<f32>;
-@group(2) @binding(4) var image_rugs : texture_2d<f32>;
-@group(2) @binding(5) var image_pigment : texture_2d<f32>;
-@group(2) @binding(6) var image_stripes : texture_2d<f32>;
-@group(2) @binding(7) var image_circles : texture_2d<f32>;
-@group(2) @binding(8) var image_sparks : texture_2d<f32>;
-@group(2) @binding(9) var image_yulan : texture_2d<f32>;
+@group(2) @binding(1) var image_1 : texture_2d<f32>;
+@group(2) @binding(2) var image_2 : texture_2d<f32>;
+@group(2) @binding(3) var image_3 : texture_2d<f32>;
+@group(2) @binding(4) var image_4 : texture_2d<f32>;
+@group(2) @binding(5) var image_5 : texture_2d<f32>;
+@group(2) @binding(6) var image_6 : texture_2d<f32>;
+@group(2) @binding(7) var image_7 : texture_2d<f32>;
+@group(2) @binding(8) var image_8 : texture_2d<f32>;
+@group(2) @binding(9) var image_9 : texture_2d<f32>;
 
 @compute @workgroup_size(8, 8, 1)
 fn compute_main(@builtin(global_invocation_id) global_id: vec3u) {}
@@ -149,24 +149,24 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   let small_coord = hit.xy / 500.0;
 
-  let pixel = textureSample(myTexture, mySampler, small_coord);
-  let pixel2 = textureSample(image2, mySampler, small_coord - vec2f(1., 1.));
-  let pixel3 = textureSample(image_bubbles, mySampler, small_coord - vec2f(1., 0.));
-  let pixel4 = textureSample(image_rugs, mySampler, small_coord - vec2f(0., 1.));
-  let pixel5 = textureSample(image_pigment, mySampler, small_coord - vec2f(2., 0.));
-  let pixel6 = textureSample(image_stripes, mySampler, small_coord - vec2f(2., 1.));
+  let pixel1 = textureSample(image_1, mySampler, fract(small_coord));
+  let pixel2 = textureSample(image_2, mySampler, fract(small_coord));
+  let pixel3 = textureSample(image_3, mySampler, fract(small_coord));
+  let pixel4 = textureSample(image_4, mySampler, fract(small_coord));
+  let pixel5 = textureSample(image_5, mySampler, fract(small_coord));
+  let pixel6 = textureSample(image_6, mySampler, fract(small_coord));
 
-  let pixel7 = textureSample(image_circles, mySampler, small_coord - vec2f(0., 2.));
-  let pixel8 = textureSample(image_sparks, mySampler, small_coord - vec2f(1., 2.));
-  let pixel9 = textureSample(image_yulan, mySampler, small_coord - vec2f(2., 2.));
+  let pixel7 = textureSample(image_7, mySampler, small_coord - vec2f(0., 2.));
+  let pixel8 = textureSample(image_8, mySampler, small_coord - vec2f(1., 2.));
+  let pixel9 = textureSample(image_9, mySampler, small_coord - vec2f(2., 2.));
 
 
-  let inside_image = small_coord.x > 0.0 && small_coord.y > 0. && small_coord.x < 1. && small_coord.y < 1.;
-  let inside_image3 = small_coord.x > 1.0 && small_coord.y > 0. && small_coord.x < 2. && small_coord.y < 1.;
-  let inside_image5 = small_coord.x > 2.0 && small_coord.y > 0. && small_coord.x < 3. && small_coord.y < 1.;
+  let inside_image1 = small_coord.x > 0.0 && small_coord.y > 0. && small_coord.x < 1. && small_coord.y < 1.;
+  let inside_image2 = small_coord.x > 1.0 && small_coord.y > 0. && small_coord.x < 2. && small_coord.y < 1.;
+  let inside_image3 = small_coord.x > 2.0 && small_coord.y > 0. && small_coord.x < 3. && small_coord.y < 1.;
 
   let inside_image4 = small_coord.x > 0.0 && small_coord.y > 1. && small_coord.x < 1. && small_coord.y < 2.;
-  let inside_image2 = small_coord.x > 1.0 && small_coord.y > 1. && small_coord.x < 2. && small_coord.y < 2.;
+  let inside_image5 = small_coord.x > 1.0 && small_coord.y > 1. && small_coord.x < 2. && small_coord.y < 2.;
   let inside_image6 = small_coord.x > 2.0 && small_coord.y > 1. && small_coord.x < 3. && small_coord.y < 2.;
 
   let inside_image7 = small_coord.x > 0.0 && small_coord.y > 2. && small_coord.x < 1. && small_coord.y < 3.;
@@ -174,8 +174,8 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   let inside_image9 = small_coord.x > 2.0 && small_coord.y > 2. && small_coord.x < 3. && small_coord.y < 3.;
 
   if disableLens {
-    if inside_image {
-      return pixel * opacity;
+    if inside_image1 {
+      return pixel1 * opacity;
     } else if inside_image2 {
       return pixel2 * opacity;
     } else if inside_image3 {
@@ -197,8 +197,8 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     }
   }
 
-  if inside_image {
-    return pixel;
+  if inside_image1 {
+    return pixel1;
   } else if inside_image2 {
     return pixel2;
   } else if inside_image3 {

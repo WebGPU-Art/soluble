@@ -7,7 +7,7 @@ import { SolubleApp } from "../primes.mjs";
 import { BaseCellParams } from "../paint.mjs";
 
 let store = {
-  disableLens: 0, // or 1
+  disableLens: 1, // or 1
   radius: 0.98,
 };
 
@@ -44,17 +44,17 @@ export const imageConfigs: SolubleApp = {
   },
   getTextures: (obj) => {
     return [
-      obj["tiye"],
-      obj["candy"],
-      obj["bubbles"],
+      obj[0] || obj["tiye"],
+      obj[1] || obj["candy"],
+      obj[2] || obj["bubbles"],
       // row 2
-      obj["rugs"],
-      obj["pigment"],
-      obj["stripes"],
+      obj[3] || obj["rugs"],
+      obj[4] || obj["pigment"],
+      obj[5] || obj["stripes"],
       // row 3
-      obj["circles"],
-      obj["sparks"],
-      obj["yulan"],
+      obj[6] || obj["circles"],
+      obj[7] || obj["sparks"],
+      obj[8] || obj["yulan"],
     ];
   },
 };

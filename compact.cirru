@@ -87,6 +87,18 @@
             def site $ {} (:storage-key "\"workflow")
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote (ns app.config)
+    |app.img-counter $ %{} :FileEntry
+      :defs $ {}
+        |*counter $ %{} :CodeEntry (:doc "|0-8 slots for pictures")
+          :code $ quote (defatom *counter 0)
+        |img-slot! $ %{} :CodeEntry (:doc |)
+          :code $ quote
+            defn img-slot! () $ let
+                ret @*counter
+              if (< ret 8) (swap! *counter inc) (reset! *counter 0)
+              , ret
+      :ns $ %{} :CodeEntry (:doc |)
+        :code $ quote (ns app.img-counter)
     |app.main $ %{} :FileEntry
       :defs $ {}
         |*compute-shader $ %{} :CodeEntry (:doc |)
@@ -149,7 +161,7 @@
                   img-stripes $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/d090a685f03af9d31988a2a92b3b8a19/stripes.jpg"
                   img-circles $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/80e5932494210d46c600b402a029f973/circles.jpg"
                   img-sparks $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/3fd6b05f2f9b9a1985224ac39e7b3aee/sparks.jpg"
-                  img-yulan $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/d65d03fc3ecb50bed15bd7bf36c0a45d/yulan.jpg"
+                  img-rhombic $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/309de8ad40b61cb865b32adedf1b2dc4/rhombic-mirror.png"
                 js-set (.!deref solublejs/atomSharedTextures) "\"tiye" $ js-await img-tiye
                 js-set (.!deref solublejs/atomSharedTextures) "\"candy" $ js-await img-candy
                 js-set (.!deref solublejs/atomSharedTextures) "\"bubbles" $ js-await img-bubbles
@@ -158,7 +170,7 @@
                 js-set (.!deref solublejs/atomSharedTextures) "\"pigment" $ js-await img-pigment
                 js-set (.!deref solublejs/atomSharedTextures) "\"circles" $ js-await img-circles
                 js-set (.!deref solublejs/atomSharedTextures) "\"sparks" $ js-await img-sparks
-                js-set (.!deref solublejs/atomSharedTextures) "\"yulan" $ js-await img-yulan
+                js-set (.!deref solublejs/atomSharedTextures) "\"yulan" $ js-await img-rhombic
         |loop-paint! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn loop-paint! () (solublejs/callFramePaint)
@@ -175,14 +187,24 @@
               if config/dev? $ load-console-formatter!
               let
                   ret $ js-await (solublejs/initializeContext)
+                  device $ .-device ret
                 if
                   contains?
                     #{} :image :surround-mirror $ ; :sphere-mirror
                     -> @*reel :store :tab
-                  js-await $ load-textures! (.-device ret)
                   do
-                    load-textures! $ .-device ret
-                    , nil
+                    js-await $ load-textures! device
+                    js/window.addEventListener "\"keydown" $ fn (event) (hint-fn async) (js/console.log event)
+                      if
+                        and
+                          or (.-metaKey event) (.-ctrlKey event)
+                          = "\"b" $ .-key event
+                        let
+                            texture $ js-await (solublejs/loadImageFromInputEl device)
+                            k $ img-slot!
+                          js-set (.!deref solublejs/atomSharedTextures) k texture
+                          js/console.log "\"image added to slot" k
+                  do (load-textures! device) nil
               render-app!
               loop-paint!
               solublejs/resetCanvasHeight canvas
@@ -269,6 +291,7 @@
             "\"../src/apps/box-mirror.mts" :refer $ boxMirrorConfigs
             "\"../src/apps/rhombic-mirror.mts" :refer $ rhombicMirrorConfigs
             "\"../src/global.mts" :refer $ atomSolubleTree
+            app.img-counter :refer $ img-slot!
     |app.schema $ %{} :FileEntry
       :defs $ {}
         |store $ %{} :CodeEntry (:doc |)
