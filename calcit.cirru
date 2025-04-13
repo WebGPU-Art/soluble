@@ -612,6 +612,15 @@
                           |T $ %{} :Leaf (:at 1699464836463) (:by |rJG4IHzWf) (:text |get-env)
                           |b $ %{} :Leaf (:at 1699464838265) (:by |rJG4IHzWf) (:text "|\"interval")
                           |h $ %{} :Leaf (:at 1699465043647) (:by |rJG4IHzWf) (:text "|\"40")
+        |resource-base-url $ %{} :CodeEntry (:doc |)
+          :code $ %{} :Expr (:at 1744560561594) (:by |rJG4IHzWf)
+            :data $ {}
+              |T $ %{} :Leaf (:at 1744560562755) (:by |rJG4IHzWf) (:text |def)
+              |b $ %{} :Leaf (:at 1744560561594) (:by |rJG4IHzWf) (:text |resource-base-url)
+              |h $ %{} :Expr (:at 1744560561594) (:by |rJG4IHzWf)
+                :data $ {}
+                  |T $ %{} :Leaf (:at 1744560564783) (:by |rJG4IHzWf) (:text |get-env)
+                  |b $ %{} :Leaf (:at 1744560565737) (:by |rJG4IHzWf) (:text "|\"resource-base-url")
         |site $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1545933382603) (:by |root)
             :data $ {}
@@ -900,15 +909,21 @@
                             :data $ {}
                               |T $ %{} :Leaf (:at 1713891180928) (:by |rJG4IHzWf) (:text |solublejs/loadImageAsTexture)
                               |b $ %{} :Leaf (:at 1713891180928) (:by |rJG4IHzWf) (:text |device)
-                              |h $ %{} :Leaf (:at 1713891180928) (:by |rJG4IHzWf) (:text "|\"https://cdn.tiye.me/logo/tiye.jpg")
+                              |h $ %{} :Expr (:at 1744560582566) (:by |rJG4IHzWf)
+                                :data $ {}
+                                  |D $ %{} :Leaf (:at 1744560590017) (:by |rJG4IHzWf) (:text |replace-url)
+                                  |T $ %{} :Leaf (:at 1713891180928) (:by |rJG4IHzWf) (:text "|\"https://cdn.tiye.me/logo/tiye.jpg")
                       |b $ %{} :Expr (:at 1713891191030) (:by |rJG4IHzWf)
                         :data $ {}
                           |T $ %{} :Leaf (:at 1713891193910) (:by |rJG4IHzWf) (:text |img-candy)
-                          |b $ %{} :Expr (:at 1713891194303) (:by |rJG4IHzWf)
+                          |b $ %{} :Expr (:at 1744560654960) (:by |rJG4IHzWf)
                             :data $ {}
                               |T $ %{} :Leaf (:at 1713891194303) (:by |rJG4IHzWf) (:text |solublejs/loadImageAsTexture)
                               |b $ %{} :Leaf (:at 1713891194303) (:by |rJG4IHzWf) (:text |device)
-                              |h $ %{} :Leaf (:at 1713891194303) (:by |rJG4IHzWf) (:text "|\"https://cos-sh.tiye.me/cos-up/c7367e21405d602c5ef5a8c55c35d512/candy.jpeg")
+                              |h $ %{} :Expr (:at 1744560655987) (:by |rJG4IHzWf)
+                                :data $ {}
+                                  |D $ %{} :Leaf (:at 1744560656582) (:by |rJG4IHzWf) (:text |replace-url)
+                                  |T $ %{} :Leaf (:at 1713891194303) (:by |rJG4IHzWf) (:text "|\"https://cos-sh.tiye.me/cos-up/c7367e21405d602c5ef5a8c55c35d512/candy.jpeg")
                       |h $ %{} :Expr (:at 1713891201938) (:by |rJG4IHzWf)
                         :data $ {}
                           |T $ %{} :Leaf (:at 1713891203727) (:by |rJG4IHzWf) (:text |img-bubbles)
@@ -916,7 +931,10 @@
                             :data $ {}
                               |T $ %{} :Leaf (:at 1713891204315) (:by |rJG4IHzWf) (:text |solublejs/loadImageAsTexture)
                               |b $ %{} :Leaf (:at 1713891204315) (:by |rJG4IHzWf) (:text |device)
-                              |h $ %{} :Leaf (:at 1713891204315) (:by |rJG4IHzWf) (:text "|\"https://cos-sh.tiye.me/cos-up/20b39957d952bd189e4253369db30335/pasted-2024-04-17T17:00:49.301Z.png")
+                              |h $ %{} :Expr (:at 1744560657224) (:by |rJG4IHzWf)
+                                :data $ {}
+                                  |D $ %{} :Leaf (:at 1744560657888) (:by |rJG4IHzWf) (:text |replace-url)
+                                  |T $ %{} :Leaf (:at 1713891204315) (:by |rJG4IHzWf) (:text "|\"https://cos-sh.tiye.me/cos-up/20b39957d952bd189e4253369db30335/pasted-2024-04-17T17:00:49.301Z.png")
                       |l $ %{} :Expr (:at 1713891216868) (:by |rJG4IHzWf)
                         :data $ {}
                           |T $ %{} :Leaf (:at 1713891215426) (:by |rJG4IHzWf) (:text |img-rugs)
@@ -924,7 +942,10 @@
                             :data $ {}
                               |T $ %{} :Leaf (:at 1713891217583) (:by |rJG4IHzWf) (:text |solublejs/loadImageAsTexture)
                               |b $ %{} :Leaf (:at 1713891217583) (:by |rJG4IHzWf) (:text |device)
-                              |h $ %{} :Leaf (:at 1713891217583) (:by |rJG4IHzWf) (:text "|\"https://cos-sh.tiye.me/cos-up/ceec218462f81744323e22dd2d04e94b/pasted-2024-04-17T17:12:29.234Z.png")
+                              |h $ %{} :Expr (:at 1744560658904) (:by |rJG4IHzWf)
+                                :data $ {}
+                                  |D $ %{} :Leaf (:at 1744560659604) (:by |rJG4IHzWf) (:text |replace-url)
+                                  |T $ %{} :Leaf (:at 1713891217583) (:by |rJG4IHzWf) (:text "|\"https://cos-sh.tiye.me/cos-up/ceec218462f81744323e22dd2d04e94b/pasted-2024-04-17T17:12:29.234Z.png")
                       |o $ %{} :Expr (:at 1713891216868) (:by |rJG4IHzWf)
                         :data $ {}
                           |T $ %{} :Leaf (:at 1716576676907) (:by |rJG4IHzWf) (:text |img-pigment)
@@ -932,7 +953,10 @@
                             :data $ {}
                               |T $ %{} :Leaf (:at 1713891217583) (:by |rJG4IHzWf) (:text |solublejs/loadImageAsTexture)
                               |b $ %{} :Leaf (:at 1713891217583) (:by |rJG4IHzWf) (:text |device)
-                              |h $ %{} :Leaf (:at 1716576679983) (:by |rJG4IHzWf) (:text "|\"https://cos-sh.tiye.me/cos-up/4a932a1d8eaf46b4d9d8ec07538e8ee1/pigment.jpg")
+                              |h $ %{} :Expr (:at 1744560660598) (:by |rJG4IHzWf)
+                                :data $ {}
+                                  |D $ %{} :Leaf (:at 1744560661201) (:by |rJG4IHzWf) (:text |replace-url)
+                                  |T $ %{} :Leaf (:at 1716576679983) (:by |rJG4IHzWf) (:text "|\"https://cos-sh.tiye.me/cos-up/4a932a1d8eaf46b4d9d8ec07538e8ee1/pigment.jpg")
                       |q $ %{} :Expr (:at 1713891216868) (:by |rJG4IHzWf)
                         :data $ {}
                           |T $ %{} :Leaf (:at 1716576687847) (:by |rJG4IHzWf) (:text |img-stripes)
@@ -940,7 +964,10 @@
                             :data $ {}
                               |T $ %{} :Leaf (:at 1713891217583) (:by |rJG4IHzWf) (:text |solublejs/loadImageAsTexture)
                               |b $ %{} :Leaf (:at 1713891217583) (:by |rJG4IHzWf) (:text |device)
-                              |h $ %{} :Leaf (:at 1716576689869) (:by |rJG4IHzWf) (:text "|\"https://cos-sh.tiye.me/cos-up/d090a685f03af9d31988a2a92b3b8a19/stripes.jpg")
+                              |h $ %{} :Expr (:at 1744560665071) (:by |rJG4IHzWf)
+                                :data $ {}
+                                  |D $ %{} :Leaf (:at 1744560665623) (:by |rJG4IHzWf) (:text |replace-url)
+                                  |T $ %{} :Leaf (:at 1716576689869) (:by |rJG4IHzWf) (:text "|\"https://cos-sh.tiye.me/cos-up/d090a685f03af9d31988a2a92b3b8a19/stripes.jpg")
                       |s $ %{} :Expr (:at 1744512978957) (:by |rJG4IHzWf)
                         :data $ {}
                           |T $ %{} :Leaf (:at 1744512982246) (:by |rJG4IHzWf) (:text |img-circles)
@@ -948,7 +975,10 @@
                             :data $ {}
                               |T $ %{} :Leaf (:at 1744512985635) (:by |rJG4IHzWf) (:text |solublejs/loadImageAsTexture)
                               |b $ %{} :Leaf (:at 1744512985635) (:by |rJG4IHzWf) (:text |device)
-                              |h $ %{} :Leaf (:at 1744512995153) (:by |rJG4IHzWf) (:text "|\"https://cos-sh.tiye.me/cos-up/80e5932494210d46c600b402a029f973/circles.jpg")
+                              |h $ %{} :Expr (:at 1744560666665) (:by |rJG4IHzWf)
+                                :data $ {}
+                                  |D $ %{} :Leaf (:at 1744560667379) (:by |rJG4IHzWf) (:text |replace-url)
+                                  |T $ %{} :Leaf (:at 1744512995153) (:by |rJG4IHzWf) (:text "|\"https://cos-sh.tiye.me/cos-up/80e5932494210d46c600b402a029f973/circles.jpg")
                       |t $ %{} :Expr (:at 1744512978957) (:by |rJG4IHzWf)
                         :data $ {}
                           |T $ %{} :Leaf (:at 1744513006277) (:by |rJG4IHzWf) (:text |img-sparks)
@@ -956,7 +986,10 @@
                             :data $ {}
                               |T $ %{} :Leaf (:at 1744512985635) (:by |rJG4IHzWf) (:text |solublejs/loadImageAsTexture)
                               |b $ %{} :Leaf (:at 1744512985635) (:by |rJG4IHzWf) (:text |device)
-                              |h $ %{} :Leaf (:at 1744513008446) (:by |rJG4IHzWf) (:text "|\"https://cos-sh.tiye.me/cos-up/3fd6b05f2f9b9a1985224ac39e7b3aee/sparks.jpg")
+                              |h $ %{} :Expr (:at 1744560668554) (:by |rJG4IHzWf)
+                                :data $ {}
+                                  |D $ %{} :Leaf (:at 1744560669316) (:by |rJG4IHzWf) (:text |replace-url)
+                                  |T $ %{} :Leaf (:at 1744513008446) (:by |rJG4IHzWf) (:text "|\"https://cos-sh.tiye.me/cos-up/3fd6b05f2f9b9a1985224ac39e7b3aee/sparks.jpg")
                       |u $ %{} :Expr (:at 1744512978957) (:by |rJG4IHzWf)
                         :data $ {}
                           |T $ %{} :Leaf (:at 1744517311138) (:by |rJG4IHzWf) (:text |img-rhombic)
@@ -964,7 +997,10 @@
                             :data $ {}
                               |T $ %{} :Leaf (:at 1744512985635) (:by |rJG4IHzWf) (:text |solublejs/loadImageAsTexture)
                               |b $ %{} :Leaf (:at 1744512985635) (:by |rJG4IHzWf) (:text |device)
-                              |h $ %{} :Leaf (:at 1744517305853) (:by |rJG4IHzWf) (:text "|\"https://cos-sh.tiye.me/cos-up/309de8ad40b61cb865b32adedf1b2dc4/rhombic-mirror.png")
+                              |h $ %{} :Expr (:at 1744560670382) (:by |rJG4IHzWf)
+                                :data $ {}
+                                  |D $ %{} :Leaf (:at 1744560671858) (:by |rJG4IHzWf) (:text |replace-url)
+                                  |T $ %{} :Leaf (:at 1744517305853) (:by |rJG4IHzWf) (:text "|\"https://cos-sh.tiye.me/cos-up/309de8ad40b61cb865b32adedf1b2dc4/rhombic-mirror.png")
                   |T $ %{} :Expr (:at 1713297765380) (:by |rJG4IHzWf)
                     :data $ {}
                       |D $ %{} :Leaf (:at 1713297784829) (:by |rJG4IHzWf) (:text |js-set)
@@ -1615,6 +1651,35 @@
                       |T $ %{} :Leaf (:at 1499755354983) (:by |root) (:text |comp-container)
                       |j $ %{} :Leaf (:at 1507400119272) (:by |root) (:text |@*reel)
                   |v $ %{} :Leaf (:at 1623915174985) (:by |rJG4IHzWf) (:text |dispatch!)
+        |replace-url $ %{} :CodeEntry (:doc |)
+          :code $ %{} :Expr (:at 1744560590937) (:by |rJG4IHzWf)
+            :data $ {}
+              |T $ %{} :Leaf (:at 1744560592060) (:by |rJG4IHzWf) (:text |defn)
+              |b $ %{} :Leaf (:at 1744560590937) (:by |rJG4IHzWf) (:text |replace-url)
+              |h $ %{} :Expr (:at 1744560590937) (:by |rJG4IHzWf)
+                :data $ {}
+                  |T $ %{} :Leaf (:at 1744560595754) (:by |rJG4IHzWf) (:text |url)
+              |l $ %{} :Expr (:at 1744560599502) (:by |rJG4IHzWf)
+                :data $ {}
+                  |T $ %{} :Leaf (:at 1744560599960) (:by |rJG4IHzWf) (:text |if)
+                  |b $ %{} :Expr (:at 1744560604232) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |D $ %{} :Leaf (:at 1744560605256) (:by |rJG4IHzWf) (:text |some?)
+                      |T $ %{} :Leaf (:at 1744560602527) (:by |rJG4IHzWf) (:text |config/resource-base-url)
+                  |h $ %{} :Expr (:at 1744560638870) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |D $ %{} :Leaf (:at 1744560639677) (:by |rJG4IHzWf) (:text |str)
+                      |L $ %{} :Leaf (:at 1744560642515) (:by |rJG4IHzWf) (:text |config/resource-base-url)
+                      |P $ %{} :Leaf (:at 1744560646542) (:by |rJG4IHzWf) (:text "|\"/")
+                      |T $ %{} :Expr (:at 1744560633827) (:by |rJG4IHzWf)
+                        :data $ {}
+                          |D $ %{} :Leaf (:at 1744560634673) (:by |rJG4IHzWf) (:text |last)
+                          |T $ %{} :Expr (:at 1744560606839) (:by |rJG4IHzWf)
+                            :data $ {}
+                              |T $ %{} :Leaf (:at 1744560627862) (:by |rJG4IHzWf) (:text |.split)
+                              |X $ %{} :Leaf (:at 1744560630219) (:by |rJG4IHzWf) (:text |url)
+                              |b $ %{} :Leaf (:at 1744560631702) (:by |rJG4IHzWf) (:text "|\"/")
+                  |l $ %{} :Leaf (:at 1744560652025) (:by |rJG4IHzWf) (:text |url)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ %{} :Expr (:at 1499755354983) (:by nil)
           :data $ {}

@@ -82,6 +82,9 @@
           :code $ quote
             def interval $ w-js-log
               parse-float $ get-env "\"interval" "\"40"
+        |resource-base-url $ %{} :CodeEntry (:doc |)
+          :code $ quote
+            def resource-base-url $ get-env "\"resource-base-url"
         |site $ %{} :CodeEntry (:doc |)
           :code $ quote
             def site $ {} (:storage-key "\"workflow")
@@ -153,15 +156,15 @@
           :code $ quote
             defn load-textures! (device) (hint-fn async)
               let
-                  img-tiye $ solublejs/loadImageAsTexture device "\"https://cdn.tiye.me/logo/tiye.jpg"
-                  img-candy $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/c7367e21405d602c5ef5a8c55c35d512/candy.jpeg"
-                  img-bubbles $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/20b39957d952bd189e4253369db30335/pasted-2024-04-17T17:00:49.301Z.png"
-                  img-rugs $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/ceec218462f81744323e22dd2d04e94b/pasted-2024-04-17T17:12:29.234Z.png"
-                  img-pigment $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/4a932a1d8eaf46b4d9d8ec07538e8ee1/pigment.jpg"
-                  img-stripes $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/d090a685f03af9d31988a2a92b3b8a19/stripes.jpg"
-                  img-circles $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/80e5932494210d46c600b402a029f973/circles.jpg"
-                  img-sparks $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/3fd6b05f2f9b9a1985224ac39e7b3aee/sparks.jpg"
-                  img-rhombic $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/309de8ad40b61cb865b32adedf1b2dc4/rhombic-mirror.png"
+                  img-tiye $ solublejs/loadImageAsTexture device (replace-url "\"https://cdn.tiye.me/logo/tiye.jpg")
+                  img-candy $ solublejs/loadImageAsTexture device (replace-url "\"https://cos-sh.tiye.me/cos-up/c7367e21405d602c5ef5a8c55c35d512/candy.jpeg")
+                  img-bubbles $ solublejs/loadImageAsTexture device (replace-url "\"https://cos-sh.tiye.me/cos-up/20b39957d952bd189e4253369db30335/pasted-2024-04-17T17:00:49.301Z.png")
+                  img-rugs $ solublejs/loadImageAsTexture device (replace-url "\"https://cos-sh.tiye.me/cos-up/ceec218462f81744323e22dd2d04e94b/pasted-2024-04-17T17:12:29.234Z.png")
+                  img-pigment $ solublejs/loadImageAsTexture device (replace-url "\"https://cos-sh.tiye.me/cos-up/4a932a1d8eaf46b4d9d8ec07538e8ee1/pigment.jpg")
+                  img-stripes $ solublejs/loadImageAsTexture device (replace-url "\"https://cos-sh.tiye.me/cos-up/d090a685f03af9d31988a2a92b3b8a19/stripes.jpg")
+                  img-circles $ solublejs/loadImageAsTexture device (replace-url "\"https://cos-sh.tiye.me/cos-up/80e5932494210d46c600b402a029f973/circles.jpg")
+                  img-sparks $ solublejs/loadImageAsTexture device (replace-url "\"https://cos-sh.tiye.me/cos-up/3fd6b05f2f9b9a1985224ac39e7b3aee/sparks.jpg")
+                  img-rhombic $ solublejs/loadImageAsTexture device (replace-url "\"https://cos-sh.tiye.me/cos-up/309de8ad40b61cb865b32adedf1b2dc4/rhombic-mirror.png")
                 js-set (.!deref solublejs/atomSharedTextures) "\"tiye" $ js-await img-tiye
                 js-set (.!deref solublejs/atomSharedTextures) "\"candy" $ js-await img-candy
                 js-set (.!deref solublejs/atomSharedTextures) "\"bubbles" $ js-await img-bubbles
@@ -253,6 +256,12 @@
                 .!initPointsBuffer app-config
                 solublejs/renderSolubleTree app-config
               render! mount-target (comp-container @*reel) dispatch!
+        |replace-url $ %{} :CodeEntry (:doc |)
+          :code $ quote
+            defn replace-url (url)
+              if (some? config/resource-base-url)
+                str config/resource-base-url "\"/" $ last (.split url "\"/")
+                , url
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
           ns app.main $ :require
