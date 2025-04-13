@@ -50,3 +50,24 @@ export let loadImageAsTexture = async (device: GPUDevice, url: string): Promise<
   });
   return texture;
 };
+
+// create an input element, trigger a click, and remove it.
+// main feature is to load image, and put into texture
+export let loadImageFromInputEl = (device: GPUDevice): Promise<GPUTexture> => {
+  return new Promise((resolve) => {
+    let input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.onchange = async (e) => {
+      let file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) {
+        console.error("No file selected");
+        return;
+      }
+      let url = URL.createObjectURL(file);
+      let texture = await loadImageAsTexture(device, url);
+      resolve(texture);
+    };
+    input.click();
+  });
+};
