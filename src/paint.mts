@@ -217,7 +217,11 @@ let buildCommandBuffer = (t: number, params: number[], textures: GPUTexture[]): 
   let now = Date.now() - startTime;
 
   let uniformBuffer = getUniformBuffer(t);
-  let paramsBuffer = createBuffer(new Float32Array([now, now - prevTime, params[0] || 0, params[1] || 0]), GPUBufferUsage.UNIFORM, device);
+  let paramsBuffer = createBuffer(
+    new Float32Array([now, now - prevTime, params[0] || 0, params[1] || 0, params[2]].filter((x) => x != null)),
+    GPUBufferUsage.UNIFORM,
+    device
+  );
   prevTime = now;
 
   let uniformBindGroupLayout = device.createBindGroupLayout({

@@ -9,6 +9,10 @@ struct Params {
   /// 1 to disable
   disableLens: f32,
   maskRadius: f32,
+  partRatio: f32,
+  // _p1: f32,
+  // _p2: f32,
+  // _p3: f32,
 }
 
 @group(0) @binding(1) var<uniform> params: Params;
@@ -78,7 +82,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   // apply kaleidoscope
 
   // divide circle by 6 segments
-  let parts = 2 + 20. / 60.;
+  let parts = 2 + params.partRatio / 60.;
   // let parts = 2. + 1. / 4.;
   // let parts = 2. + 1. / 5.;
   // let parts = 2. + 2. / 3.;

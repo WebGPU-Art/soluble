@@ -5,10 +5,12 @@ import { Number4, rand, randBalance } from "../math.mjs";
 import { type ButtonEvents } from "../control.mjs";
 import { SolubleApp } from "../primes.mjs";
 import { BaseCellParams } from "../paint.mjs";
+import { partRatio } from "../config.mjs";
 
 let store = {
   disableLens: 1, // or 1
   radius: 0.98,
+  partRatio: partRatio,
 };
 
 let createKaleidoscopeBasePoint = (idx: number): BaseCellParams => {
@@ -40,7 +42,7 @@ export const imageConfigs: SolubleApp = {
     }
   },
   getParams: () => {
-    return [store.disableLens, store.radius];
+    return [store.disableLens, store.radius, store.partRatio];
   },
   getTextures: (obj) => {
     return [
