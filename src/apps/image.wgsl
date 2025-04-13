@@ -36,6 +36,9 @@ struct BaseCell {
 @group(2) @binding(4) var image_rugs : texture_2d<f32>;
 @group(2) @binding(5) var image_pigment : texture_2d<f32>;
 @group(2) @binding(6) var image_stripes : texture_2d<f32>;
+@group(2) @binding(7) var image_circles : texture_2d<f32>;
+@group(2) @binding(8) var image_sparks : texture_2d<f32>;
+@group(2) @binding(9) var image_yulan : texture_2d<f32>;
 
 @compute @workgroup_size(8, 8, 1)
 fn compute_main(@builtin(global_invocation_id) global_id: vec3u) {}
@@ -74,10 +77,13 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   // apply kaleidoscope
 
-    // divide circle by 6 segments
-  // let parts = 2.286;
-  // let parts = 2.333;
-  let parts = 2. + 1. / 4.;
+  // divide circle by 6 segments
+  let parts = 2 + 20. / 60.;
+  // let parts = 2. + 1. / 4.;
+  // let parts = 2. + 1. / 5.;
+  // let parts = 2. + 2. / 3.;
+  // let parts = 2. + 2. / 7.;
+  // let parts = 2. + 3. / 4.;
 
     // radius of the circle containing the shape
   let radius = 800.;
@@ -150,12 +156,22 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   let pixel5 = textureSample(image_pigment, mySampler, small_coord - vec2f(2., 0.));
   let pixel6 = textureSample(image_stripes, mySampler, small_coord - vec2f(2., 1.));
 
+  let pixel7 = textureSample(image_circles, mySampler, small_coord - vec2f(0., 2.));
+  let pixel8 = textureSample(image_sparks, mySampler, small_coord - vec2f(1., 2.));
+  let pixel9 = textureSample(image_yulan, mySampler, small_coord - vec2f(2., 2.));
+
+
   let inside_image = small_coord.x > 0.0 && small_coord.y > 0. && small_coord.x < 1. && small_coord.y < 1.;
-  let inside_image2 = small_coord.x > 1.0 && small_coord.y > 1. && small_coord.x < 2. && small_coord.y < 2.;
   let inside_image3 = small_coord.x > 1.0 && small_coord.y > 0. && small_coord.x < 2. && small_coord.y < 1.;
-  let inside_image4 = small_coord.x > 0.0 && small_coord.y > 1. && small_coord.x < 1. && small_coord.y < 2.;
   let inside_image5 = small_coord.x > 2.0 && small_coord.y > 0. && small_coord.x < 3. && small_coord.y < 1.;
+
+  let inside_image4 = small_coord.x > 0.0 && small_coord.y > 1. && small_coord.x < 1. && small_coord.y < 2.;
+  let inside_image2 = small_coord.x > 1.0 && small_coord.y > 1. && small_coord.x < 2. && small_coord.y < 2.;
   let inside_image6 = small_coord.x > 2.0 && small_coord.y > 1. && small_coord.x < 3. && small_coord.y < 2.;
+
+  let inside_image7 = small_coord.x > 0.0 && small_coord.y > 2. && small_coord.x < 1. && small_coord.y < 3.;
+  let inside_image8 = small_coord.x > 1.0 && small_coord.y > 2. && small_coord.x < 2. && small_coord.y < 3.;
+  let inside_image9 = small_coord.x > 2.0 && small_coord.y > 2. && small_coord.x < 3. && small_coord.y < 3.;
 
   if disableLens {
     if inside_image {
@@ -170,6 +186,12 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
       return pixel5 * opacity;
     } else if inside_image6 {
       return pixel6 * opacity;
+    } else if inside_image7 {
+      return pixel7 * opacity;
+    } else if inside_image8 {
+      return pixel8 * opacity;
+    } else if inside_image9 {
+      return pixel9 * opacity;
     } else {
       return  vec4(0.2, 0.2, 0.2, 1.0) * opacity;
     }
@@ -187,6 +209,12 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     return pixel5;
   } else if inside_image6 {
     return pixel6;
+  } else if inside_image7 {
+    return pixel7;
+  } else if inside_image8 {
+    return pixel8;
+  } else if inside_image9 {
+    return pixel9;
   } else {
     return vec4(0.0, 0.0, 0.0, 0.0);
   }

@@ -147,12 +147,18 @@
                   img-rugs $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/ceec218462f81744323e22dd2d04e94b/pasted-2024-04-17T17:12:29.234Z.png"
                   img-pigment $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/4a932a1d8eaf46b4d9d8ec07538e8ee1/pigment.jpg"
                   img-stripes $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/d090a685f03af9d31988a2a92b3b8a19/stripes.jpg"
+                  img-circles $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/80e5932494210d46c600b402a029f973/circles.jpg"
+                  img-sparks $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/3fd6b05f2f9b9a1985224ac39e7b3aee/sparks.jpg"
+                  img-yulan $ solublejs/loadImageAsTexture device "\"https://cos-sh.tiye.me/cos-up/d65d03fc3ecb50bed15bd7bf36c0a45d/yulan.jpg"
                 js-set (.!deref solublejs/atomSharedTextures) "\"tiye" $ js-await img-tiye
                 js-set (.!deref solublejs/atomSharedTextures) "\"candy" $ js-await img-candy
                 js-set (.!deref solublejs/atomSharedTextures) "\"bubbles" $ js-await img-bubbles
                 js-set (.!deref solublejs/atomSharedTextures) "\"rugs" $ js-await img-rugs
                 js-set (.!deref solublejs/atomSharedTextures) "\"stripes" $ js-await img-stripes
                 js-set (.!deref solublejs/atomSharedTextures) "\"pigment" $ js-await img-pigment
+                js-set (.!deref solublejs/atomSharedTextures) "\"circles" $ js-await img-circles
+                js-set (.!deref solublejs/atomSharedTextures) "\"sparks" $ js-await img-sparks
+                js-set (.!deref solublejs/atomSharedTextures) "\"yulan" $ js-await img-yulan
         |loop-paint! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn loop-paint! () (solublejs/callFramePaint)
