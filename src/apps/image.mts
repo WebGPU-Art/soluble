@@ -40,6 +40,10 @@ export const imageConfigs: SolubleApp = {
       store.radius = Math.max(0, store.radius - 0.1);
       console.log("face2 tapped", store.radius);
     }
+    if (events.face4) {
+      store.partRatio = Math.max(0, store.partRatio - 0.1);
+      store.partRatio = 10 + Math.floor(Math.random() * 40);
+    }
   },
   getParams: () => {
     return [store.disableLens, store.radius, store.partRatio];
