@@ -8,4 +8,4 @@ export { setupRemoteControl } from "./remote-control.mjs";
 
 export { atomSolubleTree, atomSharedTextures } from "./global.mjs";
 
-export { createTextureFromSource, loadImageAsTexture } from "./utils.mjs";
+export { createTextureFromSource, loadImageAsTexture, loadImageFromInputEl } from "./utils.mjs";

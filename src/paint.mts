@@ -17,6 +17,7 @@ import { createBuffer, getComputeShaderModule } from "./utils.mjs";
 import solublePerspective from "../shaders/soluble-perspective.wgsl?raw";
 import solubleMath from "../shaders/soluble-math.wgsl?raw";
 import solubleMirror from "../shaders/soluble-mirror.wgsl?raw";
+import { pixelRatio } from "./config.mjs";
 
 let prevTime = Date.now();
 
@@ -181,8 +182,8 @@ let getUniformBuffer = (t: number): GPUBuffer => {
   let viewerPosition = atomViewerPosition.deref();
   // 👔 Uniform Data
   const uniformData = new Float32Array([
-    window.innerWidth * window.devicePixelRatio,
-    window.innerHeight * window.devicePixelRatio,
+    window.innerWidth * pixelRatio,
+    window.innerHeight * pixelRatio,
     atomViewerScale.deref(),
     t,
     // lookpoint
@@ -216,7 +217,11 @@ let buildCommandBuffer = (t: number, params: number[], textures: GPUTexture[]): 
   let now = Date.now() - startTime;
 
   let uniformBuffer = getUniformBuffer(t);
-  let paramsBuffer = createBuffer(new Float32Array([now, now - prevTime, params[0] || 0, params[1] || 0]), GPUBufferUsage.UNIFORM, device);
+  let paramsBuffer = createBuffer(
+    new Float32Array([now, now - prevTime, params[0] || 0, params[1] || 0, params[2]].filter((x) => x != null)),
+    GPUBufferUsage.UNIFORM,
+    device
+  );
   prevTime = now;
 
   let uniformBindGroupLayout = device.createBindGroupLayout({

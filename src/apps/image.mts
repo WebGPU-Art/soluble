@@ -5,10 +5,12 @@ import { Number4, rand, randBalance } from "../math.mjs";
 import { type ButtonEvents } from "../control.mjs";
 import { SolubleApp } from "../primes.mjs";
 import { BaseCellParams } from "../paint.mjs";
+import { partRatio } from "../config.mjs";
 
 let store = {
-  disableLens: 0, // or 1
+  disableLens: 1, // or 1
   radius: 0.98,
+  partRatio: partRatio,
 };
 
 let createKaleidoscopeBasePoint = (idx: number): BaseCellParams => {
@@ -38,11 +40,27 @@ export const imageConfigs: SolubleApp = {
       store.radius = Math.max(0, store.radius - 0.1);
       console.log("face2 tapped", store.radius);
     }
+    if (events.face4) {
+      store.partRatio = Math.max(0, store.partRatio - 0.1);
+      store.partRatio = 10 + Math.floor(Math.random() * 40);
+    }
   },
   getParams: () => {
-    return [store.disableLens, store.radius];
+    return [store.disableLens, store.radius, store.partRatio];
   },
   getTextures: (obj) => {
-    return [obj["tiye"], obj["candy"], obj["bubbles"], obj["rugs"], obj["pigment"], obj["stripes"]];
+    return [
+      obj[0] || obj["tiye"],
+      obj[1] || obj["candy"],
+      obj[2] || obj["bubbles"],
+      // row 2
+      obj[3] || obj["rugs"],
+      obj[4] || obj["pigment"],
+      obj[5] || obj["stripes"],
+      // row 3
+      obj[6] || obj["circles"],
+      obj[7] || obj["sparks"],
+      obj[8] || obj["yulan"],
+    ];
   },
 };
