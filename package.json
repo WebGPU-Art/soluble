@@ -8,19 +8,19 @@
     "prepare": "yarn compile"
   },
   "devDependencies": {
-    "@calcit/procs": "^0.9.13",
-    "@types/node": "^24.0.3",
-    "@webgpu/types": "^0.1.61",
+    "@calcit/procs": "^0.9.20",
+    "@types/node": "^24.9.1",
+    "@webgpu/types": "^0.1.66",
     "bottom-tip": "^0.1.5",
-    "prettier": "^3.6.0",
-    "typescript": "^5.8.3",
-    "vite": "^6.3.5",
-    "vite-plugin-glsl": "^1.5.0"
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.12",
+    "vite-plugin-glsl": "^1.5.4"
   },
   "dependencies": {
     "@triadica/touch-control": "^0.0.4-a1",
     "gamecontroller.js": "^1.5.0",
     "ismobilejs": "^1.1.1",
-    "query-string": "^9.2.1"
+    "query-string": "^9.3.1"
   }
 }
