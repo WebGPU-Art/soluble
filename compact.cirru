@@ -19,6 +19,7 @@
                   {} $ :class-name (str-spaced css/global css/row)
                   comp-nav store
                   when dev? $ comp-reel (>> states :reel) reel ({})
+          :examples $ []
         |comp-nav $ %{} :CodeEntry (:doc |)
           :code $ quote
             defcomp comp-nav (store)
@@ -42,10 +43,12 @@
                                 :style $ if (= tab t)
                                   {} $ :color :white
                               <> name
+          :examples $ []
         |style-nav $ %{} :CodeEntry (:doc |)
           :code $ quote
             defstyle style-nav $ {}
               "\"&" $ {} (:position :absolute) (:top 12)
+          :examples $ []
         |style-tab $ %{} :CodeEntry (:doc |)
           :code $ quote
             defstyle style-tab $ {}
@@ -58,9 +61,11 @@
               "\"&:hover" $ {}
                 :background-color $ hsl 0 0 0 0.5
                 :color :white
+          :examples $ []
         |tabs $ %{} :CodeEntry (:doc |)
           :code $ quote
-            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :newton-fractal "\"Newton Fractal" :dark) (:: :newton-cosh-fractal "\"Newton Cosh Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark) (:: :circles "\"Circles" :dark) (:: :kaleidoscope "\"Kaleidoscope" :dark) (:: :image "\"Image" :dark) (:: :clocking "\"Clocking" :dark) (:: :ripple "\"Ripple" :dark) (:: :surround-mirror "\"Surrond Mirror" :dark) (:: :kaleidoscope-mirror "\"Kaleidoscope Mirror" :dark) (:: :parallel-mirror "\"Parallel Mirror" :dark) (:: :sphere-mirror "\"Sphere Mirror" :dark) (:: :hollow-mirror "\"Hollow Mirror" :dark) (:: :box-mirror "\"Box Mirror" :dark) (:: :rhombic-mirror "\"Rhombic Mirror" :dark)
+            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :newton-fractal "\"Newton Fractal" :dark) (:: :newton-cosh-fractal "\"Newton Cosh Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark) (:: :circles "\"Circles" :dark) (:: :kaleidoscope "\"Kaleidoscope" :dark) (:: :image "\"Image" :dark) (:: :clocking "\"Clocking" :dark) (:: :ripple "\"Ripple" :dark) (:: :surround-mirror "\"Surrond Mirror" :dark) (:: :kaleidoscope-mirror "\"Kaleidoscope Mirror" :dark) (:: :parallel-mirror "\"Parallel Mirror" :dark) (:: :sphere-mirror "\"Sphere Mirror" :dark) (:: :hollow-mirror "\"Hollow Mirror" :dark) (:: :box-mirror "\"Box Mirror" :dark) (:: :rhombic-mirror "\"Rhombic Mirror" :dark) (:: :dots-clock "\"Dots Clock" :dark)
+          :examples $ []
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
           ns app.comp.container $ :require (respo-ui.css :as css)
@@ -75,47 +80,59 @@
         |dev? $ %{} :CodeEntry (:doc |)
           :code $ quote
             def dev? $ = "\"dev" (get-env "\"mode" "\"release")
+          :examples $ []
         |hide-tabs? $ %{} :CodeEntry (:doc |)
           :code $ quote
             def hide-tabs? $ = "\"true" (get-env "\"hide-tabs" "\"false")
+          :examples $ []
         |interval $ %{} :CodeEntry (:doc |)
           :code $ quote
             def interval $ w-js-log
               parse-float $ get-env "\"interval" "\"40"
+          :examples $ []
         |resource-base-url $ %{} :CodeEntry (:doc |)
           :code $ quote
             def resource-base-url $ get-env "\"resource-base-url"
+          :examples $ []
         |site $ %{} :CodeEntry (:doc |)
           :code $ quote
             def site $ {} (:storage-key "\"workflow")
+          :examples $ []
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote (ns app.config)
     |app.img-counter $ %{} :FileEntry
       :defs $ {}
         |*counter $ %{} :CodeEntry (:doc "|0-8 slots for pictures")
           :code $ quote (defatom *counter 0)
+          :examples $ []
         |img-slot! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn img-slot! () $ let
                 ret @*counter
               if (< ret 8) (swap! *counter inc) (reset! *counter 0)
               , ret
+          :examples $ []
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote (ns app.img-counter)
     |app.main $ %{} :FileEntry
       :defs $ {}
         |*compute-shader $ %{} :CodeEntry (:doc |)
           :code $ quote (defatom *compute-shader nil)
+          :examples $ []
         |*raf $ %{} :CodeEntry (:doc |)
           :code $ quote (defatom *raf 0)
+          :examples $ []
         |*reel $ %{} :CodeEntry (:doc |)
           :code $ quote
             defatom *reel $ -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
+          :examples $ []
         |*timeout $ %{} :CodeEntry (:doc |)
           :code $ quote (defatom *timeout 0)
+          :examples $ []
         |canvas $ %{} :CodeEntry (:doc |)
           :code $ quote
             def canvas $ js/document.querySelector "\"canvas"
+          :examples $ []
         |dispatch! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn dispatch! (op)
@@ -124,6 +141,7 @@
                 js/console.log "\"Dispatch:" op
               solublejs/clearPointsBuffer
               reset! *reel $ reel-updater updater @*reel op
+          :examples $ []
         |get-app $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn get-app (tab)
@@ -152,6 +170,8 @@
                 :hollow-mirror hollowMirrorConfigs
                 :box-mirror boxMirrorConfigs
                 :rhombic-mirror rhombicMirrorConfigs
+                :dots-clock dotsClockConfigs
+          :examples $ []
         |load-textures! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn load-textures! (device) (hint-fn async)
@@ -174,6 +194,7 @@
                 js-set (.!deref solublejs/atomSharedTextures) "\"circles" $ js-await img-circles
                 js-set (.!deref solublejs/atomSharedTextures) "\"sparks" $ js-await img-sparks
                 js-set (.!deref solublejs/atomSharedTextures) "\"yulan" $ js-await img-rhombic
+          :examples $ []
         |loop-paint! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn loop-paint! () (solublejs/callFramePaint)
@@ -183,6 +204,7 @@
                     js/requestAnimationFrame $ fn (t) (loop-paint!)
                 reset! *raf $ js/requestAnimationFrame
                   fn (t) (loop-paint!)
+          :examples $ []
         |main! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn main! () (hint-fn async)
@@ -227,15 +249,18 @@
                 when (some? raw)
                   dispatch! $ :: :hydrate-storage (parse-cirru-edn raw)
               println "|App started."
+          :examples $ []
         |mount-target $ %{} :CodeEntry (:doc |)
           :code $ quote
             def mount-target $ js/document.querySelector |.app
+          :examples $ []
         |persist-storage! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn persist-storage! ()
               println "\"Saved at" $ .!toISOString (new js/Date)
               js/localStorage.setItem (:storage-key config/site)
                 format-cirru-edn $ :store @*reel
+          :examples $ []
         |reload! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn reload! () $ if (nil? build-errors)
@@ -247,6 +272,7 @@
                 reset! *reel $ refresh-reel @*reel schema/store updater
                 hud! "\"ok~" "\"Ok"
               hud! "\"error" build-errors
+          :examples $ []
         |render-app! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn render-app! ()
@@ -256,12 +282,14 @@
                 .!initPointsBuffer app-config
                 solublejs/renderSolubleTree app-config
               render! mount-target (comp-container @*reel) dispatch!
+          :examples $ []
         |replace-url $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn replace-url (url)
               if (some? config/resource-base-url)
                 str config/resource-base-url "\"/" $ last (.split url "\"/")
                 , url
+          :examples $ []
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
           ns app.main $ :require
@@ -299,6 +327,7 @@
             "\"../src/apps/hollow-mirror.mts" :refer $ hollowMirrorConfigs
             "\"../src/apps/box-mirror.mts" :refer $ boxMirrorConfigs
             "\"../src/apps/rhombic-mirror.mts" :refer $ rhombicMirrorConfigs
+            "\"../src/apps/dots-clock.mts" :refer $ dotsClockConfigs
             "\"../src/global.mts" :refer $ atomSolubleTree
             app.img-counter :refer $ img-slot!
     |app.schema $ %{} :FileEntry
@@ -306,9 +335,10 @@
         |store $ %{} :CodeEntry (:doc |)
           :code $ quote
             def store $ {}
-              :tab $ turn-tag (get-env "\"tab" "\"rhombic-mirror")
+              :tab $ turn-tag (get-env "\"tab" "\"dots-clock")
               :states $ {}
                 :cursor $ []
+          :examples $ []
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote (ns app.schema)
     |app.updater $ %{} :FileEntry
@@ -322,6 +352,7 @@
                 (:tab t theme) (assoc store :tab t)
                 (:hydrate-storage data) data
                 _ $ do (eprintln "\"unknown op:" op) store
+          :examples $ []
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
           ns app.updater $ :require

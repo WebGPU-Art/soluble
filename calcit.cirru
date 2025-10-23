@@ -501,6 +501,12 @@
                       |b $ %{} :Leaf (:at 1731209309368) (:by |rJG4IHzWf) (:text |:rhombic-mirror)
                       |h $ %{} :Leaf (:at 1731209314741) (:by |rJG4IHzWf) (:text "|\"Rhombic Mirror")
                       |l $ %{} :Leaf (:at 1712938641596) (:by |rJG4IHzWf) (:text |:dark)
+                  |zs $ %{} :Expr (:at 1712938631055) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1712938631792) (:by |rJG4IHzWf) (:text |::)
+                      |b $ %{} :Leaf (:at 1761238580624) (:by |rJG4IHzWf) (:text |:dots-clock)
+                      |h $ %{} :Leaf (:at 1761238583549) (:by |rJG4IHzWf) (:text "|\"Dots Clock")
+                      |l $ %{} :Leaf (:at 1712938641596) (:by |rJG4IHzWf) (:text |:dark)
       :ns $ %{} :CodeEntry (:doc |)
         :code $ %{} :Expr (:at 1499755354983) (:by nil)
           :data $ {}
@@ -885,6 +891,10 @@
                     :data $ {}
                       |T $ %{} :Leaf (:at 1731209263524) (:by |rJG4IHzWf) (:text |:rhombic-mirror)
                       |b $ %{} :Leaf (:at 1731209252849) (:by |rJG4IHzWf) (:text |rhombicMirrorConfigs)
+                  |zq $ %{} :Expr (:at 1716718449053) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1761238609920) (:by |rJG4IHzWf) (:text |:dots-clock)
+                      |b $ %{} :Leaf (:at 1761238614398) (:by |rJG4IHzWf) (:text |dotsClockConfigs)
         |load-textures! $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1713297574685) (:by |rJG4IHzWf)
             :data $ {}
@@ -1910,6 +1920,13 @@
                     |g $ %{} :Expr (:at 1714755629826) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1731209247779) (:by |rJG4IHzWf) (:text |rhombicMirrorConfigs)
+                |zszj $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
+                  :data $ {}
+                    |T $ %{} :Leaf (:at 1761238627611) (:by |rJG4IHzWf) (:text "|\"../src/apps/dots-clock.mts")
+                    |a $ %{} :Leaf (:at 1714755628974) (:by |rJG4IHzWf) (:text |:refer)
+                    |g $ %{} :Expr (:at 1714755629826) (:by |rJG4IHzWf)
+                      :data $ {}
+                        |T $ %{} :Leaf (:at 1761238622342) (:by |rJG4IHzWf) (:text |dotsClockConfigs)
                 |zt $ %{} :Expr (:at 1709657313552) (:by |rJG4IHzWf)
                   :data $ {}
                     |T $ %{} :Leaf (:at 1736960997397) (:by |rJG4IHzWf) (:text "|\"../src/global.mts")
@@ -1944,7 +1961,7 @@
                             :data $ {}
                               |D $ %{} :Leaf (:at 1711260016101) (:by |rJG4IHzWf) (:text |get-env)
                               |L $ %{} :Leaf (:at 1711260020594) (:by |rJG4IHzWf) (:text "|\"tab")
-                              |T $ %{} :Leaf (:at 1731211750626) (:by |rJG4IHzWf) (:text "|\"rhombic-mirror")
+                              |T $ %{} :Leaf (:at 1761239946451) (:by |rJG4IHzWf) (:text "|\"dots-clock")
                   |j $ %{} :Expr (:at 1499755354983) (:by nil)
                     :data $ {}
                       |T $ %{} :Leaf (:at 1499755354983) (:by |root) (:text |:states)

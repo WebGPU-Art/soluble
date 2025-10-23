@@ -7,6 +7,7 @@ import { slowFractalConfigs } from "./apps/slow-fractal.mjs";
 import { imageConfigs } from "./apps/image.mjs";
 import { orbitsConfigs } from "./apps/orbits.mjs";
 import { clockingConfigs } from "./apps/clocking.mjs";
+import { dotsClockConfigs } from "./apps/dots-clock.mjs";
 
 // import all files to load types
 import {} from "./apps/kaleidoscope.mjs";
@@ -14,6 +15,7 @@ import {} from "./apps/kaleidoscope-mirror.mjs";
 import {} from "./apps/box-mirror.mjs";
 import {} from "./apps/stars.mjs";
 import {} from "./apps/rings.mjs";
+import {} from "./apps/dots-clock.mjs";
 import {} from "./apps/circles.mjs";
 import {} from "./apps/ripple.mjs";
 import {} from "./apps/surround-mirror.mjs";
@@ -29,6 +31,7 @@ import {} from "./apps/rhombic-mirror.mjs";
 // const appConfigs = complexFractalConfigs;
 // export const appConfigs = spaceFractalConfigs;
 // export const appConfigs = sphereFractalConfigs;
-export const appConfigs = slowFractalConfigs;
+// export const appConfigs = slowFractalConfigs;
+export const appConfigs = dotsClockConfigs;
 
 export default appConfigs;
