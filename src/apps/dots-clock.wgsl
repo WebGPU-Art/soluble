@@ -66,15 +66,15 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
       continue;
     }
 
-    // 计算点的亮度，基于距离的衰减
+    // 计算点的亮度，使用更简单的线性衰减
     let distance_factor = 1.0 - (distance_to_ray / dot_size);
-    let brightness = pow(distance_factor, 1.5) * base_point.p3 * 0.08;
+    let brightness = distance_factor * base_point.p3 * 0.1;
     
     // 七段显示器风格的颜色：明亮的绿色/青色
     let base_color = vec3(0.2, 1.0, 0.6); // 青绿色
     
-    // 添加轻微的脉动效果
-    let pulse = sin(uniforms.time * 2.0 + base_point.p4 * 0.1) * 0.1 + 0.9;
+    // 添加非常轻微的脉动效果，减少闪烁
+    let pulse = sin(uniforms.time * 1.5) * 0.05 + 0.95;
     
     let color = base_color * brightness * pulse;
     total = total + color;
