@@ -128,15 +128,15 @@ let createPoint = (idx: number): BaseCellParams => {
   const now = new Date();
   const currentSecond = now.getSeconds();
   const currentTime = Date.now();
-  
+
   // 检查是否需要更新时间（每秒检查一次）
   if (currentSecond !== lastCheckedSecond) {
     // 秒数变化，需要更新
     const newDigits = getCurrentTimeDigits();
     const oldPositions = pointPositions.map((p) => p.pos);
-    
+
     pointPositions = distributePoints(newDigits, 200);
-    
+
     // 设置旧位置用于动画
     for (let i = 0; i < pointPositions.length; i++) {
       if (i < oldPositions.length) {
@@ -145,7 +145,7 @@ let createPoint = (idx: number): BaseCellParams => {
         pointPositions[i].oldPos = pointPositions[i].pos;
       }
     }
-    
+
     lastUpdateTime = currentTime;
     animationProgress = 0;
     lastCheckedSecond = currentSecond;
@@ -174,7 +174,7 @@ let createPoint = (idx: number): BaseCellParams => {
   const z = oldPos[2] + (currentPos[2] - oldPos[2]) * smoothT;
 
   const position: Number4 = [x, y, z, 1];
-  
+
   // 调整点的大小和亮度，避免中间特别亮的点
   const size = 6; // 统一大小
   const brightness = 8; // 统一亮度
@@ -187,21 +187,58 @@ let createPoint = (idx: number): BaseCellParams => {
 let lastCheckedSecond = -1;
 // 添加一个强制更新标志
 let forceUpdate = true;
+// 添加定时器引用
+let updateTimer: NodeJS.Timeout | null = null;
+// 添加活跃状态检测
+let isActive = false;
+
+// 停止定时器的函数
+function stopUpdateTimer() {
+  if (updateTimer) {
+    clearInterval(updateTimer);
+    updateTimer = null;
+    isActive = false;
+    console.log("Dots clock timer stopped");
+  }
+}
+
+// 启动定时器的函数
+function startUpdateTimer() {
+  stopUpdateTimer(); // 确保之前的定时器被清理
+  isActive = true;
+
+  updateTimer = setInterval(() => {
+    // 检查是否仍然是活跃状态
+    if (!isActive) {
+      stopUpdateTimer();
+      return;
+    }
+
+    if (updatePointPositions()) {
+      console.log("定时器触发更新");
+    }
+  }, 500);
+
+  console.log("Dots clock timer started");
+}
+
+// 全局清理函数，可以从其他地方调用
+(globalThis as any).stopDotsClockTimer = stopUpdateTimer;
 
 // 添加一个更新函数，用于更新点的位置
 function updatePointPositions() {
   const now = new Date();
   const currentSecond = now.getSeconds();
-  
+
   // 如果秒数变化或强制更新
   if (currentSecond !== lastCheckedSecond || forceUpdate) {
     console.log("更新点位置，当前秒数:", currentSecond);
-    
+
     const newDigits = getCurrentTimeDigits();
     const oldPositions = pointPositions.map((p) => ({ ...p }));
-    
+
     pointPositions = distributePoints(newDigits, 200);
-    
+
     // 设置旧位置用于动画
     for (let i = 0; i < pointPositions.length; i++) {
       if (i < oldPositions.length) {
@@ -210,15 +247,15 @@ function updatePointPositions() {
         pointPositions[i].oldPos = pointPositions[i].pos;
       }
     }
-    
+
     lastUpdateTime = Date.now();
     animationProgress = 0;
     lastCheckedSecond = currentSecond;
     forceUpdate = false;
-    
+
     return true; // 返回true表示已更新
   }
-  
+
   return false; // 返回false表示未更新
 }
 
@@ -226,17 +263,17 @@ export const dotsClockConfigs = {
   initPointsBuffer: () => {
     // 强制使用200个点，而不是使用useBaseSize
     createGlobalPointsBuffer(200, createPoint);
-    
+
     // 初始化时立即更新一次
     updatePointPositions();
-    
-    // 设置定时器，每500毫秒检查一次是否需要更新
-    setInterval(() => {
-      if (updatePointPositions()) {
-        console.log("定时器触发更新");
-      }
-    }, 500);
+
+    // 启动定时器
+    startUpdateTimer();
   },
   useCompute: false,
   renderShader: dotsClockShader,
+  // 添加清理函数（如果框架支持）
+  onDestroy: () => {
+    stopUpdateTimer();
+  },
 };

@@ -8,6 +8,7 @@ import { imageConfigs } from "./apps/image.mjs";
 import { orbitsConfigs } from "./apps/orbits.mjs";
 import { clockingConfigs } from "./apps/clocking.mjs";
 import { dotsClockConfigs } from "./apps/dots-clock.mjs";
+import { inversionCirclesConfigs } from "./apps/inversion-circles.mjs";
 
 // import all files to load types
 import {} from "./apps/kaleidoscope.mjs";
@@ -25,6 +26,7 @@ import {} from "./apps/hollow-mirror.mjs";
 import {} from "./apps/newton.mjs";
 import {} from "./apps/newton-cosh.mjs";
 import {} from "./apps/rhombic-mirror.mjs";
+import {} from "./apps/inversion-circles.mjs";
 
 // const appConfigs = cubicFireConfigs;
 // const appConfigs = quaternionFractalConfigs;
@@ -32,6 +34,7 @@ import {} from "./apps/rhombic-mirror.mjs";
 // export const appConfigs = spaceFractalConfigs;
 // export const appConfigs = sphereFractalConfigs;
 // export const appConfigs = slowFractalConfigs;
-export const appConfigs = dotsClockConfigs;
+// export const appConfigs = dotsClockConfigs;
+export const appConfigs = inversionCirclesConfigs;
 
 export default appConfigs;

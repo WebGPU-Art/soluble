@@ -97,6 +97,7 @@
                               |r $ %{} :Expr (:at 1507461840980) (:by |root)
                                 :data $ {}
                                   |T $ %{} :Leaf (:at 1507461841342) (:by |root) (:text |{})
+          :examples $ []
         |comp-nav $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1699463214336) (:by |rJG4IHzWf)
             :data $ {}
@@ -251,6 +252,7 @@
                                                         :data $ {}
                                                           |T $ %{} :Leaf (:at 1699463221360) (:by |rJG4IHzWf) (:text |<>)
                                                           |b $ %{} :Leaf (:at 1699463221360) (:by |rJG4IHzWf) (:text |name)
+          :examples $ []
         |style-nav $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1699463351193) (:by |rJG4IHzWf)
             :data $ {}
@@ -273,6 +275,7 @@
                             :data $ {}
                               |T $ %{} :Leaf (:at 1699463353227) (:by |rJG4IHzWf) (:text |:top)
                               |b $ %{} :Leaf (:at 1699463353227) (:by |rJG4IHzWf) (:text |12)
+          :examples $ []
         |style-tab $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1699463319508) (:by |rJG4IHzWf)
             :data $ {}
@@ -355,6 +358,7 @@
                             :data $ {}
                               |T $ %{} :Leaf (:at 1699463320650) (:by |rJG4IHzWf) (:text |:color)
                               |b $ %{} :Leaf (:at 1699463320650) (:by |rJG4IHzWf) (:text |:white)
+          :examples $ []
         |tabs $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1699463292254) (:by |rJG4IHzWf)
             :data $ {}
@@ -507,6 +511,13 @@
                       |b $ %{} :Leaf (:at 1761238580624) (:by |rJG4IHzWf) (:text |:dots-clock)
                       |h $ %{} :Leaf (:at 1761238583549) (:by |rJG4IHzWf) (:text "|\"Dots Clock")
                       |l $ %{} :Leaf (:at 1712938641596) (:by |rJG4IHzWf) (:text |:dark)
+                  |zt $ %{} :Expr (:at 1712938631055) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1712938631792) (:by |rJG4IHzWf) (:text |::)
+                      |b $ %{} :Leaf (:at 1766899139190) (:by |rJG4IHzWf) (:text |:inversion-circles)
+                      |h $ %{} :Leaf (:at 1766899146125) (:by |rJG4IHzWf) (:text "|\"Inversion Circles")
+                      |l $ %{} :Leaf (:at 1712938641596) (:by |rJG4IHzWf) (:text |:dark)
+          :examples $ []
       :ns $ %{} :CodeEntry (:doc |)
         :code $ %{} :Expr (:at 1499755354983) (:by nil)
           :data $ {}
@@ -572,6 +583,7 @@
                       :data $ {}
                         |j $ %{} :Leaf (:at 1521954067604) (:by |root) (:text |dev?)
                         |n $ %{} :Leaf (:at 1699463461189) (:by |rJG4IHzWf) (:text |hide-tabs?)
+        :examples $ []
     |app.config $ %{} :FileEntry
       :defs $ {}
         |dev? $ %{} :CodeEntry (:doc |)
@@ -588,6 +600,7 @@
                       |D $ %{} :Leaf (:at 1624469706777) (:by |rJG4IHzWf) (:text |get-env)
                       |T $ %{} :Leaf (:at 1624469708397) (:by |rJG4IHzWf) (:text "|\"mode")
                       |b $ %{} :Leaf (:at 1658121345573) (:by |rJG4IHzWf) (:text "|\"release")
+          :examples $ []
         |hide-tabs? $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1699463394108) (:by |rJG4IHzWf)
             :data $ {}
@@ -602,6 +615,7 @@
                       |T $ %{} :Leaf (:at 1699463401265) (:by |rJG4IHzWf) (:text |get-env)
                       |b $ %{} :Leaf (:at 1699463401265) (:by |rJG4IHzWf) (:text "|\"hide-tabs")
                       |h $ %{} :Leaf (:at 1699463401265) (:by |rJG4IHzWf) (:text "|\"false")
+          :examples $ []
         |interval $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1699464828651) (:by |rJG4IHzWf)
             :data $ {}
@@ -618,6 +632,7 @@
                           |T $ %{} :Leaf (:at 1699464836463) (:by |rJG4IHzWf) (:text |get-env)
                           |b $ %{} :Leaf (:at 1699464838265) (:by |rJG4IHzWf) (:text "|\"interval")
                           |h $ %{} :Leaf (:at 1699465043647) (:by |rJG4IHzWf) (:text "|\"40")
+          :examples $ []
         |resource-base-url $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1744560561594) (:by |rJG4IHzWf)
             :data $ {}
@@ -627,6 +642,7 @@
                 :data $ {}
                   |T $ %{} :Leaf (:at 1744560564783) (:by |rJG4IHzWf) (:text |get-env)
                   |b $ %{} :Leaf (:at 1744560565737) (:by |rJG4IHzWf) (:text "|\"resource-base-url")
+          :examples $ []
         |site $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1545933382603) (:by |root)
             :data $ {}
@@ -639,11 +655,13 @@
                     :data $ {}
                       |T $ %{} :Leaf (:at 1544956719115) (:by |rJG4IHzWf) (:text |:storage-key)
                       |j $ %{} :Leaf (:at 1544956719115) (:by |rJG4IHzWf) (:text "|\"workflow")
+          :examples $ []
       :ns $ %{} :CodeEntry (:doc |)
         :code $ %{} :Expr (:at 1527788237503) (:by |root)
           :data $ {}
             |T $ %{} :Leaf (:at 1527788237503) (:by |root) (:text |ns)
             |j $ %{} :Leaf (:at 1527788237503) (:by |root) (:text |app.config)
+        :examples $ []
     |app.img-counter $ %{} :FileEntry
       :defs $ {}
         |*counter $ %{} :CodeEntry (:doc "|0-8 slots for pictures")
@@ -652,6 +670,7 @@
               |T $ %{} :Leaf (:at 1744515967506) (:by |rJG4IHzWf) (:text |defatom)
               |b $ %{} :Leaf (:at 1744515962979) (:by |rJG4IHzWf) (:text |*counter)
               |h $ %{} :Leaf (:at 1744515969243) (:by |rJG4IHzWf) (:text |0)
+          :examples $ []
         |img-slot! $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1744516000695) (:by |rJG4IHzWf)
             :data $ {}
@@ -687,11 +706,13 @@
                           |b $ %{} :Leaf (:at 1744516049127) (:by |rJG4IHzWf) (:text |*counter)
                           |h $ %{} :Leaf (:at 1744516049742) (:by |rJG4IHzWf) (:text |0)
                   |h $ %{} :Leaf (:at 1744516020843) (:by |rJG4IHzWf) (:text |ret)
+          :examples $ []
       :ns $ %{} :CodeEntry (:doc |)
         :code $ %{} :Expr (:at 1744515959109) (:by |rJG4IHzWf)
           :data $ {}
             |T $ %{} :Leaf (:at 1744515959109) (:by |rJG4IHzWf) (:text |ns)
             |b $ %{} :Leaf (:at 1744515959109) (:by |rJG4IHzWf) (:text |app.img-counter)
+        :examples $ []
     |app.main $ %{} :FileEntry
       :defs $ {}
         |*compute-shader $ %{} :CodeEntry (:doc |)
@@ -700,12 +721,14 @@
               |T $ %{} :Leaf (:at 1699464056788) (:by |rJG4IHzWf) (:text |defatom)
               |b $ %{} :Leaf (:at 1699464055289) (:by |rJG4IHzWf) (:text |*compute-shader)
               |h $ %{} :Leaf (:at 1699464059556) (:by |rJG4IHzWf) (:text |nil)
+          :examples $ []
         |*raf $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1699464218640) (:by |rJG4IHzWf)
             :data $ {}
               |T $ %{} :Leaf (:at 1699464219756) (:by |rJG4IHzWf) (:text |defatom)
               |b $ %{} :Leaf (:at 1699464218640) (:by |rJG4IHzWf) (:text |*raf)
               |h $ %{} :Leaf (:at 1699464221695) (:by |rJG4IHzWf) (:text |0)
+          :examples $ []
         |*reel $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1499755354983) (:by nil)
             :data $ {}
@@ -725,12 +748,14 @@
                       |T $ %{} :Leaf (:at 1507399781682) (:by |root) (:text |assoc)
                       |j $ %{} :Leaf (:at 1507399793097) (:by |root) (:text |:store)
                       |r $ %{} :Leaf (:at 1507399787471) (:by |root) (:text |schema/store)
+          :examples $ []
         |*timeout $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1699464175515) (:by |rJG4IHzWf)
             :data $ {}
               |T $ %{} :Leaf (:at 1699464177063) (:by |rJG4IHzWf) (:text |defatom)
               |b $ %{} :Leaf (:at 1699464175515) (:by |rJG4IHzWf) (:text |*timeout)
               |h $ %{} :Leaf (:at 1699464179099) (:by |rJG4IHzWf) (:text |0)
+          :examples $ []
         |canvas $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1699464260109) (:by |rJG4IHzWf)
             :data $ {}
@@ -740,6 +765,7 @@
                 :data $ {}
                   |T $ %{} :Leaf (:at 1699464267334) (:by |rJG4IHzWf) (:text |js/document.querySelector)
                   |b $ %{} :Leaf (:at 1699464268561) (:by |rJG4IHzWf) (:text "|\"canvas")
+          :examples $ []
         |dispatch! $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1499755354983) (:by nil)
             :data $ {}
@@ -778,6 +804,7 @@
                       |j $ %{} :Leaf (:at 1507399888500) (:by |root) (:text |updater)
                       |r $ %{} :Leaf (:at 1507399891576) (:by |root) (:text |@*reel)
                       |v $ %{} :Leaf (:at 1507399892687) (:by |root) (:text |op)
+          :examples $ []
         |get-app $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1699463992142) (:by |rJG4IHzWf)
             :data $ {}
@@ -891,10 +918,15 @@
                     :data $ {}
                       |T $ %{} :Leaf (:at 1731209263524) (:by |rJG4IHzWf) (:text |:rhombic-mirror)
                       |b $ %{} :Leaf (:at 1731209252849) (:by |rJG4IHzWf) (:text |rhombicMirrorConfigs)
+                  |zo $ %{} :Expr (:at 1766899104238) (:by |rJG4IHzWf)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1766899107648) (:by |rJG4IHzWf) (:text |:inversion-circles)
+                      |b $ %{} :Leaf (:at 1766899108064) (:by |rJG4IHzWf) (:text |inversionCirclesConfigs)
                   |zq $ %{} :Expr (:at 1716718449053) (:by |rJG4IHzWf)
                     :data $ {}
                       |T $ %{} :Leaf (:at 1761238609920) (:by |rJG4IHzWf) (:text |:dots-clock)
                       |b $ %{} :Leaf (:at 1761238614398) (:by |rJG4IHzWf) (:text |dotsClockConfigs)
+          :examples $ []
         |load-textures! $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1713297574685) (:by |rJG4IHzWf)
             :data $ {}
@@ -1119,6 +1151,7 @@
                         :data $ {}
                           |T $ %{} :Leaf (:at 1713891224558) (:by |rJG4IHzWf) (:text |js-await)
                           |b $ %{} :Leaf (:at 1744517314041) (:by |rJG4IHzWf) (:text |img-rhombic)
+          :examples $ []
         |loop-paint! $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1699464116175) (:by |rJG4IHzWf)
             :data $ {}
@@ -1183,6 +1216,7 @@
                               |h $ %{} :Expr (:at 1709315088844) (:by |rJG4IHzWf)
                                 :data $ {}
                                   |T $ %{} :Leaf (:at 1709315088844) (:by |rJG4IHzWf) (:text |loop-paint!)
+          :examples $ []
         |main! $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1499755354983) (:by nil)
             :data $ {}
@@ -1501,6 +1535,7 @@
                 :data $ {}
                   |T $ %{} :Leaf (:at 1499755354983) (:by |root) (:text |println)
                   |j $ %{} :Leaf (:at 1499755354983) (:by |root) (:text "||App started.")
+          :examples $ []
         |mount-target $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1499755354983) (:by nil)
             :data $ {}
@@ -1510,6 +1545,7 @@
                 :data $ {}
                   |j $ %{} :Leaf (:at 1695659910770) (:by |rJG4IHzWf) (:text |js/document.querySelector)
                   |r $ %{} :Leaf (:at 1499755354983) (:by |root) (:text ||.app)
+          :examples $ []
         |persist-storage! $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1533919515671) (:by |rJG4IHzWf)
             :data $ {}
@@ -1542,6 +1578,7 @@
                         :data $ {}
                           |T $ %{} :Leaf (:at 1533919515671) (:by |rJG4IHzWf) (:text |:store)
                           |j $ %{} :Leaf (:at 1533919515671) (:by |rJG4IHzWf) (:text |@*reel)
+          :examples $ []
         |reload! $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1626201152815) (:by |rJG4IHzWf)
             :data $ {}
@@ -1615,6 +1652,7 @@
                       |T $ %{} :Leaf (:at 1626290831868) (:by |rJG4IHzWf) (:text |hud!)
                       |b $ %{} :Leaf (:at 1626290930377) (:by |rJG4IHzWf) (:text "|\"error")
                       |j $ %{} :Leaf (:at 1626201209903) (:by |rJG4IHzWf) (:text |build-errors)
+          :examples $ []
         |render-app! $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1499755354983) (:by nil)
             :data $ {}
@@ -1661,6 +1699,7 @@
                       |T $ %{} :Leaf (:at 1499755354983) (:by |root) (:text |comp-container)
                       |j $ %{} :Leaf (:at 1507400119272) (:by |root) (:text |@*reel)
                   |v $ %{} :Leaf (:at 1623915174985) (:by |rJG4IHzWf) (:text |dispatch!)
+          :examples $ []
         |replace-url $ %{} :CodeEntry (:doc |)
           :code $ %{} :Expr (:at 1744560590937) (:by |rJG4IHzWf)
             :data $ {}
@@ -1690,6 +1729,7 @@
                               |X $ %{} :Leaf (:at 1744560630219) (:by |rJG4IHzWf) (:text |url)
                               |b $ %{} :Leaf (:at 1744560631702) (:by |rJG4IHzWf) (:text "|\"/")
                   |l $ %{} :Leaf (:at 1744560652025) (:by |rJG4IHzWf) (:text |url)
+          :examples $ []
       :ns $ %{} :CodeEntry (:doc |)
         :code $ %{} :Expr (:at 1499755354983) (:by nil)
           :data $ {}
@@ -1927,6 +1967,13 @@
                     |g $ %{} :Expr (:at 1714755629826) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1761238622342) (:by |rJG4IHzWf) (:text |dotsClockConfigs)
+                |zszn $ %{} :Expr (:at 1699464534081) (:by |rJG4IHzWf)
+                  :data $ {}
+                    |T $ %{} :Leaf (:at 1766899084805) (:by |rJG4IHzWf) (:text "|\"../src/apps/inversion-circles.mts")
+                    |a $ %{} :Leaf (:at 1714755628974) (:by |rJG4IHzWf) (:text |:refer)
+                    |g $ %{} :Expr (:at 1714755629826) (:by |rJG4IHzWf)
+                      :data $ {}
+                        |T $ %{} :Leaf (:at 1766899099094) (:by |rJG4IHzWf) (:text |inversionCirclesConfigs)
                 |zt $ %{} :Expr (:at 1709657313552) (:by |rJG4IHzWf)
                   :data $ {}
                     |T $ %{} :Leaf (:at 1736960997397) (:by |rJG4IHzWf) (:text "|\"../src/global.mts")
@@ -1941,6 +1988,7 @@
                     |h $ %{} :Expr (:at 1744516110784) (:by |rJG4IHzWf)
                       :data $ {}
                         |T $ %{} :Leaf (:at 1744516110784) (:by |rJG4IHzWf) (:text |img-slot!)
+        :examples $ []
     |app.schema $ %{} :FileEntry
       :defs $ {}
         |store $ %{} :CodeEntry (:doc |)
@@ -1961,7 +2009,7 @@
                             :data $ {}
                               |D $ %{} :Leaf (:at 1711260016101) (:by |rJG4IHzWf) (:text |get-env)
                               |L $ %{} :Leaf (:at 1711260020594) (:by |rJG4IHzWf) (:text "|\"tab")
-                              |T $ %{} :Leaf (:at 1761239946451) (:by |rJG4IHzWf) (:text "|\"dots-clock")
+                              |T $ %{} :Leaf (:at 1766899191826) (:by |rJG4IHzWf) (:text "|\"inversion-circles")
                   |j $ %{} :Expr (:at 1499755354983) (:by nil)
                     :data $ {}
                       |T $ %{} :Leaf (:at 1499755354983) (:by |root) (:text |:states)
@@ -1974,11 +2022,13 @@
                               |j $ %{} :Expr (:at 1584781007287) (:by |rJG4IHzWf)
                                 :data $ {}
                                   |T $ %{} :Leaf (:at 1584781007486) (:by |rJG4IHzWf) (:text |[])
+          :examples $ []
       :ns $ %{} :CodeEntry (:doc |)
         :code $ %{} :Expr (:at 1499755354983) (:by nil)
           :data $ {}
             |T $ %{} :Leaf (:at 1499755354983) (:by |root) (:text |ns)
             |j $ %{} :Leaf (:at 1499755354983) (:by |root) (:text |app.schema)
+        :examples $ []
     |app.updater $ %{} :FileEntry
       :defs $ {}
         |updater $ %{} :CodeEntry (:doc |)
@@ -2041,6 +2091,7 @@
                               |b $ %{} :Leaf (:at 1688397780408) (:by |rJG4IHzWf) (:text "|\"unknown op:")
                               |h $ %{} :Leaf (:at 1688397780408) (:by |rJG4IHzWf) (:text |op)
                           |h $ %{} :Leaf (:at 1688397780408) (:by |rJG4IHzWf) (:text |store)
+          :examples $ []
       :ns $ %{} :CodeEntry (:doc |)
         :code $ %{} :Expr (:at 1499755354983) (:by nil)
           :data $ {}
@@ -2056,6 +2107,7 @@
                     |v $ %{} :Expr (:at 1584874621524) (:by |rJG4IHzWf)
                       :data $ {}
                         |j $ %{} :Leaf (:at 1584874623096) (:by |rJG4IHzWf) (:text |update-states)
+        :examples $ []
   :users $ {}
     |rJG4IHzWf $ {} (:avatar nil) (:id |rJG4IHzWf) (:name |chen) (:nickname |chen) (:password |d41d8cd98f00b204e9800998ecf8427e) (:theme :star-trail)
     |root $ {} (:avatar nil) (:id |root) (:name |root) (:nickname |root) (:password |d41d8cd98f00b204e9800998ecf8427e) (:theme :star-trail)

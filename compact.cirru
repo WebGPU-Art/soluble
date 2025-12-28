@@ -64,7 +64,7 @@
           :examples $ []
         |tabs $ %{} :CodeEntry (:doc |)
           :code $ quote
-            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :newton-fractal "\"Newton Fractal" :dark) (:: :newton-cosh-fractal "\"Newton Cosh Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark) (:: :circles "\"Circles" :dark) (:: :kaleidoscope "\"Kaleidoscope" :dark) (:: :image "\"Image" :dark) (:: :clocking "\"Clocking" :dark) (:: :ripple "\"Ripple" :dark) (:: :surround-mirror "\"Surrond Mirror" :dark) (:: :kaleidoscope-mirror "\"Kaleidoscope Mirror" :dark) (:: :parallel-mirror "\"Parallel Mirror" :dark) (:: :sphere-mirror "\"Sphere Mirror" :dark) (:: :hollow-mirror "\"Hollow Mirror" :dark) (:: :box-mirror "\"Box Mirror" :dark) (:: :rhombic-mirror "\"Rhombic Mirror" :dark) (:: :dots-clock "\"Dots Clock" :dark)
+            def tabs $ [] (:: :cubic-fire "\"Cubic Fire" :dark) (:: :quaternion-fractal "\"Quaternion Fractal" :dark) (:: :complex-fractal "\"Complex Fractal" :dark) (:: :newton-fractal "\"Newton Fractal" :dark) (:: :newton-cosh-fractal "\"Newton Cosh Fractal" :dark) (:: :space-fractal "\"Space Fractal" :dark) (:: :sphere-fractal "\"Sphere Fractal" :dark) (:: :slow-fractal "\"Slow Fractal" :dark) (:: :orbits "\"Orbits" :dark) (:: :stars "\"Stars" :dark) (:: :rings "\"Rings" :dark) (:: :circles "\"Circles" :dark) (:: :kaleidoscope "\"Kaleidoscope" :dark) (:: :image "\"Image" :dark) (:: :clocking "\"Clocking" :dark) (:: :ripple "\"Ripple" :dark) (:: :surround-mirror "\"Surrond Mirror" :dark) (:: :kaleidoscope-mirror "\"Kaleidoscope Mirror" :dark) (:: :parallel-mirror "\"Parallel Mirror" :dark) (:: :sphere-mirror "\"Sphere Mirror" :dark) (:: :hollow-mirror "\"Hollow Mirror" :dark) (:: :box-mirror "\"Box Mirror" :dark) (:: :rhombic-mirror "\"Rhombic Mirror" :dark) (:: :dots-clock "\"Dots Clock" :dark) (:: :inversion-circles "\"Inversion Circles" :dark)
           :examples $ []
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote
@@ -75,6 +75,7 @@
             respo.comp.space :refer $ =<
             reel.comp.reel :refer $ comp-reel
             app.config :refer $ dev? hide-tabs?
+        :examples $ []
     |app.config $ %{} :FileEntry
       :defs $ {}
         |dev? $ %{} :CodeEntry (:doc |)
@@ -100,6 +101,7 @@
           :examples $ []
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote (ns app.config)
+        :examples $ []
     |app.img-counter $ %{} :FileEntry
       :defs $ {}
         |*counter $ %{} :CodeEntry (:doc "|0-8 slots for pictures")
@@ -114,6 +116,7 @@
           :examples $ []
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote (ns app.img-counter)
+        :examples $ []
     |app.main $ %{} :FileEntry
       :defs $ {}
         |*compute-shader $ %{} :CodeEntry (:doc |)
@@ -170,6 +173,7 @@
                 :hollow-mirror hollowMirrorConfigs
                 :box-mirror boxMirrorConfigs
                 :rhombic-mirror rhombicMirrorConfigs
+                :inversion-circles inversionCirclesConfigs
                 :dots-clock dotsClockConfigs
           :examples $ []
         |load-textures! $ %{} :CodeEntry (:doc |)
@@ -328,19 +332,22 @@
             "\"../src/apps/box-mirror.mts" :refer $ boxMirrorConfigs
             "\"../src/apps/rhombic-mirror.mts" :refer $ rhombicMirrorConfigs
             "\"../src/apps/dots-clock.mts" :refer $ dotsClockConfigs
+            "\"../src/apps/inversion-circles.mts" :refer $ inversionCirclesConfigs
             "\"../src/global.mts" :refer $ atomSolubleTree
             app.img-counter :refer $ img-slot!
+        :examples $ []
     |app.schema $ %{} :FileEntry
       :defs $ {}
         |store $ %{} :CodeEntry (:doc |)
           :code $ quote
             def store $ {}
-              :tab $ turn-tag (get-env "\"tab" "\"dots-clock")
+              :tab $ turn-tag (get-env "\"tab" "\"inversion-circles")
               :states $ {}
                 :cursor $ []
           :examples $ []
       :ns $ %{} :CodeEntry (:doc |)
         :code $ quote (ns app.schema)
+        :examples $ []
     |app.updater $ %{} :FileEntry
       :defs $ {}
         |updater $ %{} :CodeEntry (:doc |)
@@ -357,3 +364,4 @@
         :code $ quote
           ns app.updater $ :require
             respo.cursor :refer $ update-states
+        :examples $ []
