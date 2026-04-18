@@ -1,5 +1,13 @@
 #import soluble::perspective
 
+struct Params {
+  animating: f32,
+  active_count: f32,
+  total_count: f32,
+}
+
+@group(0) @binding(1) var<uniform> params: Params;
+
 struct BaseCell {
   position: vec4<f32>,
   p1: f32, p2: f32, p3: f32, p4: f32,
@@ -25,6 +33,16 @@ fn vertex_main(
 }
 
 const PI = 3.14159265368932374;
+const CLOCK_MIN = vec2<f32>(-1.22, -0.36);
+const CLOCK_MAX = vec2<f32>(1.55, 0.34);
+const IDLE_MIN = vec2<f32>(-0.34, -0.61);
+const IDLE_MAX = vec2<f32>(0.50, -0.33);
+const ANIMATION_MIN = vec2<f32>(-1.22, -0.64);
+const ANIMATION_MAX = vec2<f32>(1.55, 0.34);
+
+fn in_rect(p: vec2<f32>, min_p: vec2<f32>, max_p: vec2<f32>) -> bool {
+  return p.x >= min_p.x && p.x <= max_p.x && p.y >= min_p.y && p.y <= max_p.y;
+}
 
 @fragment
 fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
@@ -32,56 +50,54 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   // pixel coordinates
   let coord: vec2<f32> = vx_out.uv * uniforms.screen_wh;
   let p: vec2<f32> = coord * 0.0005 / uniforms.scale;
+  let background = vec3(0.05, 0.05, 0.08);
+  let in_clock = in_rect(p, CLOCK_MIN, CLOCK_MAX);
+  let in_idle = in_rect(p, IDLE_MIN, IDLE_MAX);
+  let is_animating = params.animating > 0.5;
+
+  if is_animating {
+    if !in_rect(p, ANIMATION_MIN, ANIMATION_MAX) {
+      return vec4(background, 1.0);
+    }
+  } else if !in_clock && !in_idle {
+    return vec4(background, 1.0);
+  }
 
   var base_size = arrayLength(&base_points);
+  let active_count = min(u32(params.active_count), base_size);
+  var point_start = 0u;
+  var point_end = base_size;
 
-  // create view ray
-  let ray_unit = normalize(
-    p.x * uniforms.rightward + p.y * uniforms.upward + 2.0 * uniforms.forward
-  );
+  if !is_animating {
+    if in_clock {
+      point_end = active_count;
+    } else {
+      point_start = active_count;
+    }
+  }
 
   // raymarch
   var total: vec3<f32> = vec3(0.0, 0.0, 0.0);
+  let base_color = vec3(0.18, 1.0, 0.58);
+  let pulse = sin(uniforms.time * 1.5) * 0.04 + 0.96;
+  let color_factor = 0.77 * pulse; // DOT_BRIGHTNESS(7) * 0.11 * pulse
 
-  for (var j: u32 = 0u; j < base_size; j++) {
-    let base_point = base_points[j];
-    let base_position = base_point.position.xyz;
+  for (var j: u32 = point_start; j < point_end; j++) {
+    // position.xy = pre-projected screen coords, position.z = screen radius
+    let pt = base_points[j].position;
+    let delta = pt.xy - p;
+    let r = pt.z;
+    let dist2 = dot(delta, delta);
+    let r2 = r * r;
 
-    let view = base_position - uniforms.viewer_position;
-    let view_unit = normalize(view);
-    let view_length = length(view);
-    let cos_value = dot(view_unit, ray_unit);
-    
-    if cos_value < 0.7 {
-      continue;
-    }
-    
-    let sin_value = sqrt(1.0 - cos_value * cos_value);
-    let distance_to_ray = abs(view_length * sin_value);
-    
-    // 点的大小
-    let dot_size = base_point.p1;
-    
-    if distance_to_ray > dot_size {
+    if dist2 > r2 {
       continue;
     }
 
-    // 计算点的亮度，使用更简单的线性衰减
-    let distance_factor = 1.0 - (distance_to_ray / dot_size);
-    let brightness = distance_factor * base_point.p3 * 0.1;
-    
-    // 七段显示器风格的颜色：明亮的绿色/青色
-    let base_color = vec3(0.2, 1.0, 0.6); // 青绿色
-    
-    // 添加非常轻微的脉动效果，减少闪烁
-    let pulse = sin(uniforms.time * 1.5) * 0.05 + 0.95;
-    
-    let color = base_color * brightness * pulse;
-    total = total + color;
+    let distance_factor = 1.0 - dist2 / r2;
+    total += base_color * (distance_factor * color_factor);
   }
 
-  // 深色背景
-  let background = vec3(0.05, 0.05, 0.08);
   total = total + background;
 
   return vec4(total, 1.0);

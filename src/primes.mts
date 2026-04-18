@@ -18,7 +18,7 @@ export interface SolubleAttribute {
 
 export interface SolubleObjectData {
   topology: GPUPrimitiveTopology;
-  vertexBuffersDescriptors: Iterable<GPUVertexBufferLayout | null>;
+  vertexBuffersDescriptors: GPUVertexBufferLayout[];
   shaderModule: GPUShaderModule;
   vertexBuffers: GPUBuffer[];
   length: number;
@@ -35,6 +35,7 @@ export type SolubleApp = {
   useCompute: boolean;
   renderShader: string;
   onButtonEvent?: (events: ButtonEvents) => void;
+  onDestroy?: () => void;
   getParams?: () => number[];
   getTextures?: (obj: Record<string, GPUTexture>) => GPUTexture[];
 };

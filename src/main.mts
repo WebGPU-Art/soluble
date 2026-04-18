@@ -4,10 +4,9 @@ import {
   loadTouchControl,
   setupRemoteControl,
   initializeContext,
-  paintSolubleTree,
   renderSolubleTree,
   resetCanvasHeight,
-  computeBasePoints,
+  callFramePaint,
   registerShaderResult,
 } from "./index.mjs";
 
@@ -23,16 +22,8 @@ let timeoutState: NodeJS.Timeout;
 let rafState = 0;
 
 let loopPaint = () => {
-  let tree = atomSolubleTree.deref();
-  console.log("compute", tree);
-  if (tree.useCompute) {
-    computeBasePoints();
-  }
-  paintSolubleTree([]);
-  // timeoutState = setTimeout(() => {
   rafState = requestAnimationFrame(loopPaint);
-  // }, 40);
-  // rafState = requestAnimationFrame(loopPaint);
+  callFramePaint();
 };
 
 window.onload = async () => {
@@ -52,7 +43,7 @@ window.onload = async () => {
 
   window.onresize = () => {
     resetCanvasHeight(canvas);
-    paintSolubleTree([]);
+    callFramePaint();
   };
 
   if (useRemoteControl) {
