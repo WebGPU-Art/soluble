@@ -1,4 +1,3 @@
-
 {} (:about "|Machine-generated snapshot. AI AGENTS: never edit this file directly — changes will be overwritten on recompile. Inspect via `cr query`; modify via `cr edit` / `cr tree`. MANDATORY first step: run `cr docs agents --full`.") (:package |app)
   :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!) (:version |0.0.1)
     :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |reel.calcit/
@@ -64,7 +63,7 @@
           :examples $ []
         |tabs $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
-            def tabs $ [] (:: :cubic-fire "|Cubic Fire" :dark) (:: :quaternion-fractal "|Quaternion Fractal" :dark) (:: :complex-fractal "|Complex Fractal" :dark) (:: :newton-fractal "|Newton Fractal" :dark) (:: :newton-cosh-fractal "|Newton Cosh Fractal" :dark) (:: :space-fractal "|Space Fractal" :dark) (:: :sphere-fractal "|Sphere Fractal" :dark) (:: :slow-fractal "|Slow Fractal" :dark) (:: :orbits |Orbits :dark) (:: :stars |Stars :dark) (:: :rings |Rings :dark) (:: :circles |Circles :dark) (:: :kaleidoscope |Kaleidoscope :dark) (:: :image |Image :dark) (:: :clocking |Clocking :dark) (:: :ripple |Ripple :dark) (:: :surround-mirror "|Surrond Mirror" :dark) (:: :kaleidoscope-mirror "|Kaleidoscope Mirror" :dark) (:: :parallel-mirror "|Parallel Mirror" :dark) (:: :sphere-mirror "|Sphere Mirror" :dark) (:: :hollow-mirror "|Hollow Mirror" :dark) (:: :box-mirror "|Box Mirror" :dark) (:: :pyramid-mirror "|Pyramid Mirror" :dark) (:: :rhombic-mirror "|Rhombic Mirror" :dark) (:: :dots-clock "|Dots Clock" :dark) (:: :inversion-circles "|Inversion Circles" :dark)
+            def tabs $ [] (:: :cubic-fire "|Cubic Fire" :dark) (:: :quaternion-fractal "|Quaternion Fractal" :dark) (:: :complex-fractal "|Complex Fractal" :dark) (:: :newton-fractal "|Newton Fractal" :dark) (:: :newton-cosh-fractal "|Newton Cosh Fractal" :dark) (:: :space-fractal "|Space Fractal" :dark) (:: :sphere-fractal "|Sphere Fractal" :dark) (:: :slow-fractal "|Slow Fractal" :dark) (:: :orbits |Orbits :dark) (:: :stars |Stars :dark) (:: :rings |Rings :dark) (:: :circles |Circles :dark) (:: :kaleidoscope |Kaleidoscope :dark) (:: :image |Image :dark) (:: :clocking |Clocking :dark) (:: :ripple |Ripple :dark) (:: :surround-mirror "|Surrond Mirror" :dark) (:: :kaleidoscope-mirror "|Kaleidoscope Mirror" :dark) (:: :parallel-mirror "|Parallel Mirror" :dark) (:: :sphere-mirror "|Sphere Mirror" :dark) (:: :hollow-mirror "|Hollow Mirror" :dark) (:: :box-mirror "|Box Mirror" :dark) (:: :pyramid-mirror "|Pyramid Mirror" :dark) (:: :tetrahedron-mirror "|Tetrahedron Mirror" :dark) (:: :octahedron-mirror "|Octahedron Mirror" :dark) (:: :prism-mirror "|Prism Mirror" :dark) (:: :hex-prism-mirror "|Hex Prism Mirror" :dark) (:: :icosahedron-mirror "|Icosahedron Mirror" :dark) (:: :wedge-mirror "|Wedge Mirror" :dark) (:: :rhombic-mirror "|Rhombic Mirror" :dark) (:: :dots-clock "|Dots Clock" :dark) (:: :inversion-circles "|Inversion Circles" :dark)
           :examples $ []
       :ns $ %{} :NsEntry (:doc |)
         :code $ quote
@@ -170,6 +169,12 @@
                 :hollow-mirror hollowMirrorConfigs
                 :box-mirror boxMirrorConfigs
                 :pyramid-mirror pyramidMirrorConfigs
+                :tetrahedron-mirror tetrahedronMirrorConfigs
+                :octahedron-mirror octahedronMirrorConfigs
+                :prism-mirror prismMirrorConfigs
+                :hex-prism-mirror hexPrismMirrorConfigs
+                :icosahedron-mirror icosahedronMirrorConfigs
+                :wedge-mirror wedgeMirrorConfigs
                 :rhombic-mirror rhombicMirrorConfigs
                 :inversion-circles inversionCirclesConfigs
                 :dots-clock dotsClockConfigs
@@ -333,6 +338,12 @@
             |../src/apps/hollow-mirror.mts :refer $ hollowMirrorConfigs
             |../src/apps/box-mirror.mts :refer $ boxMirrorConfigs
             |../src/apps/pyramid-mirror.mts :refer $ pyramidMirrorConfigs
+            |../src/apps/tetrahedron-mirror.mts :refer $ tetrahedronMirrorConfigs
+            |../src/apps/octahedron-mirror.mts :refer $ octahedronMirrorConfigs
+            |../src/apps/prism-mirror.mts :refer $ prismMirrorConfigs
+            |../src/apps/hex-prism-mirror.mts :refer $ hexPrismMirrorConfigs
+            |../src/apps/icosahedron-mirror.mts :refer $ icosahedronMirrorConfigs
+            |../src/apps/wedge-mirror.mts :refer $ wedgeMirrorConfigs
             |../src/apps/rhombic-mirror.mts :refer $ rhombicMirrorConfigs
             |../src/apps/dots-clock.mts :refer $ dotsClockConfigs
             |../src/apps/inversion-circles.mts :refer $ inversionCirclesConfigs
