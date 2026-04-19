@@ -138,6 +138,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     }
 
     if hit_mirror {
+      if rand11(dot(vx_out.uv, vec2f(127.1, 311.7)) + f32(times) * 43.7) < 0.2 { break; }
       total_color += vec4<f32>(0.01, 0.006, .02, 0.);
       // total_color += vec4<f32>(0.1, 0.06, .2, 0.);
       current_viewer = nearest.point;

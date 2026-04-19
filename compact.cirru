@@ -1,3 +1,4 @@
+
 {} (:about "|Machine-generated snapshot. AI AGENTS: never edit this file directly — changes will be overwritten on recompile. Inspect via `cr query`; modify via `cr edit` / `cr tree`. MANDATORY first step: run `cr docs agents --full`.") (:package |app)
   :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!) (:version |0.0.1)
     :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |reel.calcit/
@@ -354,7 +355,7 @@
         |store $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             def store $ {}
-              :tab $ turn-tag (get-env |tab |inversion-circles)
+              :tab $ turn-tag (or (.!get (new js/URLSearchParams (.-search js/location)) |tab) (get-env |tab |inversion-circles))
               :states $ {}
                 :cursor $ []
           :examples $ []
@@ -368,7 +369,9 @@
               tag-match op
                   :states cursor s
                   update-states store cursor s
-                (:tab t theme) (assoc store :tab t)
+                (:tab t theme) $ do
+                  .!replaceState js/history nil || (str |?tab= (turn-string t))
+                  assoc store :tab t
                 (:hydrate-storage data) data
                 _ $ do (eprintln "|unknown op:" op) store
           :examples $ []

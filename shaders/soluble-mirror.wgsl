@@ -188,3 +188,46 @@ fn try_reflect_ray_with_mirror(viewer_position: vec3f, ray_unit: vec3f, mirror: 
     return RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), t, vec3<f32>(0.0, 0.0, 0.0));
   }
 }
+
+/// Möller-Trumbore ray-triangle intersection with precomputed edges and normal.
+/// origin = vertex A, edge1 = B - A, edge2 = C - A, normal = normalize(cross(edge1, edge2)).
+fn ray_triangle_moller_trumbore(
+  viewer_position: vec3f,
+  ray_unit: vec3f,
+  origin: vec3f,
+  edge1: vec3f,
+  edge2: vec3f,
+  normal: vec3f
+) -> RayMirrorHit {
+  let h = cross(ray_unit, edge2);
+  let a = dot(edge1, h);
+
+  if abs(a) < 0.0001 {
+    return RayMirrorHit(false, vec3f(0.0), 0.0, vec3f(0.0));
+  }
+
+  let f = 1.0 / a;
+  let s = viewer_position - origin;
+  let u = f * dot(s, h);
+
+  if u < 0.0 || u > 1.0 {
+    return RayMirrorHit(false, vec3f(0.0), 0.0, vec3f(0.0));
+  }
+
+  let q = cross(s, edge1);
+  let v = f * dot(ray_unit, q);
+
+  if v < 0.0 || u + v > 1.0 {
+    return RayMirrorHit(false, vec3f(0.0), 0.0, vec3f(0.0));
+  }
+
+  let t = f * dot(edge2, q);
+
+  if t < 0.001 {
+    return RayMirrorHit(false, vec3f(0.0), 0.0, vec3f(0.0));
+  }
+
+  let hit_point = viewer_position + t * ray_unit;
+  let reflection = reflect_on_direction(ray_unit, normal);
+  return RayMirrorHit(true, hit_point, t, reflection);
+}

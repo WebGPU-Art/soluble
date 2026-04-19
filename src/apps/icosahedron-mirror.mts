@@ -64,7 +64,8 @@ let createLightSegments = (): Cell[] => {
     [-t, 0, 1],
   ].map((p) => [p[0] * s, p[1] * s, p[2] * s, 0] as Number4);
 
-  return [makeCell(pts[0], pts[11], zero), makeCell(pts[2], pts[10], zero), makeCell(pts[1], pts[9], zero)];
+  // antipodal pairs: longest diagonals through center (~228 vs ~120 for edge-adjacent)
+  return [makeCell(pts[0], pts[3], zero), makeCell(pts[5], pts[6], zero), makeCell(pts[9], pts[10], zero)];
 };
 
 export const icosahedronMirrorConfigs: SolubleApp = {

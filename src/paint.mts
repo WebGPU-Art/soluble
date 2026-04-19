@@ -111,6 +111,7 @@ export function clearPointsBuffer() {
   atomPointsBuffer.reset(null);
   atomSecondaryBuffer.reset(null);
   cachedBaseSize = 0;
+  rendererPipelineCache = null;
 }
 
 export function computeBasePoints() {
@@ -229,10 +230,21 @@ let getUniformBuffer = (t: number): GPUBuffer => {
   return uniformBuffer;
 };
 
+type RendererPipelineCache = {
+  shaderModule: GPUShaderModule;
+  pointsBuffer: GPUBuffer;
+  secondaryBuffer: GPUBuffer | null;
+  textureLayout: GPUBindGroupLayout | null;
+  uniformBindGroupLayout: GPUBindGroupLayout;
+  particlesBindGroupLayout: GPUBindGroupLayout;
+  particlesBindGroup: GPUBindGroup;
+  pipeline: GPURenderPipeline;
+};
+
+let rendererPipelineCache: RendererPipelineCache | null = null;
+
 let buildCommandBuffer = (t: number, params: number[], textures: GPUTexture[]): GPUCommandBuffer => {
   let { topology, shaderModule, vertexBuffersDescriptors, vertexBuffers, indices } = atomSolubleTree.deref();
-
-  // console.log("uniformData", uniformData);
 
   let device = atomDevice.deref();
   let now = Date.now() - startTime;
@@ -245,12 +257,71 @@ let buildCommandBuffer = (t: number, params: number[], textures: GPUTexture[]): 
   );
   prevTime = now;
 
-  let uniformBindGroupLayout = device.createBindGroupLayout({
-    entries: [
-      { binding: 0, visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: "uniform" } },
-      { binding: 1, visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: "uniform" } },
-    ],
-  });
+  // Textures: bind group is re-created per frame so sampler/views are current;
+  // layout is stable and lives in the pipeline cache.
+  let texturesInfo = prepareTextures(device, textures, "texturesInfo");
+
+  let secondaryBuffer = atomSecondaryBuffer.deref();
+  let pointsBuffer = atomPointsBuffer.deref();
+
+  // Rebuild pipeline only when shader, buffers, or texture layout changes
+  // (i.e. on hot reload or app switch — NOT every frame)
+  let cache = rendererPipelineCache;
+  if (
+    !cache ||
+    cache.shaderModule !== shaderModule ||
+    cache.pointsBuffer !== pointsBuffer ||
+    cache.secondaryBuffer !== secondaryBuffer ||
+    cache.textureLayout !== texturesInfo.layout
+  ) {
+    let hasSecondary = secondaryBuffer != null;
+
+    let uniformBindGroupLayout = device.createBindGroupLayout({
+      entries: [
+        { binding: 0, visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: "uniform" } },
+        { binding: 1, visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: "uniform" } },
+      ],
+    });
+
+    let particlesBindGroupLayout = device.createBindGroupLayout({
+      entries: [
+        { binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { type: "storage" } } as GPUBindGroupLayoutEntry,
+        (hasSecondary ? { binding: 1, visibility: GPUShaderStage.FRAGMENT, buffer: { type: "storage" } } : undefined) as GPUBindGroupLayoutEntry,
+      ].filter(Boolean),
+    });
+
+    let particlesBindGroup = device.createBindGroup({
+      layout: particlesBindGroupLayout,
+      entries: [{ binding: 0, resource: { buffer: pointsBuffer } }, hasSecondary && { binding: 1, resource: { buffer: secondaryBuffer } }].filter(Boolean),
+    });
+
+    let renderLayout = device.createPipelineLayout({
+      label: "renderLayout",
+      bindGroupLayouts: [uniformBindGroupLayout, particlesBindGroupLayout, texturesInfo.layout].filter(Boolean),
+    });
+
+    let pipeline = device.createRenderPipeline({
+      layout: renderLayout,
+      vertex: { module: shaderModule, entryPoint: "vertex_main", buffers: vertexBuffersDescriptors },
+      fragment: { module: shaderModule, entryPoint: "fragment_main", targets: [{ format: presentationFormat }] },
+      primitive: { topology },
+      depthStencil: { depthWriteEnabled: true, depthCompare: "less", format: "depth24plus-stencil8" },
+    });
+
+    cache = {
+      shaderModule,
+      pointsBuffer,
+      secondaryBuffer,
+      textureLayout: texturesInfo.layout,
+      uniformBindGroupLayout,
+      particlesBindGroupLayout,
+      particlesBindGroup,
+      pipeline,
+    };
+    rendererPipelineCache = cache;
+  }
+
+  let { uniformBindGroupLayout, particlesBindGroup, pipeline } = cache;
 
   let uniformBindGroup = device.createBindGroup({
     layout: uniformBindGroupLayout,
@@ -258,41 +329,6 @@ let buildCommandBuffer = (t: number, params: number[], textures: GPUTexture[]): 
       { binding: 0, resource: { buffer: uniformBuffer } },
       { binding: 1, resource: { buffer: paramsBuffer } },
     ],
-  });
-  let secondaryBuffer = atomSecondaryBuffer.deref();
-  let hasSecondary = secondaryBuffer != null;
-
-  let particlesBindGroupLayout = device.createBindGroupLayout({
-    entries: [
-      { binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { type: "storage" } } as GPUBindGroupLayoutEntry,
-      (hasSecondary ? { binding: 1, visibility: GPUShaderStage.FRAGMENT, buffer: { type: "storage" } } : undefined) as GPUBindGroupLayoutEntry,
-    ].filter(Boolean),
-  });
-
-  let particlesBindGroup = device.createBindGroup({
-    layout: particlesBindGroupLayout,
-    entries: [{ binding: 0, resource: { buffer: atomPointsBuffer.deref() } }, hasSecondary && { binding: 1, resource: { buffer: secondaryBuffer } }].filter(
-      Boolean
-    ),
-  });
-
-  let texturesInfo = prepareTextures(device, textures, "texturesInfo");
-
-  // ~~ CREATE RENDER PIPELINE ~~
-
-  let renderLayout = device.createPipelineLayout({
-    label: "renderLayout",
-    bindGroupLayouts: [uniformBindGroupLayout, particlesBindGroupLayout, texturesInfo.layout].filter(Boolean),
-  });
-
-  let pipeline = device.createRenderPipeline({
-    layout: renderLayout,
-    vertex: { module: shaderModule, entryPoint: "vertex_main", buffers: vertexBuffersDescriptors },
-    fragment: { module: shaderModule, entryPoint: "fragment_main", targets: [{ format: presentationFormat }] },
-    primitive: {
-      topology,
-    },
-    depthStencil: { depthWriteEnabled: true, depthCompare: "less", format: "depth24plus-stencil8" },
   });
 
   let needClear = atomBufferNeedClear.deref();

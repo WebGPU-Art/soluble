@@ -47,9 +47,9 @@ let createLightSegments = (): Cell[] => {
   const n_z: Number4 = [0, 0, -R, 0];
 
   return [
-    makeCell(p_x, p_y, zero),
-    makeCell(n_x, n_y, zero),
-    makeCell(p_y, p_z, zero)
+    makeCell(p_x, n_x, zero),
+    makeCell(p_y, n_y, zero),
+    makeCell(p_z, n_z, zero)
   ];
 };
 
