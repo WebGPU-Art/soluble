@@ -44,7 +44,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   var total_color = vec4<f32>(0.05, 0.02, 0.01, 1.0);
   let max_seg_len = 300.0;
-  
+
   let color_cap = vec4<f32>(0.9, 0.4, 0.1, 1.0);
   let base_light = vec4<f32>(0.02, 0.008, 0.002, 0.0);
   let bounce_tint = vec4<f32>(0.024, 0.006, 0.003, 0.0);

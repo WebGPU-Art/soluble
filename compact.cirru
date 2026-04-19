@@ -355,7 +355,12 @@
         |store $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             def store $ {}
-              :tab $ turn-tag (or (.!get (new js/URLSearchParams (.-search js/location)) |tab) (get-env |tab |inversion-circles))
+              :tab $ turn-tag
+                or
+                  .!get
+                    new js/URLSearchParams $ .-search js/location
+                    , |tab
+                  get-env |tab |inversion-circles
               :states $ {}
                 :cursor $ []
           :examples $ []
@@ -369,9 +374,13 @@
               tag-match op
                   :states cursor s
                   update-states store cursor s
-                (:tab t theme) $ do
-                  .!replaceState js/history nil || (str |?tab= (turn-string t))
-                  assoc store :tab t
+                (:tab t theme)
+                  do
+                    let
+                        params $ new js/URLSearchParams (.-search js/location)
+                        _ $ .!set params |tab (turn-string t)
+                      .!replaceState js/history nil || $ str |? (.!toString params)
+                    assoc store :tab t
                 (:hydrate-storage data) data
                 _ $ do (eprintln "|unknown op:" op) store
           :examples $ []

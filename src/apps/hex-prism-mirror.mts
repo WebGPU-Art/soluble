@@ -9,7 +9,7 @@ let store = {
   maxReflections: 4,
 };
 
-type Cell = { position: Number4; velocity: Number4; arm: Number4; };
+type Cell = { position: Number4; velocity: Number4; arm: Number4 };
 
 let makeCell = (a: Number4, b: Number4, c: Number4): Cell => {
   return { position: a, velocity: b, arm: c };
@@ -33,7 +33,7 @@ let createMirrors = (): Cell[] => {
     cells.push(makeCell(topPts[i], botPts[i], botPts[j]));
     cells.push(makeCell(topPts[i], botPts[j], topPts[j]));
   }
-  
+
   // Caps (triangulated from center)
   const centerTop: Number4 = [0, 0, H, 0];
   const centerBot: Number4 = [0, 0, -H, 0];
@@ -59,11 +59,7 @@ let createLightSegments = (): Cell[] => {
   }
 
   // Full-diameter diagonals: top[i] to opposite bottom[i+3], evenly spaced (every 2 vertices)
-  return [
-    makeCell(ptsTop[0], ptsBot[3], zero),
-    makeCell(ptsTop[2], ptsBot[5], zero),
-    makeCell(ptsTop[4], ptsBot[1], zero),
-  ];
+  return [makeCell(ptsTop[0], ptsBot[3], zero), makeCell(ptsTop[2], ptsBot[5], zero), makeCell(ptsTop[4], ptsBot[1], zero)];
 };
 
 export const hexPrismMirrorConfigs: SolubleApp = {
