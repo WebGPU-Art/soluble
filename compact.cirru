@@ -25,29 +25,65 @@
             defcomp comp-nav (store)
               let
                   tab $ :tab store
-                  show-tabs? $ and (not hide-tabs?) (:show-tabs? store)
                 div
-                  {} $ :class-name style-nav
-                  if (not hide-tabs?)
-                    list-> ({})
-                      -> tabs $ map
-                        fn (pair)
-                          let
-                              t $ nth pair 0
-                              name $ nth pair 1
-                            [] t $ div
-                              {}
-                                :class-name $ str-spaced style-tab css/font-fancy!
-                                :on-click $ fn (e d!)
-                                  d! $ :: :tab t (nth pair 2)
-                                :style $ if (= tab t)
-                                  {} $ :color :white
-                              <> name
+                  {} $ :class-name style-nav-wrapper
+                  when (not hide-tabs?)
+                    div
+                      {} $ :class-name style-nav
+                      list->
+                        {} $ :style
+                          {} (:display :flex) (:flex-direction :row) (:gap 4) (:align-items :flex-start)
+                        -> tab-groups $ map
+                          fn (group)
+                            let
+                                gname $ nth group 0
+                                gtabs $ nth group 1
+                              [] gname $ div
+                                {} $ :class-name style-nav-col
+                                div
+                                  {} $ :class-name style-group-header
+                                  <> gname
+                                list-> ({})
+                                  -> gtabs $ map
+                                    fn (pair)
+                                      let
+                                          t $ nth pair 0
+                                          name $ nth pair 1
+                                        [] t $ div
+                                          {}
+                                            :class-name $ str-spaced style-tab css/font-fancy!
+                                            :on-click $ fn (e d!)
+                                              d! $ :: :tab t (nth pair 2)
+                                            :style $ if (= tab t)
+                                              {} $ :color :white
+                                          <> name
+          :examples $ []
+        |style-group-header $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :code $ quote
+            defstyle style-group-header $ {}
+              |& $ {} (:font-size 10)
+                :color $ hsl 0 0 100 0.45
+                :padding "|2px 8px 4px"
+                :text-transform :uppercase
+                :letter-spacing 1
           :examples $ []
         |style-nav $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defstyle style-nav $ {}
-              |& $ {} (:position :absolute) (:top 12)
+              |& $ {} (:display :flex) (:flex-direction :row) (:gap 4) (:padding 8) (:align-items :flex-start)
+                :background-color $ hsl 0 0 0 0.5
+                :border-radius |4px
+          :examples $ []
+        |style-nav-col $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :code $ quote
+            defstyle style-nav-col $ {}
+              |& $ {} (:display :flex) (:flex-direction :column) (:min-width 120)
+          :examples $ []
+        |style-nav-wrapper $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :code $ quote
+            defstyle style-nav-wrapper $ {}
+              |& $ {} (:position :absolute) (:top 0) (:left 0) (:opacity 0) (:transition-duration |300ms) (:transition-property |opacity) (:z-index 10)
+              |&:hover $ {} (:opacity 1)
           :examples $ []
         |style-tab $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
@@ -62,9 +98,17 @@
                 :background-color $ hsl 0 0 0 0.5
                 :color :white
           :examples $ []
+        |tab-groups $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :code $ quote
+            def tab-groups $ []
+              [] |Fractals $ [] (:: :cubic-fire "|Cubic Fire" :dark) (:: :quaternion-fractal "|Quaternion Fractal" :dark) (:: :complex-fractal "|Complex Fractal" :dark) (:: :newton-fractal "|Newton Fractal" :dark) (:: :newton-cosh-fractal "|Newton Cosh Fractal" :dark) (:: :space-fractal "|Space Fractal" :dark) (:: :sphere-fractal "|Sphere Fractal" :dark) (:: :slow-fractal "|Slow Fractal" :dark)
+              [] |Effects $ [] (:: :orbits |Orbits :dark) (:: :stars |Stars :dark) (:: :rings |Rings :dark) (:: :circles |Circles :dark) (:: :kaleidoscope |Kaleidoscope :dark) (:: :image |Image :dark) (:: :clocking |Clocking :dark) (:: :ripple |Ripple :dark) (:: :dots-clock "|Dots Clock" :dark) (:: :inversion-circles "|Inversion Circles" :dark)
+              [] |Mirrors $ [] (:: :surround-mirror "|Surrond Mirror" :dark) (:: :kaleidoscope-mirror "|Kaleidoscope Mirror" :dark) (:: :parallel-mirror "|Parallel Mirror" :dark) (:: :sphere-mirror "|Sphere Mirror" :dark) (:: :orbit-spheres-mirror "|Orbit Spheres Mirror" :dark) (:: :hollow-mirror "|Hollow Mirror" :dark) (:: :box-mirror "|Box Mirror" :dark) (:: :pyramid-mirror "|Pyramid Mirror" :dark)
+              [] |Polyhedra $ [] (:: :tetrahedron-mirror "|Tetrahedron Mirror" :dark) (:: :octahedron-mirror "|Octahedron Mirror" :dark) (:: :prism-mirror "|Prism Mirror" :dark) (:: :hex-prism-mirror "|Hex Prism Mirror" :dark) (:: :icosahedron-mirror "|Icosahedron Mirror" :dark) (:: :wedge-mirror "|Wedge Mirror" :dark) (:: :rhombic-mirror "|Rhombic Mirror" :dark) (:: :rt-mirror "|Rhombic Triacontahedron" :dark) (:: :dodecahedron-mirror "|Dodecahedron Mirror" :dark)
+          :examples $ []
         |tabs $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
-            def tabs $ [] (:: :cubic-fire "|Cubic Fire" :dark) (:: :quaternion-fractal "|Quaternion Fractal" :dark) (:: :complex-fractal "|Complex Fractal" :dark) (:: :newton-fractal "|Newton Fractal" :dark) (:: :newton-cosh-fractal "|Newton Cosh Fractal" :dark) (:: :space-fractal "|Space Fractal" :dark) (:: :sphere-fractal "|Sphere Fractal" :dark) (:: :slow-fractal "|Slow Fractal" :dark) (:: :orbits |Orbits :dark) (:: :stars |Stars :dark) (:: :rings |Rings :dark) (:: :circles |Circles :dark) (:: :kaleidoscope |Kaleidoscope :dark) (:: :image |Image :dark) (:: :clocking |Clocking :dark) (:: :ripple |Ripple :dark) (:: :surround-mirror "|Surrond Mirror" :dark) (:: :kaleidoscope-mirror "|Kaleidoscope Mirror" :dark) (:: :parallel-mirror "|Parallel Mirror" :dark) (:: :sphere-mirror "|Sphere Mirror" :dark) (:: :hollow-mirror "|Hollow Mirror" :dark) (:: :box-mirror "|Box Mirror" :dark) (:: :pyramid-mirror "|Pyramid Mirror" :dark) (:: :tetrahedron-mirror "|Tetrahedron Mirror" :dark) (:: :octahedron-mirror "|Octahedron Mirror" :dark) (:: :prism-mirror "|Prism Mirror" :dark) (:: :hex-prism-mirror "|Hex Prism Mirror" :dark) (:: :icosahedron-mirror "|Icosahedron Mirror" :dark) (:: :wedge-mirror "|Wedge Mirror" :dark) (:: :rhombic-mirror "|Rhombic Mirror" :dark) (:: :dots-clock "|Dots Clock" :dark) (:: :inversion-circles "|Inversion Circles" :dark)
+            def tabs $ [] (:: :cubic-fire "|Cubic Fire" :dark) (:: :quaternion-fractal "|Quaternion Fractal" :dark) (:: :complex-fractal "|Complex Fractal" :dark) (:: :newton-fractal "|Newton Fractal" :dark) (:: :newton-cosh-fractal "|Newton Cosh Fractal" :dark) (:: :space-fractal "|Space Fractal" :dark) (:: :sphere-fractal "|Sphere Fractal" :dark) (:: :slow-fractal "|Slow Fractal" :dark) (:: :orbits |Orbits :dark) (:: :stars |Stars :dark) (:: :rings |Rings :dark) (:: :circles |Circles :dark) (:: :kaleidoscope |Kaleidoscope :dark) (:: :image |Image :dark) (:: :clocking |Clocking :dark) (:: :ripple |Ripple :dark) (:: :surround-mirror "|Surrond Mirror" :dark) (:: :kaleidoscope-mirror "|Kaleidoscope Mirror" :dark) (:: :parallel-mirror "|Parallel Mirror" :dark) (:: :sphere-mirror "|Sphere Mirror" :dark) (:: :orbit-spheres-mirror "|Orbit Spheres Mirror" :dark) (:: :hollow-mirror "|Hollow Mirror" :dark) (:: :box-mirror "|Box Mirror" :dark) (:: :pyramid-mirror "|Pyramid Mirror" :dark) (:: :tetrahedron-mirror "|Tetrahedron Mirror" :dark) (:: :octahedron-mirror "|Octahedron Mirror" :dark) (:: :prism-mirror "|Prism Mirror" :dark) (:: :hex-prism-mirror "|Hex Prism Mirror" :dark) (:: :icosahedron-mirror "|Icosahedron Mirror" :dark) (:: :wedge-mirror "|Wedge Mirror" :dark) (:: :rhombic-mirror "|Rhombic Mirror" :dark) (:: :rt-mirror "|Rhombic Triacontahedron" :dark) (:: :dodecahedron-mirror "|Dodecahedron Mirror" :dark) (:: :dots-clock "|Dots Clock" :dark) (:: :inversion-circles "|Inversion Circles" :dark)
           :examples $ []
       :ns $ %{} :NsEntry (:doc |)
         :code $ quote
@@ -136,11 +180,17 @@
         |dispatch! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defn dispatch! (op)
+              hint-fn $ {} (:async true)
               when
                 and config/dev? $ not= op :states
                 js/console.log |Dispatch: op
-              solublejs/clearPointsBuffer
-              reset! *reel $ reel-updater updater @*reel op
+              tag-match op
+                  :tab t theme
+                  do (js/cancelAnimationFrame @*raf) (js/clearTimeout @*timeout)
+                    js-await $ solublejs/waitForRenderIdle
+                    reset! *reel $ reel-updater updater @*reel op
+                    loop-paint!
+                _ $ reset! *reel (reel-updater updater @*reel op)
           :examples $ []
         |get-app $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
@@ -167,6 +217,7 @@
                 :surround-mirror surroundMirrorConfigs
                 :parallel-mirror parallelMirrorConfigs
                 :sphere-mirror sphereMirrorConfigs
+                :orbit-spheres-mirror orbitSpheresMirrorConfigs
                 :hollow-mirror hollowMirrorConfigs
                 :box-mirror boxMirrorConfigs
                 :pyramid-mirror pyramidMirrorConfigs
@@ -177,6 +228,8 @@
                 :icosahedron-mirror icosahedronMirrorConfigs
                 :wedge-mirror wedgeMirrorConfigs
                 :rhombic-mirror rhombicMirrorConfigs
+                :rt-mirror rtMirrorConfigs
+                :dodecahedron-mirror dodecahedronMirrorConfigs
                 :inversion-circles inversionCirclesConfigs
                 :dots-clock dotsClockConfigs
           :examples $ []
@@ -278,7 +331,7 @@
         |reload! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defn reload! () $ if (nil? build-errors)
-              do (remove-watch *reel :changes) (solublejs/clearPointsBuffer) (clear-cache!)
+              do (remove-watch *reel :changes) (clear-cache!)
                 add-watch *reel :changes $ fn (reel prev) (render-app!)
                 js/cancelAnimationFrame @*raf
                 render-app!
@@ -293,6 +346,7 @@
               let
                   tab $ :tab (:store @*reel)
                   app-config $ get-app tab
+                solublejs/clearPointsBuffer
                 .!initPointsBuffer app-config
                 solublejs/renderSolubleTree app-config
               render! mount-target (comp-container @*reel) dispatch!
@@ -348,6 +402,9 @@
             |../src/apps/icosahedron-mirror.mts :refer $ icosahedronMirrorConfigs
             |../src/apps/wedge-mirror.mts :refer $ wedgeMirrorConfigs
             |../src/apps/rhombic-mirror.mts :refer $ rhombicMirrorConfigs
+            |../src/apps/rt-mirror.mts :refer $ rtMirrorConfigs
+            |../src/apps/dodecahedron-mirror.mts :refer $ dodecahedronMirrorConfigs
+            |../src/apps/orbit-spheres-mirror.mts :refer $ orbitSpheresMirrorConfigs
             |../src/apps/dots-clock.mts :refer $ dotsClockConfigs
             |../src/apps/inversion-circles.mts :refer $ inversionCirclesConfigs
             |../src/global.mts :refer $ atomSolubleTree

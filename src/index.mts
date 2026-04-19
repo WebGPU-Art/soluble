@@ -9,6 +9,7 @@ export {
   updateGlobalPointsBuffer,
   writePointsBufferRaw,
   clearPointsBuffer,
+  waitForRenderIdle,
 } from "./paint.mjs";
 
 export { onControlEvent, registerShaderResult, loadTouchControl, loadGamepadControl } from "./control.mjs";

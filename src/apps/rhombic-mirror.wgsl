@@ -64,11 +64,6 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   var total_color = vec4<f32>(0.2, 0.0, 0.3, 1.0);
 
-  let width = 20.;
-  let shift_z = 50.0;
-
-  let d = 26.4;
-
   var current_viewer = uniforms.viewer_position;
   var current_ray_unit = ray_unit;
   var traveled = 0.0;
@@ -100,8 +95,6 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     }
 
 
-    let t = params.time * 0.000;
-
     for (var i = 0u; i < segments_size; i = i + 1u) {
       var segment = Segment(secondary_points[i].a.xyz, secondary_points[i].b.xyz);
       // let ray_segment = Segment(ray_unit, ray_unit + ray_unit);
@@ -125,13 +118,9 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
       //   total_color = vec4<f32>(1.0, 0.8, 0.0, 1.0);
       // }
 
-      let seg_len = length(segment.end - segment.start);
       let distance = max(0.001, reach.distance - 0.6);
       let f = pow(f32(in_mirror) / 2. + 2.0, 3.);
-      var color_scale = 1.2 / pow(distance * 0.07 + 0.01, 1.8) / f;
-      if seg_len > 2.2 * d {
-        color_scale *= .1;
-      }
+      var color_scale = 0.12 / pow(distance * 0.07 + 0.01, 1.8) / f;
 
       total_color += vec4<f32>(0.01, 0.02, 0.01, 0.0) * color_scale;
       total_color = min(total_color, vec4<f32>(0.4, 0.7, 0.9, 1.0));

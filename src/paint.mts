@@ -65,6 +65,7 @@ export const createGlobalPointsBuffer = (baseSize: number, f: (idx: number) => B
   let device = atomDevice.deref();
   let items = collectBaseCellItems(baseSize, f);
   atomPointsBuffer.reset(createBuffer(items, GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST, device));
+  old?.destroy();
   return atomPointsBuffer.deref();
 };
 
@@ -110,6 +111,17 @@ export const createSecondaryDataBuffer = (baseSize: number, f: (idx: number) => 
   old?.destroy();
   return atomSecondaryBuffer.deref();
 };
+
+/** true while GPU frame is being submitted and awaited */
+let paintingFrame = false;
+let activeFramePromise: Promise<void> | null = null;
+
+/** Wait until the current GPU frame, if any, has finished submission. */
+export async function waitForRenderIdle(): Promise<void> {
+  if (activeFramePromise) {
+    await activeFramePromise;
+  }
+}
 
 export function clearPointsBuffer() {
   atomPointsBuffer.deref()?.destroy();
@@ -412,16 +424,35 @@ export let interpolateShader = (shader: string) => {
 
 /** unified API to call paint */
 export let callFramePaint = async (): Promise<void> => {
-  if (atomSolubleTree.deref()?.useCompute) {
-    computeBasePoints();
+  // Guard: skip frame if buffers are not ready (mid-switch)
+  if (!atomSolubleTree.deref() || !atomPointsBuffer.deref()) return;
+
+  if (paintingFrame && activeFramePromise) {
+    await activeFramePromise;
+    return;
   }
 
-  const t0 = performance.now();
-  await paintSolubleTree(atomSolubleTree.deref()?.getParams?.() || []);
-  const dt = performance.now() - t0;
-  frameCount++;
-  if (frameCount === 1) {
-    console.log(`[soluble] first frame render time: ${dt.toFixed(1)}ms`);
+  paintingFrame = true;
+
+  activeFramePromise = (async () => {
+    if (atomSolubleTree.deref()?.useCompute) {
+      computeBasePoints();
+    }
+
+    const t0 = performance.now();
+    await paintSolubleTree(atomSolubleTree.deref()?.getParams?.() || []);
+    const dt = performance.now() - t0;
+    frameCount++;
+    if (frameCount === 1) {
+      console.log(`[soluble] first frame render time: ${dt.toFixed(1)}ms`);
+    }
+  })();
+
+  try {
+    await activeFramePromise;
+  } finally {
+    paintingFrame = false;
+    activeFramePromise = null;
   }
 };
 

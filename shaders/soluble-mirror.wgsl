@@ -153,6 +153,30 @@ struct MirrorTriangle {
   c: vec3f,
 }
 
+/// Möller-Trumbore two-sided ray-triangle intersection.
+/// Early-exits on miss before computing the surface normal, which is the most
+/// expensive part (normalize + cross).  On 60-triangle polyhedra ~98% of tests
+/// are misses, so skipping the normalize for those gives a large speedup.
+fn ray_hit_triangle(viewer: vec3f, ray: vec3f, a: vec3f, b: vec3f, c: vec3f) -> RayMirrorHit {
+  let edge1   = b - a;
+  let edge2   = c - a;
+  let h       = cross(ray, edge2);
+  let det     = dot(edge1, h);
+  if abs(det) < 0.0001 { return RayMirrorHit(false, vec3f(0.), 0., vec3f(0.)); }
+  let inv_det = 1.0 / det;
+  let s       = viewer - a;
+  let u       = inv_det * dot(s, h);
+  if u < 0.0 || u > 1.0 { return RayMirrorHit(false, vec3f(0.), 0., vec3f(0.)); }
+  let q       = cross(s, edge1);
+  let v       = inv_det * dot(ray, q);
+  if v < 0.0 || u + v > 1.0 { return RayMirrorHit(false, vec3f(0.), 0., vec3f(0.)); }
+  let t       = inv_det * dot(edge2, q);
+  if t < 0.0001 { return RayMirrorHit(false, vec3f(0.), 0., vec3f(0.)); }
+  let hit_point = viewer + t * ray;
+  let n         = normalize(cross(edge1, edge2));
+  return RayMirrorHit(true, hit_point, t, reflect_on_direction(ray, n));
+}
+
 /// to find out if ray hits mirror, return RayMirrorHit.
 fn try_reflect_ray_with_mirror(viewer_position: vec3f, ray_unit: vec3f, mirror: MirrorTriangle) -> RayMirrorHit {
   /// normal of the mirror
