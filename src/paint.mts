@@ -20,6 +20,7 @@ import solubleMirror from "../shaders/soluble-mirror.wgsl?raw";
 import { pixelRatio } from "./config.mjs";
 
 let prevTime = Date.now();
+let frameCount = 0;
 
 export type BaseCellParams = {
   position: Number4;
@@ -380,7 +381,7 @@ let startTime = Date.now();
 export function paintSolubleTree(
   /** extra params */
   params: number[]
-) {
+): Promise<void> {
   // console.log("paint params", params);
   atomBufferNeedClear.reset(true);
   let device = atomDevice.deref();
@@ -394,6 +395,7 @@ export function paintSolubleTree(
 
   let bufferList: GPUCommandBuffer[] = [buildCommandBuffer(lifetime, params || [], textures || [])];
   device.queue.submit(bufferList);
+  return device.queue.onSubmittedWorkDone();
 }
 
 export function resetCanvasHeight(canvas: HTMLCanvasElement) {
@@ -409,12 +411,18 @@ export let interpolateShader = (shader: string) => {
 };
 
 /** unified API to call paint */
-export let callFramePaint = () => {
+export let callFramePaint = async (): Promise<void> => {
   if (atomSolubleTree.deref()?.useCompute) {
     computeBasePoints();
   }
 
-  paintSolubleTree(atomSolubleTree.deref()?.getParams?.() || []);
+  const t0 = performance.now();
+  await paintSolubleTree(atomSolubleTree.deref()?.getParams?.() || []);
+  const dt = performance.now() - t0;
+  frameCount++;
+  if (frameCount === 1) {
+    console.log(`[soluble] first frame render time: ${dt.toFixed(1)}ms`);
+  }
 };
 
 /** based on code https://webgpu.github.io/webgpu-samples/?sample=imageBlur#fullscreenTexturedQuad.wgsl */

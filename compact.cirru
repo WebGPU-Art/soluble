@@ -206,7 +206,9 @@
           :examples $ []
         |loop-paint! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
-            defn loop-paint! () (solublejs/callFramePaint)
+            defn loop-paint! ()
+              hint-fn $ {} (:async true)
+              js-await $ solublejs/callFramePaint
               if (> config/interval 10)
                 reset! *timeout $ flipped js/setTimeout config/interval
                   fn () $ reset! *raf
