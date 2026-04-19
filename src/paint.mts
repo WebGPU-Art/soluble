@@ -29,7 +29,8 @@ export type BaseCellParams = {
   extendParams?: Number4;
 };
 
-let cachedBaseSize = 0;
+let cachedPointsBaseSize = 0;
+let cachedSecondaryBaseSize = 0;
 let identity = <T,>(x: T): T => x;
 
 let collectBaseCellItems = (baseSize: number, f: (idx: number) => BaseCellParams): Float32Array => {
@@ -55,10 +56,11 @@ let collectBaseCellItems = (baseSize: number, f: (idx: number) => BaseCellParams
 
 /** hold item data */
 export const createGlobalPointsBuffer = (baseSize: number, f: (idx: number) => BaseCellParams): GPUBuffer => {
-  if (atomPointsBuffer.deref() && baseSize === cachedBaseSize) {
+  if (atomPointsBuffer.deref() && baseSize === cachedPointsBaseSize) {
     return atomPointsBuffer.deref();
   }
-  cachedBaseSize = baseSize;
+  const old = atomPointsBuffer.deref();
+  cachedPointsBaseSize = baseSize;
   let device = atomDevice.deref();
   let items = collectBaseCellItems(baseSize, f);
   atomPointsBuffer.reset(createBuffer(items, GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST, device));
@@ -70,14 +72,15 @@ export const updateGlobalPointsBuffer = (baseSize: number, f: (idx: number) => B
   let items = collectBaseCellItems(baseSize, f);
   let buffer = atomPointsBuffer.deref();
 
-  if (buffer && baseSize === cachedBaseSize) {
+  if (buffer && baseSize === cachedPointsBaseSize) {
     let bytes = new Uint8Array(items.byteLength);
     bytes.set(new Uint8Array(items.buffer as ArrayBuffer, items.byteOffset, items.byteLength));
     device.queue.writeBuffer(buffer, 0, bytes);
     return buffer;
   }
 
-  cachedBaseSize = baseSize;
+  buffer?.destroy();
+  cachedPointsBaseSize = baseSize;
   atomPointsBuffer.reset(createBuffer(items, GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST, device));
   return atomPointsBuffer.deref();
 };
@@ -95,13 +98,15 @@ export const writePointsBufferRaw = (data: Float32Array): void => {
 
 /** hold secondary data, possible not called since not used */
 export const createSecondaryDataBuffer = (baseSize: number, f: (idx: number) => BaseCellParams): GPUBuffer => {
-  if (atomSecondaryBuffer.deref() && baseSize === cachedBaseSize) {
+  if (atomSecondaryBuffer.deref() && baseSize === cachedSecondaryBaseSize) {
     return atomSecondaryBuffer.deref();
   }
-  cachedBaseSize = baseSize;
+  const old = atomSecondaryBuffer.deref();
+  cachedSecondaryBaseSize = baseSize;
   let device = atomDevice.deref();
   let items = collectBaseCellItems(baseSize, f);
   atomSecondaryBuffer.reset(createBuffer(items, GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST, device));
+  old?.destroy();
   return atomSecondaryBuffer.deref();
 };
 
@@ -110,7 +115,8 @@ export function clearPointsBuffer() {
   atomSecondaryBuffer.deref()?.destroy();
   atomPointsBuffer.reset(null);
   atomSecondaryBuffer.reset(null);
-  cachedBaseSize = 0;
+  cachedPointsBaseSize = 0;
+  cachedSecondaryBaseSize = 0;
   rendererPipelineCache = null;
 }
 

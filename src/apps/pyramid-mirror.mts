@@ -53,9 +53,9 @@ let createLightSegments = (): Cell[] => {
   return [
     // main vertical segment through the pyramid interior
     makeCell([0, 120, 0, 0], [0, -100, 0, 0], zero),
-    // diagonal warm accent segments
-    // makeCell([-30, 40, 30, 0], [30, -20, -30, 0], zero),
-    // makeCell([30, 40, -30, 0], [-30, -20, 30, 0], zero),
+    // base square diagonals
+    makeCell([-100, -100, 100, 0], [100, -100, -100, 0], zero),
+    makeCell([100, -100, 100, 0], [-100, -100, -100, 0], zero),
   ];
 };
 

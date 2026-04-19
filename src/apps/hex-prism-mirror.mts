@@ -58,11 +58,11 @@ let createLightSegments = (): Cell[] => {
     ptsBot.push([R * Math.cos(angle), R * Math.sin(angle), -H, 0]);
   }
 
-  // Draw diagonals on alternating side faces
+  // Full-diameter diagonals: top[i] to opposite bottom[i+3], evenly spaced (every 2 vertices)
   return [
-    makeCell(ptsTop[0], ptsBot[1], zero),
-    makeCell(ptsTop[2], ptsBot[3], zero),
-    makeCell(ptsTop[4], ptsBot[5], zero)
+    makeCell(ptsTop[0], ptsBot[3], zero),
+    makeCell(ptsTop[2], ptsBot[5], zero),
+    makeCell(ptsTop[4], ptsBot[1], zero),
   ];
 };
 

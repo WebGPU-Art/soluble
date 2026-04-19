@@ -47,7 +47,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   let color_cap = vec4<f32>(0.3, 0.9, 0.5, 1.0);
   let base_light = vec4<f32>(0.004, 0.02, 0.01, 0.0);
-  let bounce_tint = vec4<f32>(0.001, 0.008, 0.003, 0.0);
+  let bounce_tint = vec4<f32>(0.003, 0.024, 0.009, 0.0);
 
   var current_viewer = uniforms.viewer_position;
   var current_ray_unit = ray_unit;
@@ -84,17 +84,15 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
       if hit_mirror && reach.traveled > nearest.travel { continue; }
       if first_bounce && !reach.positive_side { continue; }
 
-      let seg_len = length(segment.end - segment.start);
       let distance = max(0.001, reach.distance - 0.5);
       var color_scale = 1.4 / pow(distance * 0.06 + 0.01, 1.8) / f;
-      if seg_len > max_seg_len { color_scale *= 0.1; }
 
       total_color += base_light * color_scale;
       total_color = min(total_color, color_cap);
     }
 
     if hit_mirror {
-      if rand11(dot(vx_out.uv, vec2f(127.1, 311.7)) + f32(times) * 43.7) < 0.2 { break; }
+      if rand11(dot(vx_out.uv, vec2f(127.1, 311.7)) + f32(times) * 43.7) < 0.15 { break; }
       total_color += bounce_tint;
       current_viewer = nearest.point;
       current_ray_unit = nearest.next_ray_unit;
