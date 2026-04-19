@@ -87,6 +87,24 @@ export const updateGlobalPointsBuffer = (baseSize: number, f: (idx: number) => B
   return atomPointsBuffer.deref();
 };
 
+export const updateSecondaryDataBuffer = (baseSize: number, f: (idx: number) => BaseCellParams): GPUBuffer => {
+  let device = atomDevice.deref();
+  let items = collectBaseCellItems(baseSize, f);
+  let buffer = atomSecondaryBuffer.deref();
+
+  if (buffer && baseSize === cachedSecondaryBaseSize) {
+    let bytes = new Uint8Array(items.byteLength);
+    bytes.set(new Uint8Array(items.buffer as ArrayBuffer, items.byteOffset, items.byteLength));
+    device.queue.writeBuffer(buffer, 0, bytes);
+    return buffer;
+  }
+
+  buffer?.destroy();
+  cachedSecondaryBaseSize = baseSize;
+  atomSecondaryBuffer.reset(createBuffer(items, GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST, device));
+  return atomSecondaryBuffer.deref();
+};
+
 /** write pre-built Float32Array directly into the existing points buffer, skipping callback overhead */
 export const writePointsBufferRaw = (data: Float32Array): void => {
   let device = atomDevice.deref();

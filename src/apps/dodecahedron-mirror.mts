@@ -3,6 +3,7 @@ import shader from "./dodecahedron-mirror.wgsl";
 import { Number4 } from "../math.mjs";
 import { SolubleApp } from "../primes.mjs";
 import { createSecondaryDataBuffer } from "../paint.mjs";
+import { updateHeldYRotation } from "./polyhedra-rotation.mjs";
 
 // Regular dodecahedron — 12 pentagonal faces, 20 vertices, 30 edges.
 // Each pentagon is split into 5 triangles from its face centre → 60 mirror triangles.
@@ -27,15 +28,27 @@ function scale(v: V3, r: number): N4 {
 // 20 dodecahedron vertices normalised to radius R
 const raw: V3[] = [
   // cube corners
-  [1, 1, 1], [1, 1, -1], [1, -1, 1], [1, -1, -1],
-  [-1, 1, 1], [-1, 1, -1], [-1, -1, 1], [-1, -1, -1],
+  [1, 1, 1],
+  [1, 1, -1],
+  [1, -1, 1],
+  [1, -1, -1],
+  [-1, 1, 1],
+  [-1, 1, -1],
+  [-1, -1, 1],
+  [-1, -1, -1],
   // (0, ±1/φ, ±φ)  and cyclic permutations
-  [0, 1 / phi, phi], [0, 1 / phi, -phi],
-  [0, -1 / phi, phi], [0, -1 / phi, -phi],
-  [1 / phi, phi, 0], [1 / phi, -phi, 0],
-  [-1 / phi, phi, 0], [-1 / phi, -phi, 0],
-  [phi, 0, 1 / phi], [phi, 0, -1 / phi],
-  [-phi, 0, 1 / phi], [-phi, 0, -1 / phi],
+  [0, 1 / phi, phi],
+  [0, 1 / phi, -phi],
+  [0, -1 / phi, phi],
+  [0, -1 / phi, -phi],
+  [1 / phi, phi, 0],
+  [1 / phi, -phi, 0],
+  [-1 / phi, phi, 0],
+  [-1 / phi, -phi, 0],
+  [phi, 0, 1 / phi],
+  [phi, 0, -1 / phi],
+  [-phi, 0, 1 / phi],
+  [-phi, 0, -1 / phi],
 ];
 const V: N4[] = raw.map((v) => scale(v, R));
 
@@ -84,11 +97,15 @@ function faceKey(f: number[]) {
 for (let i = 0; i < 20; i++) {
   for (const j of adj[i]) {
     const face: number[] = [i, j];
-    let prev = i, cur = j;
+    let prev = i,
+      cur = j;
     let valid = true;
     for (let step = 0; step < 3; step++) {
       const next = adj[cur].find((x) => x !== prev && !face.includes(x));
-      if (next === undefined) { valid = false; break; }
+      if (next === undefined) {
+        valid = false;
+        break;
+      }
       face.push(next);
       prev = cur;
       cur = next;
@@ -137,16 +154,22 @@ const createSegments = (): Cell[] => {
 let store = {
   startedAt: performance.now(),
   maxReflections: 6,
+  angleY: 0,
+  lastTickAt: performance.now(),
 };
+
+const baseMirrors = createMirrors();
+const baseSegments = createSegments();
 
 export const dodecahedronMirrorConfigs: SolubleApp = {
   initPointsBuffer: () => {
-    const mirrors = createMirrors();
-    const segs = createSegments();
-    createGlobalPointsBuffer(mirrors.length, (i) => mirrors[i]);
-    createSecondaryDataBuffer(segs.length, (i) => segs[i]);
+    createGlobalPointsBuffer(baseMirrors.length, (i) => baseMirrors[i]);
+    createSecondaryDataBuffer(baseSegments.length, (i) => baseSegments[i]);
   },
   useCompute: false,
   renderShader: shader,
-  getParams: () => [performance.now() - store.startedAt, store.maxReflections],
+  getParams: () => {
+    updateHeldYRotation(store, baseMirrors, baseSegments);
+    return [performance.now() - store.startedAt, store.maxReflections];
+  },
 };

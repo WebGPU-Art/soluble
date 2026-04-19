@@ -3,10 +3,13 @@ import shader from "./octahedron-mirror.wgsl";
 import { Number4 } from "../math.mjs";
 import { SolubleApp } from "../primes.mjs";
 import { createSecondaryDataBuffer } from "../paint.mjs";
+import { updateHeldYRotation } from "./polyhedra-rotation.mjs";
 
 let store = {
   startedAt: performance.now(),
   maxReflections: 4,
+  angleY: 0,
+  lastTickAt: performance.now(),
 };
 
 type Cell = { position: Number4; velocity: Number4; arm: Number4 };
@@ -49,16 +52,18 @@ let createLightSegments = (): Cell[] => {
   return [makeCell(p_x, n_x, zero), makeCell(p_y, n_y, zero), makeCell(p_z, n_z, zero)];
 };
 
+const baseMirrors = createMirrors();
+const baseSegments = createLightSegments();
+
 export const octahedronMirrorConfigs: SolubleApp = {
   initPointsBuffer: () => {
-    const mirrors = createMirrors();
-    const segments = createLightSegments();
-    createGlobalPointsBuffer(mirrors.length, (idx) => mirrors[idx]);
-    createSecondaryDataBuffer(segments.length, (idx) => segments[idx]);
+    createGlobalPointsBuffer(baseMirrors.length, (idx) => baseMirrors[idx]);
+    createSecondaryDataBuffer(baseSegments.length, (idx) => baseSegments[idx]);
   },
   useCompute: false,
   renderShader: shader,
   getParams: () => {
+    updateHeldYRotation(store, baseMirrors, baseSegments);
     return [performance.now() - store.startedAt, store.maxReflections];
   },
 };

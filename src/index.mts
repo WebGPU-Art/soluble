@@ -7,6 +7,7 @@ export {
   computeBasePoints,
   createGlobalPointsBuffer,
   updateGlobalPointsBuffer,
+  updateSecondaryDataBuffer,
   writePointsBufferRaw,
   clearPointsBuffer,
   waitForRenderIdle,

@@ -3,10 +3,13 @@ import shader from "./icosahedron-mirror.wgsl";
 import { Number4 } from "../math.mjs";
 import { SolubleApp } from "../primes.mjs";
 import { createSecondaryDataBuffer } from "../paint.mjs";
+import { updateHeldYRotation } from "./polyhedra-rotation.mjs";
 
 let store = {
   startedAt: performance.now(),
   maxReflections: 4,
+  angleY: 0,
+  lastTickAt: performance.now(),
 };
 
 type Cell = { position: Number4; velocity: Number4; arm: Number4 };
@@ -68,16 +71,18 @@ let createLightSegments = (): Cell[] => {
   return [makeCell(pts[0], pts[3], zero), makeCell(pts[5], pts[6], zero), makeCell(pts[9], pts[10], zero)];
 };
 
+const baseMirrors = createMirrors();
+const baseSegments = createLightSegments();
+
 export const icosahedronMirrorConfigs: SolubleApp = {
   initPointsBuffer: () => {
-    const mirrors = createMirrors();
-    const segments = createLightSegments();
-    createGlobalPointsBuffer(mirrors.length, (idx) => mirrors[idx]);
-    createSecondaryDataBuffer(segments.length, (idx) => segments[idx]);
+    createGlobalPointsBuffer(baseMirrors.length, (idx) => baseMirrors[idx]);
+    createSecondaryDataBuffer(baseSegments.length, (idx) => baseSegments[idx]);
   },
   useCompute: false,
   renderShader: shader,
   getParams: () => {
+    updateHeldYRotation(store, baseMirrors, baseSegments);
     return [performance.now() - store.startedAt, store.maxReflections];
   },
 };

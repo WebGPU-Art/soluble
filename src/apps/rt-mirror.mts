@@ -3,6 +3,7 @@ import shader from "./rt-mirror.wgsl";
 import { Number4 } from "../math.mjs";
 import { SolubleApp } from "../primes.mjs";
 import { BaseCellParams, createSecondaryDataBuffer } from "../paint.mjs";
+import { updateHeldYRotation } from "./polyhedra-rotation.mjs";
 
 // Rhombic triacontahedron (RT) — 30 rhombic faces split into 60 triangular mirrors.
 // Icosahedral (5-fold) symmetry; dual of the icosidodecahedron.
@@ -149,16 +150,22 @@ const createSegments = (): Cell[] => {
 let store = {
   startedAt: performance.now(),
   maxReflections: 6,
+  angleY: 0,
+  lastTickAt: performance.now(),
 };
+
+const baseMirrors = createMirrors();
+const baseSegments = createSegments();
 
 export const rtMirrorConfigs: SolubleApp = {
   initPointsBuffer: () => {
-    const mirrors = createMirrors(); // 60
-    const segs = createSegments(); // 30
-    createGlobalPointsBuffer(mirrors.length, (i) => mirrors[i]);
-    createSecondaryDataBuffer(segs.length, (i) => segs[i]);
+    createGlobalPointsBuffer(baseMirrors.length, (i) => baseMirrors[i]);
+    createSecondaryDataBuffer(baseSegments.length, (i) => baseSegments[i]);
   },
   useCompute: false,
   renderShader: shader,
-  getParams: () => [performance.now() - store.startedAt, store.maxReflections],
+  getParams: () => {
+    updateHeldYRotation(store, baseMirrors, baseSegments);
+    return [performance.now() - store.startedAt, store.maxReflections];
+  },
 };

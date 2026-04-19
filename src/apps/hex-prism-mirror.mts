@@ -3,10 +3,13 @@ import shader from "./hex-prism-mirror.wgsl";
 import { Number4 } from "../math.mjs";
 import { SolubleApp } from "../primes.mjs";
 import { createSecondaryDataBuffer } from "../paint.mjs";
+import { updateHeldYRotation } from "./polyhedra-rotation.mjs";
 
 let store = {
   startedAt: performance.now(),
   maxReflections: 4,
+  angleY: 0,
+  lastTickAt: performance.now(),
 };
 
 type Cell = { position: Number4; velocity: Number4; arm: Number4 };
@@ -62,16 +65,18 @@ let createLightSegments = (): Cell[] => {
   return [makeCell(ptsTop[0], ptsBot[3], zero), makeCell(ptsTop[2], ptsBot[5], zero), makeCell(ptsTop[4], ptsBot[1], zero)];
 };
 
+const baseMirrors = createMirrors();
+const baseSegments = createLightSegments();
+
 export const hexPrismMirrorConfigs: SolubleApp = {
   initPointsBuffer: () => {
-    const mirrors = createMirrors();
-    const segments = createLightSegments();
-    createGlobalPointsBuffer(mirrors.length, (idx) => mirrors[idx]);
-    createSecondaryDataBuffer(segments.length, (idx) => segments[idx]);
+    createGlobalPointsBuffer(baseMirrors.length, (idx) => baseMirrors[idx]);
+    createSecondaryDataBuffer(baseSegments.length, (idx) => baseSegments[idx]);
   },
   useCompute: false,
   renderShader: shader,
   getParams: () => {
+    updateHeldYRotation(store, baseMirrors, baseSegments);
     return [performance.now() - store.startedAt, store.maxReflections];
   },
 };

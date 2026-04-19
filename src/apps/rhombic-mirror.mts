@@ -5,11 +5,14 @@ import { Number4, rand, randBalance, randBetween, range } from "../math.mjs";
 import { type ButtonEvents } from "../control.mjs";
 import { SolubleApp } from "../primes.mjs";
 import { BaseCellParams, createSecondaryDataBuffer } from "../paint.mjs";
+import { updateHeldYRotation } from "./polyhedra-rotation.mjs";
 
 let store = {
   disableLens: 0, // or 1
   radius: 0.98,
   startedAt: performance.now(),
+  angleY: 0,
+  lastTickAt: performance.now(),
 };
 
 type Cell = {
@@ -108,18 +111,19 @@ let createSegments = () => {
   ] as Cell[];
 };
 
+const baseMirrors = createRhombic();
+const baseSegments = createSegments();
+
 export const rhombicMirrorConfigs: SolubleApp = {
   initPointsBuffer: () => {
-    let items = createRhombic();
-    let secondary = createSegments();
-
-    createGlobalPointsBuffer(items.length, (idx) => items[idx]);
-    createSecondaryDataBuffer(secondary.length, (idx) => secondary[idx]);
+    createGlobalPointsBuffer(baseMirrors.length, (idx) => baseMirrors[idx]);
+    createSecondaryDataBuffer(baseSegments.length, (idx) => baseSegments[idx]);
   },
   useCompute: false,
   renderShader: mirrors,
   // onButtonEvent: (events: ButtonEvents) => { },
   getParams: () => {
+    updateHeldYRotation(store, baseMirrors, baseSegments);
     return [performance.now() - store.startedAt];
   },
   // getTextures: (obj) => {
