@@ -64,7 +64,7 @@
           :examples $ []
         |tabs $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
-            def tabs $ [] (:: :cubic-fire "|Cubic Fire" :dark) (:: :quaternion-fractal "|Quaternion Fractal" :dark) (:: :complex-fractal "|Complex Fractal" :dark) (:: :newton-fractal "|Newton Fractal" :dark) (:: :newton-cosh-fractal "|Newton Cosh Fractal" :dark) (:: :space-fractal "|Space Fractal" :dark) (:: :sphere-fractal "|Sphere Fractal" :dark) (:: :slow-fractal "|Slow Fractal" :dark) (:: :orbits |Orbits :dark) (:: :stars |Stars :dark) (:: :rings |Rings :dark) (:: :circles |Circles :dark) (:: :kaleidoscope |Kaleidoscope :dark) (:: :image |Image :dark) (:: :clocking |Clocking :dark) (:: :ripple |Ripple :dark) (:: :surround-mirror "|Surrond Mirror" :dark) (:: :kaleidoscope-mirror "|Kaleidoscope Mirror" :dark) (:: :parallel-mirror "|Parallel Mirror" :dark) (:: :sphere-mirror "|Sphere Mirror" :dark) (:: :hollow-mirror "|Hollow Mirror" :dark) (:: :box-mirror "|Box Mirror" :dark) (:: :rhombic-mirror "|Rhombic Mirror" :dark) (:: :dots-clock "|Dots Clock" :dark) (:: :inversion-circles "|Inversion Circles" :dark)
+            def tabs $ [] (:: :cubic-fire "|Cubic Fire" :dark) (:: :quaternion-fractal "|Quaternion Fractal" :dark) (:: :complex-fractal "|Complex Fractal" :dark) (:: :newton-fractal "|Newton Fractal" :dark) (:: :newton-cosh-fractal "|Newton Cosh Fractal" :dark) (:: :space-fractal "|Space Fractal" :dark) (:: :sphere-fractal "|Sphere Fractal" :dark) (:: :slow-fractal "|Slow Fractal" :dark) (:: :orbits |Orbits :dark) (:: :stars |Stars :dark) (:: :rings |Rings :dark) (:: :circles |Circles :dark) (:: :kaleidoscope |Kaleidoscope :dark) (:: :image |Image :dark) (:: :clocking |Clocking :dark) (:: :ripple |Ripple :dark) (:: :surround-mirror "|Surrond Mirror" :dark) (:: :kaleidoscope-mirror "|Kaleidoscope Mirror" :dark) (:: :parallel-mirror "|Parallel Mirror" :dark) (:: :sphere-mirror "|Sphere Mirror" :dark) (:: :hollow-mirror "|Hollow Mirror" :dark) (:: :box-mirror "|Box Mirror" :dark) (:: :pyramid-mirror "|Pyramid Mirror" :dark) (:: :rhombic-mirror "|Rhombic Mirror" :dark) (:: :dots-clock "|Dots Clock" :dark) (:: :inversion-circles "|Inversion Circles" :dark)
           :examples $ []
       :ns $ %{} :NsEntry (:doc |)
         :code $ quote
@@ -169,6 +169,7 @@
                 :sphere-mirror sphereMirrorConfigs
                 :hollow-mirror hollowMirrorConfigs
                 :box-mirror boxMirrorConfigs
+                :pyramid-mirror pyramidMirrorConfigs
                 :rhombic-mirror rhombicMirrorConfigs
                 :inversion-circles inversionCirclesConfigs
                 :dots-clock dotsClockConfigs
@@ -331,6 +332,7 @@
             |../src/apps/sphere-mirror.mts :refer $ sphereMirrorConfigs
             |../src/apps/hollow-mirror.mts :refer $ hollowMirrorConfigs
             |../src/apps/box-mirror.mts :refer $ boxMirrorConfigs
+            |../src/apps/pyramid-mirror.mts :refer $ pyramidMirrorConfigs
             |../src/apps/rhombic-mirror.mts :refer $ rhombicMirrorConfigs
             |../src/apps/dots-clock.mts :refer $ dotsClockConfigs
             |../src/apps/inversion-circles.mts :refer $ inversionCirclesConfigs

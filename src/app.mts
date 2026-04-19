@@ -14,6 +14,7 @@ import { inversionCirclesConfigs } from "./apps/inversion-circles.mjs";
 import {} from "./apps/kaleidoscope.mjs";
 import {} from "./apps/kaleidoscope-mirror.mjs";
 import {} from "./apps/box-mirror.mjs";
+import {} from "./apps/pyramid-mirror.mjs";
 import {} from "./apps/stars.mjs";
 import {} from "./apps/rings.mjs";
 import {} from "./apps/dots-clock.mjs";
