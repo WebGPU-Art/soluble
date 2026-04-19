@@ -4,10 +4,13 @@ import pyramidShader from "./pyramid-mirror.wgsl";
 import { Number4 } from "../math.mjs";
 import { SolubleApp } from "../primes.mjs";
 import { createSecondaryDataBuffer } from "../paint.mjs";
+import { updateHeldYRotation } from "./polyhedra-rotation.mjs";
 
 let store = {
   startedAt: performance.now(),
   maxReflections: 6,
+  angleY: 0,
+  lastTickAt: performance.now(),
 };
 
 type Cell = {
@@ -59,17 +62,18 @@ let createLightSegments = (): Cell[] => {
   ];
 };
 
+const baseMirrors = createPyramid();
+const baseSegments = createLightSegments();
+
 export const pyramidMirrorConfigs: SolubleApp = {
   initPointsBuffer: () => {
-    const mirrors = createPyramid();
-    const segments = createLightSegments();
-
-    createGlobalPointsBuffer(mirrors.length, (idx) => mirrors[idx]);
-    createSecondaryDataBuffer(segments.length, (idx) => segments[idx]);
+    createGlobalPointsBuffer(baseMirrors.length, (idx) => baseMirrors[idx]);
+    createSecondaryDataBuffer(baseSegments.length, (idx) => baseSegments[idx]);
   },
   useCompute: false,
   renderShader: pyramidShader,
   getParams: () => {
+    updateHeldYRotation(store, baseMirrors, baseSegments);
     return [performance.now() - store.startedAt, store.maxReflections];
   },
 };
