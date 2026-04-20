@@ -104,11 +104,11 @@
               [] |Fractals $ [] (:: :cubic-fire "|Cubic Fire" :dark) (:: :quaternion-fractal "|Quaternion Fractal" :dark) (:: :complex-fractal "|Complex Fractal" :dark) (:: :newton-fractal "|Newton Fractal" :dark) (:: :newton-cosh-fractal "|Newton Cosh Fractal" :dark) (:: :space-fractal "|Space Fractal" :dark) (:: :sphere-fractal "|Sphere Fractal" :dark) (:: :slow-fractal "|Slow Fractal" :dark)
               [] |Effects $ [] (:: :orbits |Orbits :dark) (:: :stars |Stars :dark) (:: :rings |Rings :dark) (:: :circles |Circles :dark) (:: :kaleidoscope |Kaleidoscope :dark) (:: :image |Image :dark) (:: :clocking |Clocking :dark) (:: :ripple |Ripple :dark) (:: :dots-clock "|Dots Clock" :dark) (:: :inversion-circles "|Inversion Circles" :dark)
               [] |Mirrors $ [] (:: :surround-mirror "|Surrond Mirror" :dark) (:: :kaleidoscope-mirror "|Kaleidoscope Mirror" :dark) (:: :parallel-mirror "|Parallel Mirror" :dark) (:: :sphere-mirror "|Sphere Mirror" :dark) (:: :orbit-spheres-mirror "|Orbit Spheres Mirror" :dark) (:: :hollow-mirror "|Hollow Mirror" :dark) (:: :box-mirror "|Box Mirror" :dark) (:: :pyramid-mirror "|Pyramid Mirror" :dark)
-              [] |Polyhedra $ [] (:: :tetrahedron-mirror "|Tetrahedron Mirror" :dark) (:: :octahedron-mirror "|Octahedron Mirror" :dark) (:: :prism-mirror "|Prism Mirror" :dark) (:: :hex-prism-mirror "|Hex Prism Mirror" :dark) (:: :icosahedron-mirror "|Icosahedron Mirror" :dark) (:: :wedge-mirror "|Wedge Mirror" :dark) (:: :rhombic-mirror "|Rhombic Mirror" :dark) (:: :rt-mirror "|Rhombic Triacontahedron" :dark) (:: :dodecahedron-mirror "|Dodecahedron Mirror" :dark)
+              [] |Polyhedra $ [] (:: :tetrahedron-mirror "|Tetrahedron Mirror" :dark) (:: :octahedron-mirror "|Octahedron Mirror" :dark) (:: :truncated-octahedron-mirror "|Truncated Octahedron" :dark) (:: :prism-mirror "|Prism Mirror" :dark) (:: :hex-prism-mirror "|Hex Prism Mirror" :dark) (:: :icosahedron-mirror "|Icosahedron Mirror" :dark) (:: :wedge-mirror "|Wedge Mirror" :dark) (:: :rhombohedron-mirror "|Rhombohedron Mirror" :dark) (:: :rhombic-mirror "|Rhombic Mirror" :dark) (:: :rhombic-dodecahedron-diagonals-mirror "|Rhombic Dodecahedron Diagonals" :dark) (:: :rt-mirror "|Rhombic Triacontahedron" :dark) (:: :deltoidal-icositetrahedron-mirror "|Deltoidal Icositetrahedron" :dark) (:: :dodecahedron-mirror "|Dodecahedron Mirror" :dark)
           :examples $ []
         |tabs $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
-            def tabs $ [] (:: :cubic-fire "|Cubic Fire" :dark) (:: :quaternion-fractal "|Quaternion Fractal" :dark) (:: :complex-fractal "|Complex Fractal" :dark) (:: :newton-fractal "|Newton Fractal" :dark) (:: :newton-cosh-fractal "|Newton Cosh Fractal" :dark) (:: :space-fractal "|Space Fractal" :dark) (:: :sphere-fractal "|Sphere Fractal" :dark) (:: :slow-fractal "|Slow Fractal" :dark) (:: :orbits |Orbits :dark) (:: :stars |Stars :dark) (:: :rings |Rings :dark) (:: :circles |Circles :dark) (:: :kaleidoscope |Kaleidoscope :dark) (:: :image |Image :dark) (:: :clocking |Clocking :dark) (:: :ripple |Ripple :dark) (:: :surround-mirror "|Surrond Mirror" :dark) (:: :kaleidoscope-mirror "|Kaleidoscope Mirror" :dark) (:: :parallel-mirror "|Parallel Mirror" :dark) (:: :sphere-mirror "|Sphere Mirror" :dark) (:: :orbit-spheres-mirror "|Orbit Spheres Mirror" :dark) (:: :hollow-mirror "|Hollow Mirror" :dark) (:: :box-mirror "|Box Mirror" :dark) (:: :pyramid-mirror "|Pyramid Mirror" :dark) (:: :tetrahedron-mirror "|Tetrahedron Mirror" :dark) (:: :octahedron-mirror "|Octahedron Mirror" :dark) (:: :prism-mirror "|Prism Mirror" :dark) (:: :hex-prism-mirror "|Hex Prism Mirror" :dark) (:: :icosahedron-mirror "|Icosahedron Mirror" :dark) (:: :wedge-mirror "|Wedge Mirror" :dark) (:: :rhombic-mirror "|Rhombic Mirror" :dark) (:: :rt-mirror "|Rhombic Triacontahedron" :dark) (:: :dodecahedron-mirror "|Dodecahedron Mirror" :dark) (:: :dots-clock "|Dots Clock" :dark) (:: :inversion-circles "|Inversion Circles" :dark)
+            def tabs $ [] (:: :cubic-fire "|Cubic Fire" :dark) (:: :quaternion-fractal "|Quaternion Fractal" :dark) (:: :complex-fractal "|Complex Fractal" :dark) (:: :newton-fractal "|Newton Fractal" :dark) (:: :newton-cosh-fractal "|Newton Cosh Fractal" :dark) (:: :space-fractal "|Space Fractal" :dark) (:: :sphere-fractal "|Sphere Fractal" :dark) (:: :slow-fractal "|Slow Fractal" :dark) (:: :orbits |Orbits :dark) (:: :stars |Stars :dark) (:: :rings |Rings :dark) (:: :circles |Circles :dark) (:: :kaleidoscope |Kaleidoscope :dark) (:: :image |Image :dark) (:: :clocking |Clocking :dark) (:: :ripple |Ripple :dark) (:: :surround-mirror "|Surrond Mirror" :dark) (:: :kaleidoscope-mirror "|Kaleidoscope Mirror" :dark) (:: :parallel-mirror "|Parallel Mirror" :dark) (:: :sphere-mirror "|Sphere Mirror" :dark) (:: :orbit-spheres-mirror "|Orbit Spheres Mirror" :dark) (:: :hollow-mirror "|Hollow Mirror" :dark) (:: :box-mirror "|Box Mirror" :dark) (:: :pyramid-mirror "|Pyramid Mirror" :dark) (:: :tetrahedron-mirror "|Tetrahedron Mirror" :dark) (:: :octahedron-mirror "|Octahedron Mirror" :dark) (:: :truncated-octahedron-mirror "|Truncated Octahedron" :dark) (:: :prism-mirror "|Prism Mirror" :dark) (:: :hex-prism-mirror "|Hex Prism Mirror" :dark) (:: :icosahedron-mirror "|Icosahedron Mirror" :dark) (:: :wedge-mirror "|Wedge Mirror" :dark) (:: :rhombohedron-mirror "|Rhombohedron Mirror" :dark) (:: :rhombic-mirror "|Rhombic Mirror" :dark) (:: :rhombic-dodecahedron-diagonals-mirror "|Rhombic Dodecahedron Diagonals" :dark) (:: :rt-mirror "|Rhombic Triacontahedron" :dark) (:: :deltoidal-icositetrahedron-mirror "|Deltoidal Icositetrahedron" :dark) (:: :dodecahedron-mirror "|Dodecahedron Mirror" :dark) (:: :dots-clock "|Dots Clock" :dark) (:: :inversion-circles "|Inversion Circles" :dark)
           :examples $ []
       :ns $ %{} :NsEntry (:doc |)
         :code $ quote
@@ -223,12 +223,16 @@
                 :pyramid-mirror pyramidMirrorConfigs
                 :tetrahedron-mirror tetrahedronMirrorConfigs
                 :octahedron-mirror octahedronMirrorConfigs
+                :truncated-octahedron-mirror truncatedOctahedronMirrorConfigs
                 :prism-mirror prismMirrorConfigs
                 :hex-prism-mirror hexPrismMirrorConfigs
                 :icosahedron-mirror icosahedronMirrorConfigs
                 :wedge-mirror wedgeMirrorConfigs
+                :rhombohedron-mirror rhombohedronMirrorConfigs
                 :rhombic-mirror rhombicMirrorConfigs
+                :rhombic-dodecahedron-diagonals-mirror rhombicDodecahedronDiagonalsMirrorConfigs
                 :rt-mirror rtMirrorConfigs
+                :deltoidal-icositetrahedron-mirror deltoidalIcositetrahedronMirrorConfigs
                 :dodecahedron-mirror dodecahedronMirrorConfigs
                 :inversion-circles inversionCirclesConfigs
                 :dots-clock dotsClockConfigs
@@ -397,12 +401,16 @@
             |../src/apps/pyramid-mirror.mts :refer $ pyramidMirrorConfigs
             |../src/apps/tetrahedron-mirror.mts :refer $ tetrahedronMirrorConfigs
             |../src/apps/octahedron-mirror.mts :refer $ octahedronMirrorConfigs
+            |../src/apps/truncated-octahedron-mirror.mts :refer $ truncatedOctahedronMirrorConfigs
             |../src/apps/prism-mirror.mts :refer $ prismMirrorConfigs
             |../src/apps/hex-prism-mirror.mts :refer $ hexPrismMirrorConfigs
             |../src/apps/icosahedron-mirror.mts :refer $ icosahedronMirrorConfigs
             |../src/apps/wedge-mirror.mts :refer $ wedgeMirrorConfigs
+            |../src/apps/rhombohedron-mirror.mts :refer $ rhombohedronMirrorConfigs
             |../src/apps/rhombic-mirror.mts :refer $ rhombicMirrorConfigs
+            |../src/apps/rhombic-dodecahedron-diagonals-mirror.mts :refer $ rhombicDodecahedronDiagonalsMirrorConfigs
             |../src/apps/rt-mirror.mts :refer $ rtMirrorConfigs
+            |../src/apps/deltoidal-icositetrahedron-mirror.mts :refer $ deltoidalIcositetrahedronMirrorConfigs
             |../src/apps/dodecahedron-mirror.mts :refer $ dodecahedronMirrorConfigs
             |../src/apps/orbit-spheres-mirror.mts :refer $ orbitSpheresMirrorConfigs
             |../src/apps/dots-clock.mts :refer $ dotsClockConfigs

@@ -8,6 +8,7 @@ import { updateHeldYRotation } from "./polyhedra-rotation.mjs";
 // Regular dodecahedron — 12 pentagonal faces, 20 vertices, 30 edges.
 // Each pentagon is split into 5 triangles from its face centre → 60 mirror triangles.
 // Light segments follow the 30 dodecahedron edges.
+// This is the Platonic solid paired with the icosahedron, sharing the same golden-ratio coordinate family.
 //
 // Vertex coordinates use the standard form with φ = (1+√5)/2:
 //   (±1, ±1, ±1)         — 8 cube vertices
@@ -63,7 +64,7 @@ function adjacent(i: number, j: number) {
   return Math.abs(dist(V[i], V[j]) - edgeLen) < EPS;
 }
 
-// Build adjacency list
+// Recover the dodecahedron graph from edge length, then walk the graph to recover its 12 pentagons.
 const adj: number[][] = Array.from({ length: 20 }, () => []);
 for (let i = 0; i < 20; i++) {
   for (let j = i + 1; j < 20; j++) {
@@ -131,7 +132,7 @@ function centroid(f: number[]): N4 {
 type Cell = { position: N4; velocity: N4; arm: N4 };
 const makeCell = (a: N4, b: N4, c: N4): Cell => ({ position: a, velocity: b, arm: c });
 
-// 60 mirror triangles: each pentagon → 5 triangles from centroid
+// Each pentagon becomes a 5-triangle fan because the mirror shader works on triangles only.
 const createMirrors = (): Cell[] => {
   const cells: Cell[] = [];
   for (const face of faceList) {
@@ -145,7 +146,7 @@ const createMirrors = (): Cell[] => {
   return cells;
 };
 
-// 30 dodecahedron edge segments — one per edge, restoring full wireframe pattern.
+// One segment per edge restores the full pentagonal frame inside the reflections.
 const createSegments = (): Cell[] => {
   const zero: N4 = [0, 0, 0, 0];
   return edges.map(([i, j]) => makeCell(V[i], V[j], zero));

@@ -9,7 +9,7 @@
   },
   "packageManager": "yarn@4.12.0",
   "devDependencies": {
-    "@calcit/procs": "^0.12.24",
+    "@calcit/procs": "^0.12.25",
     "@types/node": "^25.0.3",
     "@webgpu/types": "^0.1.68",
     "bottom-tip": "^0.1.5",

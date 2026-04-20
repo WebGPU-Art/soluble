@@ -7,6 +7,8 @@ import { SolubleApp } from "../primes.mjs";
 import { BaseCellParams, createSecondaryDataBuffer } from "../paint.mjs";
 import { updateHeldYRotation } from "./polyhedra-rotation.mjs";
 
+// This demo uses the rhombic dodecahedron: 12 rhombus faces and 14 vertices.
+// It is one of the classic space-filling rhombic polyhedra and matches the old hand-built mirror style.
 let store = {
   disableLens: 0, // or 1
   radius: 0.98,
@@ -25,7 +27,7 @@ let makeCell = (a: Number4, b: Number4, c: Number4) => {
   return { position: a, velocity: b, arm: c } as Cell;
 };
 
-// points of rhombic hexecontahedron
+// The 6 axis points and 8 cube-corner points are enough to describe all 12 rhombic faces.
 let u = 100;
 
 // use z axis positive to decide front direction
@@ -48,6 +50,7 @@ let p6: Number4 = [1 * u, -1 * u, 1 * u, 0];
 let p7: Number4 = [1 * u, -1 * u, -1 * u, 0];
 let p8: Number4 = [-1 * u, -1 * u, -1 * u, 0];
 
+// Each rhombus face is split into 2 mirror triangles.
 let createRhombic = () => {
   return [
     makeCell(pTop, p1, p2),
@@ -77,6 +80,7 @@ let createRhombic = () => {
   ] as Cell[];
 };
 
+// Segments trace the visible edge skeleton of the rhombic dodecahedron.
 let createSegments = () => {
   let d = u;
   /** as placeholder */

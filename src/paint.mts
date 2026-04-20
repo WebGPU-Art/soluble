@@ -288,7 +288,7 @@ let buildCommandBuffer = (t: number, params: number[], textures: GPUTexture[]): 
 
   let uniformBuffer = getUniformBuffer(t);
   let paramsBuffer = createBuffer(
-    new Float32Array([now, now - prevTime, params[0] || 0, params[1] || 0, params[2]].filter((x) => x != null)),
+    new Float32Array([now, now - prevTime, params[0] ?? 0, params[1] ?? 0, ...params.slice(2)]),
     GPUBufferUsage.UNIFORM,
     device
   );

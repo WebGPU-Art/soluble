@@ -5,6 +5,8 @@ import { SolubleApp } from "../primes.mjs";
 import { createSecondaryDataBuffer } from "../paint.mjs";
 import { updateHeldYRotation } from "./polyhedra-rotation.mjs";
 
+// Regular octahedron: 8 triangular faces, 6 vertices.
+// This is the dual of the cube, so the construction just uses the ±x, ±y, ±z axis tips.
 let store = {
   startedAt: performance.now(),
   maxReflections: 4,
@@ -18,6 +20,7 @@ let makeCell = (a: Number4, b: Number4, c: Number4): Cell => {
   return { position: a, velocity: b, arm: c };
 };
 
+// Each triangular face is already a mirror triangle, so no extra face splitting is needed here.
 let createMirrors = (): Cell[] => {
   const R = 120;
   const p_x: Number4 = [R, 0, 0, 0];
@@ -39,6 +42,7 @@ let createMirrors = (): Cell[] => {
   ];
 };
 
+// The 3 diameter segments highlight the three principal symmetry axes.
 let createLightSegments = (): Cell[] => {
   const zero: Number4 = [0, 0, 0, 0];
   const R = 120;

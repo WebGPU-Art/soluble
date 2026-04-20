@@ -7,6 +7,7 @@ import { updateHeldYRotation } from "./polyhedra-rotation.mjs";
 
 // Rhombic triacontahedron (RT) — 30 rhombic faces split into 60 triangular mirrors.
 // Icosahedral (5-fold) symmetry; dual of the icosidodecahedron.
+// It is the larger golden-ratio rhombic solid in this group, compared with the simpler rhombic demo above.
 //
 // Two vertex types:
 //   ICO  (12, outer radius R_ico): corners of an icosahedron
@@ -48,7 +49,7 @@ const icoRaw: V3[] = [
 const ico: V3[] = icoRaw.map((v) => v.map((x) => (x / icoNorm) * R_ico) as V3);
 
 // 20 icosahedron faces (top cap, bottom cap, equatorial)
-// — these become the 20 DOD vertices when centroids are normalised to R_dod
+// — these become the 20 dodecahedral inner vertices when centroids are normalised to R_dod
 const icoFaces: [number, number, number][] = [
   [0, 1, 8], // 0  top cap
   [0, 8, 4], // 1
@@ -141,7 +142,7 @@ const createMirrors = (): Cell[] => {
 };
 
 // 30 icosahedron edge segments — one segment per RT rhombus long diagonal.
-// Restores the full wireframe density of the original pattern.
+// This keeps the golden-symmetry wireframe readable once reflections accumulate.
 const createSegments = (): Cell[] => {
   const zero: N4 = [0, 0, 0, 0];
   return rtEdges.map(([ia, ib]) => makeCell(v4(ico[ia]), v4(ico[ib]), zero));
