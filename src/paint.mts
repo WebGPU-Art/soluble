@@ -287,11 +287,7 @@ let buildCommandBuffer = (t: number, params: number[], textures: GPUTexture[]): 
   let now = Date.now() - startTime;
 
   let uniformBuffer = getUniformBuffer(t);
-  let paramsBuffer = createBuffer(
-    new Float32Array([now, now - prevTime, params[0] ?? 0, params[1] ?? 0, ...params.slice(2)]),
-    GPUBufferUsage.UNIFORM,
-    device
-  );
+  let paramsBuffer = createBuffer(new Float32Array([now, now - prevTime, params[0] ?? 0, params[1] ?? 0, ...params.slice(2)]), GPUBufferUsage.UNIFORM, device);
   prevTime = now;
 
   // Textures: bind group is re-created per frame so sampler/views are current;

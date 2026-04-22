@@ -109,11 +109,7 @@ const rotateAroundAxis = (v: [number, number, number], axis: [number, number, nu
   const cx = ay * vz - az * vy;
   const cy = az * vx - ax * vz;
   const cz = ax * vy - ay * vx;
-  return [
-    vx * c + cx * s + ax * d * (1 - c),
-    vy * c + cy * s + ay * d * (1 - c),
-    vz * c + cz * s + az * d * (1 - c),
-  ];
+  return [vx * c + cx * s + ax * d * (1 - c), vy * c + cy * s + ay * d * (1 - c), vz * c + cz * s + az * d * (1 - c)];
 };
 
 /** Build the current Cell for a segment definition at time t (ms). */
