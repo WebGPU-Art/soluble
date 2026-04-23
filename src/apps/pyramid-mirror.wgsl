@@ -1,4 +1,3 @@
-
 #import soluble::perspective
 
 #import soluble::math
@@ -8,10 +7,8 @@
 struct Params {
   time: f32,
   dt: f32,
-  /// 1 to disable
-  // disableLens: f32,
-  // maskRadius: f32,
   lifetime: f32,
+  max_reflections: f32,
 }
 
 @group(0) @binding(1) var<uniform> params: Params;
@@ -19,7 +16,7 @@ struct Params {
 struct BaseCell {
   a: vec4<f32>,
   b: vec4<f32>,
- c: vec4<f32>,
+  c: vec4<f32>,
 };
 
 @group(1) @binding(0) var<storage, read_write> base_points: array<BaseCell>;
@@ -49,7 +46,6 @@ fn vertex_main(
 }
 
 
-
 @fragment
 fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
@@ -62,19 +58,26 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     p.x * uniforms.rightward + p.y * uniforms.upward + 2.0 * uniforms.forward
   );
 
-  var total_color = vec4<f32>(0.2, 0.0, 0.3, 1.0);
+  var total_color = vec4<f32>(0.05, 0.0, 0.12, 1.0);
+
+  let max_seg_len = 300.0;
+  // warm golden tones for pyramid interior
+  let color_cap = vec4<f32>(0.9, 0.7, 0.3, 1.0);
 
   var current_viewer = uniforms.viewer_position;
   var current_ray_unit = ray_unit;
-  var traveled = 0.0;
   var in_mirror = 0u;
 
-  /// maximum number of reflections
-  let max_relect_times = 8u;
+  let max_reflect_times = u32(params.max_reflections);
   let size = arrayLength(&base_points);
   let segments_size = arrayLength(&secondary_points);
 
-  for (var times = 0u; times < max_relect_times + 1u; times++) {
+  for (var times = 0u; times < max_reflect_times + 1u; times++) {
+
+    // Early exit: color already saturated
+    if all(total_color.rgb >= color_cap.rgb) {
+      break;
+    }
 
     var hit_mirror = false;
     var nearest = RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 1000000., vec3<f32>(0.0, 0.0, 0.0));
@@ -84,52 +87,42 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
       let mirror = MirrorTriangle(ceil.a.xyz, ceil.b.xyz, ceil.c.xyz);
       let hit = try_reflect_ray_with_mirror(current_viewer, current_ray_unit, mirror);
 
-      if hit.hit && hit.travel > .01 {
+      if hit.hit && hit.travel > 0.01 && hit.travel < nearest.travel {
         hit_mirror = true;
-
-        if hit.travel < nearest.travel {
-          nearest = hit;
-          traveled = hit.travel;
-        }
+        nearest = hit;
       }
     }
 
+    // loop-invariant: whether back-facing cull is needed this bounce
+    let first_bounce = in_mirror == 0u;
+    let f = pow(f32(in_mirror) / 2.0 + 2.0, 3.0);
 
     for (var i = 0u; i < segments_size; i = i + 1u) {
       var segment = Segment(secondary_points[i].a.xyz, secondary_points[i].b.xyz);
-      // let ray_segment = Segment(ray_unit, ray_unit + ray_unit);
       let reach = ray_closest_point_to_line(current_viewer, current_ray_unit, segment);
 
-      if !reach.positive_side && in_mirror < 1u {
-        // I wanted to reduce light from back of camera,
-        // however, it does not apply to in-mirror world
-        continue;
+      // cheapest checks first:
+      // 1. traveled-distance cull (single float compare)
+      if hit_mirror && reach.traveled > nearest.travel { continue; }
+      // 2. back-of-camera cull (only outside mirror world)
+      if first_bounce && !reach.positive_side { continue; }
+
+      let seg_len = length(segment.end - segment.start);
+      let distance = max(0.001, reach.distance - 0.5);
+      var color_scale = 1.4 / pow(distance * 0.06 + 0.01, 1.8) / f;
+      if seg_len > max_seg_len {
+        color_scale *= 0.1;
       }
 
-      if hit_mirror {
-        if reach.traveled > traveled {
-          continue;
-        }
-      }
-
-      // let distance = reach.distance;
-      // let factor = (0.1 + exp(-traveled));
-      // if distance < 0.2 && reach.positive_side {
-      //   total_color = vec4<f32>(1.0, 0.8, 0.0, 1.0);
-      // }
-
-      let distance = max(0.001, reach.distance - 0.6);
-      let f = pow(f32(in_mirror) / 2. + 2.0, 3.);
-      var color_scale = 0.12 / pow(distance * 0.07 + 0.01, 1.8) / f;
-
-      total_color += vec4<f32>(0.01, 0.02, 0.01, 0.0) * color_scale;
-      total_color = min(total_color, vec4<f32>(0.4, 0.7, 0.9, 1.0));
+      // warm golden glow: red channel dominant, then green
+      total_color += vec4<f32>(0.02, 0.014, 0.004, 0.0) * color_scale;
+      total_color = min(total_color, color_cap);
     }
 
     if hit_mirror {
       if rand11(dot(vx_out.uv, vec2f(127.1, 311.7)) + f32(times) * 43.7) < 0.15 { break; }
-      total_color += vec4<f32>(0.01, 0.006, .02, 0.);
-      // total_color += vec4<f32>(0.1, 0.06, .2, 0.);
+      // add a slight warm tint on each reflection
+      total_color += vec4<f32>(0.024, 0.012, 0.003, 0.0);
       current_viewer = nearest.point;
       current_ray_unit = nearest.next_ray_unit;
       in_mirror += 1u;

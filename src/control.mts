@@ -62,6 +62,8 @@ export function loadTouchControl() {
 }
 
 let prevButtons: GameButtons = undefined;
+let currentButtons: GameButtons = undefined;
+let currentButtonsAt = 0;
 /** wrapped events from GameButtons */
 export type ButtonEvents = Partial<{
   face1: boolean;
@@ -103,6 +105,8 @@ let buttonNames: (keyof GameButtons)[] = [
 export let loadGamepadControl = (handleButtonEvent?: (events: ButtonEvents) => void) => {
   console.log("loading gamepad control");
   setupGamepadControl((axes, buttons) => {
+    currentButtons = buttons;
+    currentButtonsAt = performance.now();
     let scale = atomViewerScale.deref();
     let speedy = buttons.l1.value > 0.1 || buttons.r1.value > 0.1 ? 8 : 1;
     let faster = speedy > 4 ? 4 : 1;
@@ -135,4 +139,11 @@ export let loadGamepadControl = (handleButtonEvent?: (events: ButtonEvents) => v
     }
     prevButtons = buttons;
   });
+};
+
+export let isGamepadButtonPressed = (button: keyof GameButtons): boolean => {
+  if (performance.now() - currentButtonsAt > 200) {
+    return false;
+  }
+  return currentButtons?.[button]?.pressed === true;
 };

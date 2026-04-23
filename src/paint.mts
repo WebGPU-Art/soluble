@@ -20,6 +20,7 @@ import solubleMirror from "../shaders/soluble-mirror.wgsl?raw";
 import { pixelRatio } from "./config.mjs";
 
 let prevTime = Date.now();
+let frameCount = 0;
 
 export type BaseCellParams = {
   position: Number4;
@@ -29,67 +30,125 @@ export type BaseCellParams = {
   extendParams?: Number4;
 };
 
-let cachedBaseSize = 0;
+let cachedPointsBaseSize = 0;
+let cachedSecondaryBaseSize = 0;
 let identity = <T,>(x: T): T => x;
+
+let collectBaseCellItems = (baseSize: number, f: (idx: number) => BaseCellParams): Float32Array => {
+  let items: number[] = [];
+  for (let i = 0; i < baseSize; i++) {
+    let info = f(i);
+    items.push(...info.position);
+    if (info.velocity) {
+      items.push(...info.velocity);
+    }
+    if (info.arm) {
+      items.push(...info.arm);
+    }
+    if (info.params) {
+      items.push(...info.params);
+    }
+    if (info.extendParams) {
+      items.push(...info.extendParams);
+    }
+  }
+  return new Float32Array(items);
+};
 
 /** hold item data */
 export const createGlobalPointsBuffer = (baseSize: number, f: (idx: number) => BaseCellParams): GPUBuffer => {
-  if (atomPointsBuffer.deref() && baseSize === cachedBaseSize) {
+  if (atomPointsBuffer.deref() && baseSize === cachedPointsBaseSize) {
     return atomPointsBuffer.deref();
   }
-  cachedBaseSize = baseSize;
+  const old = atomPointsBuffer.deref();
+  cachedPointsBaseSize = baseSize;
   let device = atomDevice.deref();
-  let items: number[] = [];
-  for (let i = 0; i < baseSize; i++) {
-    let info = f(i);
-    items.push(...info.position);
-    if (info.velocity) {
-      items.push(...info.velocity);
-    }
-    if (info.arm) {
-      items.push(...info.arm);
-    }
-    if (info.params) {
-      items.push(...info.params);
-    }
-    if (info.extendParams) {
-      items.push(...info.extendParams);
-    }
-  }
-  atomPointsBuffer.reset(createBuffer(new Float32Array(items), GPUBufferUsage.STORAGE, device));
+  let items = collectBaseCellItems(baseSize, f);
+  atomPointsBuffer.reset(createBuffer(items, GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST, device));
+  old?.destroy();
   return atomPointsBuffer.deref();
 };
-/** hold secondary data, possible not called since not used */
-export const createSecondaryDataBuffer = (baseSize: number, f: (idx: number) => BaseCellParams): GPUBuffer => {
-  if (atomSecondaryBuffer.deref() && baseSize === cachedBaseSize) {
-    return atomSecondaryBuffer.deref();
-  }
-  cachedBaseSize = baseSize;
+
+export const updateGlobalPointsBuffer = (baseSize: number, f: (idx: number) => BaseCellParams): GPUBuffer => {
   let device = atomDevice.deref();
-  let items: number[] = [];
-  for (let i = 0; i < baseSize; i++) {
-    let info = f(i);
-    items.push(...info.position);
-    if (info.velocity) {
-      items.push(...info.velocity);
-    }
-    if (info.arm) {
-      items.push(...info.arm);
-    }
-    if (info.params) {
-      items.push(...info.params);
-    }
-    if (info.extendParams) {
-      items.push(...info.extendParams);
-    }
+  let items = collectBaseCellItems(baseSize, f);
+  let buffer = atomPointsBuffer.deref();
+
+  if (buffer && baseSize === cachedPointsBaseSize) {
+    let bytes = new Uint8Array(items.byteLength);
+    bytes.set(new Uint8Array(items.buffer as ArrayBuffer, items.byteOffset, items.byteLength));
+    device.queue.writeBuffer(buffer, 0, bytes);
+    return buffer;
   }
-  atomSecondaryBuffer.reset(createBuffer(new Float32Array(items), GPUBufferUsage.STORAGE, device));
+
+  buffer?.destroy();
+  cachedPointsBaseSize = baseSize;
+  atomPointsBuffer.reset(createBuffer(items, GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST, device));
+  return atomPointsBuffer.deref();
+};
+
+export const updateSecondaryDataBuffer = (baseSize: number, f: (idx: number) => BaseCellParams): GPUBuffer => {
+  let device = atomDevice.deref();
+  let items = collectBaseCellItems(baseSize, f);
+  let buffer = atomSecondaryBuffer.deref();
+
+  if (buffer && baseSize === cachedSecondaryBaseSize) {
+    let bytes = new Uint8Array(items.byteLength);
+    bytes.set(new Uint8Array(items.buffer as ArrayBuffer, items.byteOffset, items.byteLength));
+    device.queue.writeBuffer(buffer, 0, bytes);
+    return buffer;
+  }
+
+  buffer?.destroy();
+  cachedSecondaryBaseSize = baseSize;
+  atomSecondaryBuffer.reset(createBuffer(items, GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST, device));
   return atomSecondaryBuffer.deref();
 };
 
+/** write pre-built Float32Array directly into the existing points buffer, skipping callback overhead */
+export const writePointsBufferRaw = (data: Float32Array): void => {
+  let device = atomDevice.deref();
+  let buffer = atomPointsBuffer.deref();
+  if (buffer) {
+    let bytes = new Uint8Array(data.byteLength);
+    bytes.set(new Uint8Array(data.buffer as ArrayBuffer, data.byteOffset, data.byteLength));
+    device.queue.writeBuffer(buffer, 0, bytes);
+  }
+};
+
+/** hold secondary data, possible not called since not used */
+export const createSecondaryDataBuffer = (baseSize: number, f: (idx: number) => BaseCellParams): GPUBuffer => {
+  if (atomSecondaryBuffer.deref() && baseSize === cachedSecondaryBaseSize) {
+    return atomSecondaryBuffer.deref();
+  }
+  const old = atomSecondaryBuffer.deref();
+  cachedSecondaryBaseSize = baseSize;
+  let device = atomDevice.deref();
+  let items = collectBaseCellItems(baseSize, f);
+  atomSecondaryBuffer.reset(createBuffer(items, GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST, device));
+  old?.destroy();
+  return atomSecondaryBuffer.deref();
+};
+
+/** true while GPU frame is being submitted and awaited */
+let paintingFrame = false;
+let activeFramePromise: Promise<void> | null = null;
+
+/** Wait until the current GPU frame, if any, has finished submission. */
+export async function waitForRenderIdle(): Promise<void> {
+  if (activeFramePromise) {
+    await activeFramePromise;
+  }
+}
+
 export function clearPointsBuffer() {
+  atomPointsBuffer.deref()?.destroy();
+  atomSecondaryBuffer.deref()?.destroy();
   atomPointsBuffer.reset(null);
   atomSecondaryBuffer.reset(null);
+  cachedPointsBaseSize = 0;
+  cachedSecondaryBaseSize = 0;
+  rendererPipelineCache = null;
 }
 
 export function computeBasePoints() {
@@ -208,28 +267,94 @@ let getUniformBuffer = (t: number): GPUBuffer => {
   return uniformBuffer;
 };
 
+type RendererPipelineCache = {
+  shaderModule: GPUShaderModule;
+  pointsBuffer: GPUBuffer;
+  secondaryBuffer: GPUBuffer | null;
+  textureLayout: GPUBindGroupLayout | null;
+  uniformBindGroupLayout: GPUBindGroupLayout;
+  particlesBindGroupLayout: GPUBindGroupLayout;
+  particlesBindGroup: GPUBindGroup;
+  pipeline: GPURenderPipeline;
+};
+
+let rendererPipelineCache: RendererPipelineCache | null = null;
+
 let buildCommandBuffer = (t: number, params: number[], textures: GPUTexture[]): GPUCommandBuffer => {
   let { topology, shaderModule, vertexBuffersDescriptors, vertexBuffers, indices } = atomSolubleTree.deref();
-
-  // console.log("uniformData", uniformData);
 
   let device = atomDevice.deref();
   let now = Date.now() - startTime;
 
   let uniformBuffer = getUniformBuffer(t);
-  let paramsBuffer = createBuffer(
-    new Float32Array([now, now - prevTime, params[0] || 0, params[1] || 0, params[2]].filter((x) => x != null)),
-    GPUBufferUsage.UNIFORM,
-    device
-  );
+  let paramsBuffer = createBuffer(new Float32Array([now, now - prevTime, params[0] ?? 0, params[1] ?? 0, ...params.slice(2)]), GPUBufferUsage.UNIFORM, device);
   prevTime = now;
 
-  let uniformBindGroupLayout = device.createBindGroupLayout({
-    entries: [
-      { binding: 0, visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: "uniform" } },
-      { binding: 1, visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: "uniform" } },
-    ],
-  });
+  // Textures: bind group is re-created per frame so sampler/views are current;
+  // layout is stable and lives in the pipeline cache.
+  let texturesInfo = prepareTextures(device, textures, "texturesInfo");
+
+  let secondaryBuffer = atomSecondaryBuffer.deref();
+  let pointsBuffer = atomPointsBuffer.deref();
+
+  // Rebuild pipeline only when shader, buffers, or texture layout changes
+  // (i.e. on hot reload or app switch — NOT every frame)
+  let cache = rendererPipelineCache;
+  if (
+    !cache ||
+    cache.shaderModule !== shaderModule ||
+    cache.pointsBuffer !== pointsBuffer ||
+    cache.secondaryBuffer !== secondaryBuffer ||
+    cache.textureLayout !== texturesInfo.layout
+  ) {
+    let hasSecondary = secondaryBuffer != null;
+
+    let uniformBindGroupLayout = device.createBindGroupLayout({
+      entries: [
+        { binding: 0, visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: "uniform" } },
+        { binding: 1, visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: "uniform" } },
+      ],
+    });
+
+    let particlesBindGroupLayout = device.createBindGroupLayout({
+      entries: [
+        { binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { type: "storage" } } as GPUBindGroupLayoutEntry,
+        (hasSecondary ? { binding: 1, visibility: GPUShaderStage.FRAGMENT, buffer: { type: "storage" } } : undefined) as GPUBindGroupLayoutEntry,
+      ].filter(Boolean),
+    });
+
+    let particlesBindGroup = device.createBindGroup({
+      layout: particlesBindGroupLayout,
+      entries: [{ binding: 0, resource: { buffer: pointsBuffer } }, hasSecondary && { binding: 1, resource: { buffer: secondaryBuffer } }].filter(Boolean),
+    });
+
+    let renderLayout = device.createPipelineLayout({
+      label: "renderLayout",
+      bindGroupLayouts: [uniformBindGroupLayout, particlesBindGroupLayout, texturesInfo.layout].filter(Boolean),
+    });
+
+    let pipeline = device.createRenderPipeline({
+      layout: renderLayout,
+      vertex: { module: shaderModule, entryPoint: "vertex_main", buffers: vertexBuffersDescriptors },
+      fragment: { module: shaderModule, entryPoint: "fragment_main", targets: [{ format: presentationFormat }] },
+      primitive: { topology },
+      depthStencil: { depthWriteEnabled: true, depthCompare: "less", format: "depth24plus-stencil8" },
+    });
+
+    cache = {
+      shaderModule,
+      pointsBuffer,
+      secondaryBuffer,
+      textureLayout: texturesInfo.layout,
+      uniformBindGroupLayout,
+      particlesBindGroupLayout,
+      particlesBindGroup,
+      pipeline,
+    };
+    rendererPipelineCache = cache;
+  }
+
+  let { uniformBindGroupLayout, particlesBindGroup, pipeline } = cache;
 
   let uniformBindGroup = device.createBindGroup({
     layout: uniformBindGroupLayout,
@@ -237,41 +362,6 @@ let buildCommandBuffer = (t: number, params: number[], textures: GPUTexture[]): 
       { binding: 0, resource: { buffer: uniformBuffer } },
       { binding: 1, resource: { buffer: paramsBuffer } },
     ],
-  });
-  let secondaryBuffer = atomSecondaryBuffer.deref();
-  let hasSecondary = secondaryBuffer != null;
-
-  let particlesBindGroupLayout = device.createBindGroupLayout({
-    entries: [
-      { binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { type: "storage" } } as GPUBindGroupLayoutEntry,
-      (hasSecondary ? { binding: 1, visibility: GPUShaderStage.FRAGMENT, buffer: { type: "storage" } } : undefined) as GPUBindGroupLayoutEntry,
-    ].filter(Boolean),
-  });
-
-  let particlesBindGroup = device.createBindGroup({
-    layout: particlesBindGroupLayout,
-    entries: [{ binding: 0, resource: { buffer: atomPointsBuffer.deref() } }, hasSecondary && { binding: 1, resource: { buffer: secondaryBuffer } }].filter(
-      Boolean
-    ),
-  });
-
-  let texturesInfo = prepareTextures(device, textures, "texturesInfo");
-
-  // ~~ CREATE RENDER PIPELINE ~~
-
-  let renderLayout = device.createPipelineLayout({
-    label: "renderLayout",
-    bindGroupLayouts: [uniformBindGroupLayout, particlesBindGroupLayout, texturesInfo.layout].filter(Boolean),
-  });
-
-  let pipeline = device.createRenderPipeline({
-    layout: renderLayout,
-    vertex: { module: shaderModule, entryPoint: "vertex_main", buffers: vertexBuffersDescriptors },
-    fragment: { module: shaderModule, entryPoint: "fragment_main", targets: [{ format: presentationFormat }] },
-    primitive: {
-      topology,
-    },
-    depthStencil: { depthWriteEnabled: true, depthCompare: "less", format: "depth24plus-stencil8" },
   });
 
   let needClear = atomBufferNeedClear.deref();
@@ -317,7 +407,7 @@ let startTime = Date.now();
 export function paintSolubleTree(
   /** extra params */
   params: number[]
-) {
+): Promise<void> {
   // console.log("paint params", params);
   atomBufferNeedClear.reset(true);
   let device = atomDevice.deref();
@@ -331,6 +421,7 @@ export function paintSolubleTree(
 
   let bufferList: GPUCommandBuffer[] = [buildCommandBuffer(lifetime, params || [], textures || [])];
   device.queue.submit(bufferList);
+  return device.queue.onSubmittedWorkDone();
 }
 
 export function resetCanvasHeight(canvas: HTMLCanvasElement) {
@@ -346,12 +437,37 @@ export let interpolateShader = (shader: string) => {
 };
 
 /** unified API to call paint */
-export let callFramePaint = () => {
-  if (atomSolubleTree.deref()?.useCompute) {
-    computeBasePoints();
+export let callFramePaint = async (): Promise<void> => {
+  // Guard: skip frame if buffers are not ready (mid-switch)
+  if (!atomSolubleTree.deref() || !atomPointsBuffer.deref()) return;
+
+  if (paintingFrame && activeFramePromise) {
+    await activeFramePromise;
+    return;
   }
 
-  paintSolubleTree(atomSolubleTree.deref()?.getParams?.() || []);
+  paintingFrame = true;
+
+  activeFramePromise = (async () => {
+    if (atomSolubleTree.deref()?.useCompute) {
+      computeBasePoints();
+    }
+
+    const t0 = performance.now();
+    await paintSolubleTree(atomSolubleTree.deref()?.getParams?.() || []);
+    const dt = performance.now() - t0;
+    frameCount++;
+    if (frameCount === 1) {
+      console.log(`[soluble] first frame render time: ${dt.toFixed(1)}ms`);
+    }
+  })();
+
+  try {
+    await activeFramePromise;
+  } finally {
+    paintingFrame = false;
+    activeFramePromise = null;
+  }
 };
 
 /** based on code https://webgpu.github.io/webgpu-samples/?sample=imageBlur#fullscreenTexturedQuad.wgsl */

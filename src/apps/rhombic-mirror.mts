@@ -5,11 +5,16 @@ import { Number4, rand, randBalance, randBetween, range } from "../math.mjs";
 import { type ButtonEvents } from "../control.mjs";
 import { SolubleApp } from "../primes.mjs";
 import { BaseCellParams, createSecondaryDataBuffer } from "../paint.mjs";
+import { updateHeldYRotation } from "./polyhedra-rotation.mjs";
 
+// This demo uses the rhombic dodecahedron: 12 rhombus faces and 14 vertices.
+// It is one of the classic space-filling rhombic polyhedra and matches the old hand-built mirror style.
 let store = {
   disableLens: 0, // or 1
   radius: 0.98,
   startedAt: performance.now(),
+  angleY: 0,
+  lastTickAt: performance.now(),
 };
 
 type Cell = {
@@ -22,7 +27,7 @@ let makeCell = (a: Number4, b: Number4, c: Number4) => {
   return { position: a, velocity: b, arm: c } as Cell;
 };
 
-// points of rhombic hexecontahedron
+// The 6 axis points and 8 cube-corner points are enough to describe all 12 rhombic faces.
 let u = 100;
 
 // use z axis positive to decide front direction
@@ -45,6 +50,7 @@ let p6: Number4 = [1 * u, -1 * u, 1 * u, 0];
 let p7: Number4 = [1 * u, -1 * u, -1 * u, 0];
 let p8: Number4 = [-1 * u, -1 * u, -1 * u, 0];
 
+// Each rhombus face is split into 2 mirror triangles.
 let createRhombic = () => {
   return [
     makeCell(pTop, p1, p2),
@@ -74,6 +80,7 @@ let createRhombic = () => {
   ] as Cell[];
 };
 
+// Segments trace the visible edge skeleton of the rhombic dodecahedron.
 let createSegments = () => {
   let d = u;
   /** as placeholder */
@@ -108,18 +115,19 @@ let createSegments = () => {
   ] as Cell[];
 };
 
+const baseMirrors = createRhombic();
+const baseSegments = createSegments();
+
 export const rhombicMirrorConfigs: SolubleApp = {
   initPointsBuffer: () => {
-    let items = createRhombic();
-    let secondary = createSegments();
-
-    createGlobalPointsBuffer(items.length, (idx) => items[idx]);
-    createSecondaryDataBuffer(secondary.length, (idx) => secondary[idx]);
+    createGlobalPointsBuffer(baseMirrors.length, (idx) => baseMirrors[idx]);
+    createSecondaryDataBuffer(baseSegments.length, (idx) => baseSegments[idx]);
   },
   useCompute: false,
   renderShader: mirrors,
   // onButtonEvent: (events: ButtonEvents) => { },
   getParams: () => {
+    updateHeldYRotation(store, baseMirrors, baseSegments);
     return [performance.now() - store.startedAt];
   },
   // getTextures: (obj) => {

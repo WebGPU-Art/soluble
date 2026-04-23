@@ -68,6 +68,8 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   let shift_z = 50.0;
 
   let d = 26.4;
+  let max_seg_len = 2.2 * d;
+  let color_cap = vec4<f32>(0.4, 0.7, 0.9, 1.0);
 
   var current_viewer = uniforms.viewer_position;
   var current_ray_unit = ray_unit;
@@ -80,6 +82,11 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   let segments_size = arrayLength(&secondary_points);
 
   for (var times = 0u; times < max_relect_times + 1u; times++) {
+
+    // Early exit: color already saturated, further reflections only add more
+    if all(total_color.rgb >= color_cap.rgb) {
+      break;
+    }
 
     var hit_mirror = false;
     var nearest = RayMirrorHit(false, vec3<f32>(0.0, 0.0, 0.0), 1000000., vec3<f32>(0.0, 0.0, 0.0));
@@ -99,12 +106,16 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
       }
     }
 
-
-    let t = params.time * 0.000;
+    // Hoist f out of the segment loop: only depends on in_mirror (constant within this iteration)
+    let f = pow(f32(in_mirror) / 2. + 2.0, 3.);
 
     for (var i = 0u; i < segments_size; i = i + 1u) {
+      // Early exit: color already saturated
+      if all(total_color.rgb >= color_cap.rgb) {
+        break;
+      }
+
       var segment = Segment(secondary_points[i].a.xyz, secondary_points[i].b.xyz);
-      // let ray_segment = Segment(ray_unit, ray_unit + ray_unit);
       let reach = ray_closest_point_to_line(current_viewer, current_ray_unit, segment);
 
       if !reach.positive_side && in_mirror < 1u {
@@ -119,25 +130,19 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
         }
       }
 
-      // let distance = reach.distance;
-      // let factor = (0.1 + exp(-traveled));
-      // if distance < 0.2 && reach.positive_side {
-      //   total_color = vec4<f32>(1.0, 0.8, 0.0, 1.0);
-      // }
-
       let seg_len = length(segment.end - segment.start);
       let distance = max(0.001, reach.distance - 0.6);
-      let f = pow(f32(in_mirror) / 2. + 2.0, 3.);
       var color_scale = 1.2 / pow(distance * 0.07 + 0.01, 1.8) / f;
-      if seg_len > 2.2 * d {
+      if seg_len > max_seg_len {
         color_scale *= .1;
       }
 
       total_color += vec4<f32>(0.01, 0.02, 0.01, 0.0) * color_scale;
-      total_color = min(total_color, vec4<f32>(0.4, 0.7, 0.9, 1.0));
+      total_color = min(total_color, color_cap);
     }
 
     if hit_mirror {
+      if rand11(dot(vx_out.uv, vec2f(127.1, 311.7)) + f32(times) * 43.7) < 0.15 { break; }
       total_color += vec4<f32>(0.01, 0.006, .02, 0.);
       current_viewer = nearest.point;
       current_ray_unit = nearest.next_ray_unit;

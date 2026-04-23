@@ -7,15 +7,16 @@
     "compile": "rm -rfv lib/* && tsc -d --project tsconfig.json --outDir lib/",
     "prepare": "yarn compile"
   },
+  "packageManager": "yarn@4.12.0",
   "devDependencies": {
-    "@calcit/procs": "^0.9.20",
-    "@types/node": "^24.9.1",
-    "@webgpu/types": "^0.1.66",
+    "@calcit/procs": "^0.12.25",
+    "@types/node": "^25.0.3",
+    "@webgpu/types": "^0.1.68",
     "bottom-tip": "^0.1.5",
-    "prettier": "^3.6.2",
+    "prettier": "^3.7.4",
     "typescript": "^5.9.3",
-    "vite": "^7.1.12",
-    "vite-plugin-glsl": "^1.5.4"
+    "vite": "^7.3.0",
+    "vite-plugin-glsl": "^1.5.5"
   },
   "dependencies": {
     "@triadica/touch-control": "^0.0.4-a1",

@@ -1,6 +1,17 @@
 export { createRenderer, initializeContext, renderSolubleTree } from "./render.mjs";
 
-export { paintSolubleTree, resetCanvasHeight, callFramePaint, computeBasePoints, createGlobalPointsBuffer, clearPointsBuffer } from "./paint.mjs";
+export {
+  paintSolubleTree,
+  resetCanvasHeight,
+  callFramePaint,
+  computeBasePoints,
+  createGlobalPointsBuffer,
+  updateGlobalPointsBuffer,
+  updateSecondaryDataBuffer,
+  writePointsBufferRaw,
+  clearPointsBuffer,
+  waitForRenderIdle,
+} from "./paint.mjs";
 
 export { onControlEvent, registerShaderResult, loadTouchControl, loadGamepadControl } from "./control.mjs";
 
