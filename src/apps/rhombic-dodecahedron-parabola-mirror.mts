@@ -75,17 +75,17 @@ let store = {
   lastTickAt: performance.now(),
 };
 
-const LR = 0.010;
+const LR = 0.01;
 const LG = 0.013;
-const LB = 0.030;
+const LB = 0.03;
 const BR = 0.008;
-const BG = 0.010;
+const BG = 0.01;
 const BB = 0.022;
 // Peak downward acceleration inside the polyhedron. The shader oscillates
 // continuously between 0 and this value, so at the trough the picture matches
 // the straight-line `rhombic-dodecahedron-diagonals-mirror` exactly and at the
 // crest interior legs bend into visible parabolas.
-const CURVE_MAX = 0.00006;
+const CURVE_MAX = 0.00192;
 
 export const rhombicDodecahedronParabolaMirrorConfigs: SolubleApp = {
   initPointsBuffer: () => {
@@ -96,6 +96,6 @@ export const rhombicDodecahedronParabolaMirrorConfigs: SolubleApp = {
   renderShader: shader,
   getParams: () => {
     updateHeldYRotation(store, mirrors, segments);
-    return [performance.now() - store.startedAt, store.maxReflections, LR, LG, LB, BR, BG, BB, CURVE_MAX];
+    return [(performance.now() - store.startedAt) / 512, store.maxReflections, LR, LG, LB, BR, BG, BB, CURVE_MAX];
   },
 };

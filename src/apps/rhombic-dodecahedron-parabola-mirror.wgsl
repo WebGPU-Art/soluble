@@ -211,7 +211,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   // Continuous acceleration envelope: 0 -> curve_max -> 0 over a slow cosine wave.
   // The whole picture sees exactly one gravity vector per frame and the kinematics
   // reduce to straight lines when curve_accel == 0, so the morph is continuous.
-  let accel_phase = 0.5 - 0.5 * cos(params.lifetime * 0.00035);
+  let accel_phase = sin(params.lifetime * 0.0224);
   let curve_accel = params.curve_max * accel_phase;
   let gravity_inside = vec3<f32>(0.0, -curve_accel, 0.0);
 
@@ -271,7 +271,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
     }
 
     if hit_mirror {
-      if rand11(dot(vx_out.uv, vec2f(127.1, 311.7)) + f32(times) * 43.7) < 0.15 { break; }
+      if rand11(dot(vx_out.uv, vec2f(127.1, 311.7)) + f32(times) * 43.7) < 0.075 { break; }
       total_color += bounce_tint;
       current_viewer = nearest.point;
       current_velocity = nearest.next_velocity;

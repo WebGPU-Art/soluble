@@ -24,23 +24,11 @@ const c: Number4 = [-u, u, -u, 0];
 const d: Number4 = [-u, -u, u, 0];
 
 // 4 faces (normals handled in shader by dot-product sign check)
-const mirrors: Cell[] = [
-  makeCell(a, b, c),
-  makeCell(a, d, b),
-  makeCell(a, c, d),
-  makeCell(c, b, d),
-];
+const mirrors: Cell[] = [makeCell(a, b, c), makeCell(a, d, b), makeCell(a, c, d), makeCell(c, b, d)];
 
 // Segments = 6 edges of the tetrahedron. These are the light-emitting lines that
 // appear as glowing streaks inside the mirror cavity.
-const segments: Cell[] = [
-  makeSegment(a, b),
-  makeSegment(a, c),
-  makeSegment(a, d),
-  makeSegment(b, c),
-  makeSegment(b, d),
-  makeSegment(c, d),
-];
+const segments: Cell[] = [makeSegment(a, b), makeSegment(a, c), makeSegment(a, d), makeSegment(b, c), makeSegment(b, d), makeSegment(c, d)];
 
 let store = {
   startedAt: performance.now(),
@@ -54,13 +42,13 @@ const LR = 0.025;
 const LG = 0.015;
 const LB = 0.006;
 const BR = 0.018;
-const BG = 0.010;
+const BG = 0.01;
 const BB = 0.004;
 
 // Peak downward acceleration inside the tetrahedron. With edge ~283 units a
 // ray traversing half an edge (≈140 units) drops 0.5 * 0.0004 * 140² ≈ 4 units
 // at the peak — clearly visible but not chaotic.
-const CURVE_MAX = 0.0004;
+const CURVE_MAX = 0.0256;
 
 export const tetrahedronParabolaMirrorConfigs: SolubleApp = {
   initPointsBuffer: () => {
@@ -71,6 +59,6 @@ export const tetrahedronParabolaMirrorConfigs: SolubleApp = {
   renderShader: shader,
   getParams: () => {
     updateHeldYRotation(store, mirrors, segments);
-    return [performance.now() - store.startedAt, store.maxReflections, LR, LG, LB, BR, BG, BB, CURVE_MAX];
+    return [(performance.now() - store.startedAt) / 128, store.maxReflections, LR, LG, LB, BR, BG, BB, CURVE_MAX];
   },
 };
