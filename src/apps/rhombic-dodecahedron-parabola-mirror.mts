@@ -85,7 +85,7 @@ const BB = 0.022;
 // continuously between 0 and this value, so at the trough the picture matches
 // the straight-line `rhombic-dodecahedron-diagonals-mirror` exactly and at the
 // crest interior legs bend into visible parabolas.
-const CURVE_MAX = 0.00192;
+const CURVE_MAX = 0.0128;
 
 export const rhombicDodecahedronParabolaMirrorConfigs: SolubleApp = {
   initPointsBuffer: () => {
@@ -96,6 +96,6 @@ export const rhombicDodecahedronParabolaMirrorConfigs: SolubleApp = {
   renderShader: shader,
   getParams: () => {
     updateHeldYRotation(store, mirrors, segments);
-    return [(performance.now() - store.startedAt) / 512, store.maxReflections, LR, LG, LB, BR, BG, BB, CURVE_MAX];
+    return [(performance.now() - store.startedAt) / 128, store.maxReflections, LR, LG, LB, BR, BG, BB, CURVE_MAX];
   },
 };
