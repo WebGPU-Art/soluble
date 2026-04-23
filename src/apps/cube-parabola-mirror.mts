@@ -90,6 +90,8 @@ export const cubeParabolaMirrorConfigs: SolubleApp = {
   renderShader: shader,
   getParams: () => {
     updateHeldYRotation(store, mirrors, segments);
-    return [(performance.now() - store.startedAt) / 128, store.maxReflections, LR, LG, LB, BR, BG, BB, CURVE_MAX];
+    // Gravity along the body diagonal normalize(1,1,1) ≈ 0.5774
+    const D = 0.5773502692;
+    return [(performance.now() - store.startedAt) / 128, store.maxReflections, LR, LG, LB, BR, BG, BB, CURVE_MAX, D, D, D];
   },
 };

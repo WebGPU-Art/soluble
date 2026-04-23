@@ -21,6 +21,9 @@ struct Params {
   bg: f32,
   bb: f32,
   curve_max: f32,
+  gx: f32,
+  gy: f32,
+  gz: f32,
 }
 
 @group(0) @binding(1) var<uniform> params: Params;
@@ -213,7 +216,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   // reduce to straight lines when curve_accel == 0, so the morph is continuous.
   let accel_phase = sin(params.lifetime * 0.0224);
   let curve_accel = params.curve_max * accel_phase;
-  let gravity_inside = vec3<f32>(0.0, -curve_accel, 0.0);
+  let gravity_inside = vec3<f32>(params.gx, params.gy, params.gz) * curve_accel;
 
   var current_viewer = uniforms.viewer_position;
   var current_velocity = ray_unit;

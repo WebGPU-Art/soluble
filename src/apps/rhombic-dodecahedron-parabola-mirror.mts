@@ -96,6 +96,6 @@ export const rhombicDodecahedronParabolaMirrorConfigs: SolubleApp = {
   renderShader: shader,
   getParams: () => {
     updateHeldYRotation(store, mirrors, segments);
-    return [(performance.now() - store.startedAt) / 128, store.maxReflections, LR, LG, LB, BR, BG, BB, CURVE_MAX];
+    return [(performance.now() - store.startedAt) / 128, store.maxReflections, LR, LG, LB, BR, BG, BB, CURVE_MAX, 0, -1, 0];
   },
 };
