@@ -34,10 +34,18 @@ const mirrors: Cell[] = [
 
 // 12 edges: each of the 6 vertices connects to the 4 vertices not on the same axis
 const segments: Cell[] = [
-  makeSegment(px, py), makeSegment(px, ny), makeSegment(px, pz), makeSegment(px, nz),
-  makeSegment(nx, py), makeSegment(nx, ny), makeSegment(nx, pz), makeSegment(nx, nz),
-  makeSegment(py, pz), makeSegment(py, nz),
-  makeSegment(ny, pz), makeSegment(ny, nz),
+  makeSegment(px, py),
+  makeSegment(px, ny),
+  makeSegment(px, pz),
+  makeSegment(px, nz),
+  makeSegment(nx, py),
+  makeSegment(nx, ny),
+  makeSegment(nx, pz),
+  makeSegment(nx, nz),
+  makeSegment(py, pz),
+  makeSegment(py, nz),
+  makeSegment(ny, pz),
+  makeSegment(ny, nz),
 ];
 
 let store = {
@@ -50,8 +58,8 @@ let store = {
 // Rose/magenta palette — distinct from the other demos
 const LR = 0.028;
 const LG = 0.008;
-const LB = 0.020;
-const BR = 0.020;
+const LB = 0.02;
+const BR = 0.02;
 const BG = 0.005;
 const BB = 0.014;
 

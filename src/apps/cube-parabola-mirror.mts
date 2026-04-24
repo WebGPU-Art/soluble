@@ -72,11 +72,11 @@ let store = {
 
 // Cool teal/cyan palette
 const LR = 0.006;
-const LG = 0.020;
+const LG = 0.02;
 const LB = 0.028;
 const BR = 0.004;
 const BG = 0.014;
-const BB = 0.020;
+const BB = 0.02;
 
 // Same amplitude as tetrahedron; cube edge = 2u = 200, interior paths similar length.
 const CURVE_MAX = 0.0256;
