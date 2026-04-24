@@ -34,11 +34,13 @@ struct BaseCell {
   c: vec4<f32>,
 };
 
-@group(1) @binding(0) var<storage, read_write> base_points: array<BaseCell>;
-@group(1) @binding(1) var<storage, read_write> secondary_points: array<BaseCell>;
+@group(1) @binding(0) var<storage, read> base_points: array<BaseCell>;
+@group(1) @binding(1) var<storage, read> secondary_points: array<BaseCell>;
 
 @compute @workgroup_size(8, 8, 1)
-fn compute_main(@builtin(global_invocation_id) global_id: vec3u) {}
+fn compute_main(@builtin(global_invocation_id) global_id: vec3u) {
+  // noop placeholder for future compute work
+}
 
 struct VertexOut {
   @builtin(position) position: vec4<f32>,
@@ -94,6 +96,10 @@ fn linear_reach(origin: vec3<f32>, velocity: vec3<f32>, s: Segment) -> ReachResu
   return ReachResult(linear.distance, linear.positive_side, linear.traveled / speed);
 }
 
+// Number of uniform samples along the parabola in curved_reach.
+// Increase for higher quality (slower), decrease for better performance.
+const CURVED_REACH_SAMPLES: u32 = 96u;
+
 // Parabolic reach: uniform-sample the parabola on [0, max_travel] to find the
 // closest approach to a finite segment, then take a single quadratic-interpolation
 // refinement around the discrete minimum for sub-step accuracy. Uniform sampling
@@ -104,7 +110,7 @@ fn curved_reach(origin: vec3<f32>, velocity: vec3<f32>, gravity: vec3<f32>, s: S
     let p = origin;
     return ReachResult(point_to_segment_distance(p, s), false, 0.0);
   }
-  let steps = 96u;
+  let steps = CURVED_REACH_SAMPLES;
   var best_distance = 1e30;
   var best_i = 1u;
   for (var i = 1u; i <= steps; i = i + 1u) {

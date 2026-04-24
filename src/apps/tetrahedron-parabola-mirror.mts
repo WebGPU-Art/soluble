@@ -45,9 +45,11 @@ const BR = 0.018;
 const BG = 0.01;
 const BB = 0.004;
 
-// Peak downward acceleration inside the tetrahedron. With edge ~283 units a
-// ray traversing half an edge (≈140 units) drops 0.5 * 0.0004 * 140² ≈ 4 units
-// at the peak — clearly visible but not chaotic.
+// Peak acceleration inside the tetrahedron. With edge ~283 units a ray
+// traversing half an edge (≈140 units) has a maximum drop of
+// 0.5 * CURVE_MAX * 140² ≈ 251 units at full amplitude — strongly curved.
+// The sin oscillation means the acceleration alternates sign, so interior
+// paths arc upward and downward in alternation.
 const CURVE_MAX = 0.0256;
 
 export const tetrahedronParabolaMirrorConfigs: SolubleApp = {

@@ -20,16 +20,16 @@ const ny: Number4 = [0, -R, 0, 0];
 const pz: Number4 = [0, 0, R, 0];
 const nz: Number4 = [0, 0, -R, 0];
 
-// 8 faces
+// 8 faces — vertex order chosen so cross(b-a, c-a) points outward from origin.
 const mirrors: Cell[] = [
-  makeCell(px, py, pz),
-  makeCell(nx, py, pz),
-  makeCell(px, ny, pz),
-  makeCell(nx, ny, pz),
-  makeCell(px, py, nz),
-  makeCell(nx, py, nz),
-  makeCell(px, ny, nz),
-  makeCell(nx, ny, nz),
+  makeCell(px, py, pz),  // +++ outward (+,+,+) ✓
+  makeCell(nx, pz, py),  // -++ outward (-,+,+) — swapped py/pz to fix winding
+  makeCell(px, pz, ny),  // +-+ outward (+,-,+) — swapped ny/pz to fix winding
+  makeCell(nx, ny, pz),  // --+ outward (-,-,+) ✓
+  makeCell(px, nz, py),  // ++- outward (+,+,-) — swapped py/nz to fix winding
+  makeCell(nx, py, nz),  // -+- outward (-,+,-) ✓
+  makeCell(px, ny, nz),  // +-- outward (+,-,-) ✓
+  makeCell(nx, nz, ny),  // --- outward (-,-,-) — swapped ny/nz to fix winding
 ];
 
 // 12 edges: each of the 6 vertices connects to the 4 vertices not on the same axis
