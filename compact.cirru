@@ -103,7 +103,7 @@
             def tab-groups $ []
               [] |Fractals $ [] (:: :cubic-fire "|Cubic Fire" :dark) (:: :quaternion-fractal "|Quaternion Fractal" :dark) (:: :complex-fractal "|Complex Fractal" :dark) (:: :newton-fractal "|Newton Fractal" :dark) (:: :newton-cosh-fractal "|Newton Cosh Fractal" :dark) (:: :space-fractal "|Space Fractal" :dark) (:: :sphere-fractal "|Sphere Fractal" :dark) (:: :slow-fractal "|Slow Fractal" :dark)
               [] |Effects $ [] (:: :orbits |Orbits :dark) (:: :stars |Stars :dark) (:: :rings |Rings :dark) (:: :circles |Circles :dark) (:: :kaleidoscope |Kaleidoscope :dark) (:: :image |Image :dark) (:: :clocking |Clocking :dark) (:: :ripple |Ripple :dark) (:: :dots-clock "|Dots Clock" :dark) (:: :inversion-circles "|Inversion Circles" :dark)
-              [] |Mirrors $ [] (:: :surround-mirror "|Surrond Mirror" :dark) (:: :kaleidoscope-mirror "|Kaleidoscope Mirror" :dark) (:: :parallel-mirror "|Parallel Mirror" :dark) (:: :sphere-mirror "|Sphere Mirror" :dark) (:: :orbit-spheres-mirror "|Orbit Spheres Mirror" :dark) (:: :gravity-spheres "|Gravity Spheres" :dark) (:: :hollow-mirror "|Hollow Mirror" :dark) (:: :box-mirror "|Box Mirror" :dark) (:: :pyramid-mirror "|Pyramid Mirror" :dark)
+              [] |Mirrors $ [] (:: :surround-mirror "|Surrond Mirror" :dark) (:: :kaleidoscope-mirror "|Kaleidoscope Mirror" :dark) (:: :parallel-mirror "|Parallel Mirror" :dark) (:: :sphere-mirror "|Sphere Mirror" :dark) (:: :orbit-spheres-mirror "|Orbit Spheres Mirror" :dark) (:: :gravity-spheres "|Gravity Spheres" :dark) (:: :gravity-cubes "|Gravity Cubes" :dark) (:: :gravity-octahedron "|Gravity Octahedron" :dark) (:: :hollow-mirror "|Hollow Mirror" :dark) (:: :box-mirror "|Box Mirror" :dark) (:: :pyramid-mirror "|Pyramid Mirror" :dark)
               [] |Polyhedra $ [] (:: :tetrahedron-mirror "|Tetrahedron Mirror" :dark) (:: :tetrahedron-parabola-mirror "|Tetrahedron Parabola" :dark) (:: :tetrahedron-arc-mirror "|Tetrahedron Arc" :dark) (:: :cube-parabola-mirror "|Cube Parabola" :dark) (:: :octahedron-mirror "|Octahedron Mirror" :dark) (:: :octahedron-parabola-mirror "|Octahedron Parabola" :dark) (:: :truncated-octahedron-mirror "|Truncated Octahedron" :dark) (:: :cuboctahedron-mirror "|Cuboctahedron Mirror" :dark) (:: :prism-mirror "|Prism Mirror" :dark) (:: :hex-prism-mirror "|Hex Prism Mirror" :dark) (:: :icosahedron-mirror "|Icosahedron Mirror" :dark) (:: :wedge-mirror "|Wedge Mirror" :dark) (:: :rhombohedron-mirror "|Rhombohedron Mirror" :dark) (:: :rhombic-mirror "|Rhombic Mirror" :dark) (:: :rhombic-dodecahedron-diagonals-mirror "|Rhombic Dodecahedron Diagonals" :dark) (:: :rhombic-dodecahedron-parabola-mirror "|Rhombic Dodecahedron Parabola" :dark) (:: :rhombic-dodecahedron-rotating-mirror "|Rhombic Dodecahedron Rotating" :dark) (:: :rt-mirror "|Rhombic Triacontahedron" :dark) (:: :deltoidal-icositetrahedron-mirror "|Deltoidal Icositetrahedron" :dark) (:: :dodecahedron-mirror "|Dodecahedron Mirror" :dark) (:: :crystal-refraction "|Crystal Refraction" :dark)
           :examples $ []
         |tabs $ %{} :CodeEntry (:doc |) (:schema :dynamic)
@@ -219,6 +219,8 @@
                 :sphere-mirror sphereMirrorConfigs
                 :orbit-spheres-mirror orbitSpheresMirrorConfigs
                 :gravity-spheres gravitySpheresMirrorConfigs
+                :gravity-cubes gravityCubesConfigs
+                :gravity-octahedron gravityOctahedraConfigs
                 :hollow-mirror hollowMirrorConfigs
                 :box-mirror boxMirrorConfigs
                 :pyramid-mirror pyramidMirrorConfigs
@@ -431,6 +433,8 @@
             |../src/apps/crystal-refraction.mts :refer $ crystalRefractionConfigs
             |../src/apps/orbit-spheres-mirror.mts :refer $ orbitSpheresMirrorConfigs
             |../src/apps/gravity-spheres.mts :refer $ gravitySpheresMirrorConfigs
+            |../src/apps/gravity-cubes.mts :refer $ gravityCubesConfigs
+            |../src/apps/gravity-octahedron.mts :refer $ gravityOctahedraConfigs
             |../src/apps/dots-clock.mts :refer $ dotsClockConfigs
             |../src/apps/inversion-circles.mts :refer $ inversionCirclesConfigs
             |../src/global.mts :refer $ atomSolubleTree
