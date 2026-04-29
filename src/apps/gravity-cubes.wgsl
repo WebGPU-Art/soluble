@@ -89,11 +89,11 @@ fn obb_normal(p: vec3f, cube: Cube) -> vec3f {
 }
 
 // Gravity from the centroid of all cubes — single pull point, keeps it simple
-fn gravity_at(p: vec3f, cubes: array<Cube, 3>) -> vec3f {
+fn gravity_at(p: vec3f, cubes: array<Cube, 3>, gm_scale: f32) -> vec3f {
   let cm = (cubes[0].center + cubes[1].center + cubes[2].center) / 3.0;
   let diff = cm - p;
   let r2 = max(dot(diff, diff), 2500.0);
-  return normalize(diff) * 260.0 / r2;
+  return normalize(diff) * 260.0 * gm_scale / r2;
 }
 
 const GRAV_STEPS: u32 = 500u;
@@ -110,6 +110,10 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
   var color = vec4f(0.02, 0.01, 0.09, 1.0);
   let cubes = make_cubes(params.time);
+
+  // Pulsing gravity: sin(t * 0.0002) * 2.0 — half the speed of pulse-spheres
+  // sin = 0.5 → gm_scale = 1.0 (baseline), sin < 0 → repulsion
+  let gm_scale = sin(params.time * 0.0002) * 2.0;
 
   // ── Phase 1: SDF sphere-march for first cube hit ──────────────────────────
   var march_t = 0.0;
@@ -139,7 +143,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   var vel = reflect(ray_unit, normal0);
 
   for (var step = 0u; step < GRAV_STEPS; step++) {
-    let accel = gravity_at(pos, cubes);
+    let accel = gravity_at(pos, cubes, gm_scale);
     vel = normalize(vel + accel * STEP);
     pos = pos + vel * STEP;
 
