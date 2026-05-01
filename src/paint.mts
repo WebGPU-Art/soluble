@@ -318,8 +318,8 @@ let buildCommandBuffer = (t: number, params: number[], textures: GPUTexture[]): 
 
     let particlesBindGroupLayout = device.createBindGroupLayout({
       entries: [
-        { binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { type: "storage" } } as GPUBindGroupLayoutEntry,
-        (hasSecondary ? { binding: 1, visibility: GPUShaderStage.FRAGMENT, buffer: { type: "storage" } } : undefined) as GPUBindGroupLayoutEntry,
+        { binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { type: "read-only-storage" } } as GPUBindGroupLayoutEntry,
+        (hasSecondary ? { binding: 1, visibility: GPUShaderStage.FRAGMENT, buffer: { type: "read-only-storage" } } : undefined) as GPUBindGroupLayoutEntry,
       ].filter(Boolean),
     });
 

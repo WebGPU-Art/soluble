@@ -46,6 +46,6 @@ export const crystalRefractionConfigs: SolubleApp = {
   getParams: () => {
     const t = performance.now() - store.startedAt;
     updateHeldYRotation(store, geometry.mirrors, geometry.segments);
-    return [t, store.maxReflections, 0.006, 0.030, 0.040, 0.010, 0.018, 0.034, 1.49, 0.78];
+    return [t, store.maxReflections, 0.006, 0.03, 0.04, 0.01, 0.018, 0.034, 1.49, 0.78];
   },
 };

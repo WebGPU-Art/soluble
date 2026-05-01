@@ -16,7 +16,7 @@ struct BaseCell {
 };
 
 
-@group(1) @binding(0) var<storage, read_write> base_points: array<BaseCell>;
+@group(1) @binding(0) var<storage, read> base_points: array<BaseCell>;
 
 // Render Pass
 

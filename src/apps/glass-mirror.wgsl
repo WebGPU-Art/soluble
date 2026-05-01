@@ -25,8 +25,8 @@ struct BaseCell {
   c: vec4<f32>,
 };
 
-@group(1) @binding(0) var<storage, read_write> base_points: array<BaseCell>;
-@group(1) @binding(1) var<storage, read_write> secondary_points: array<BaseCell>;
+@group(1) @binding(0) var<storage, read> base_points: array<BaseCell>;
+@group(1) @binding(1) var<storage, read> secondary_points: array<BaseCell>;
 
 @compute @workgroup_size(8, 8, 1)
 fn compute_main(@builtin(global_invocation_id) global_id: vec3u) {}
