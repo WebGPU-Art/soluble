@@ -1,8 +1,8 @@
 #import soluble::perspective
 
-// Twin Pulse: axis-aligned cube + sphere both at origin.
-// They alternate size: cube via sin, sphere via cos.
-// Ray bounces between the two surfaces (straight reflections, no gravity).
+// Twin Cubes: two independently rotating cubes both at origin.
+// They alternate size: cube A via sin, cube B via cos.
+// Ray bounces between the two cubes' surfaces (straight reflections, no gravity).
 // If at any step the ray passes within EDGE_THRESH of a cube edge → white pixel.
 
 struct Params { time: f32, dt: f32, max_reflections: f32 }
@@ -62,36 +62,58 @@ fn dist_to_cube_edges(p: vec3f, hs: f32) -> f32 {
   return min(d_xe, min(d_ye, d_ze));
 }
 
+fn rot_x(a: f32) -> mat3x3<f32> {
+  let c = cos(a); let s = sin(a);
+  return mat3x3<f32>(vec3f(1.,0.,0.), vec3f(0.,c,s), vec3f(0.,-s,c));
+}
+fn rot_y(a: f32) -> mat3x3<f32> {
+  let c = cos(a); let s = sin(a);
+  return mat3x3<f32>(vec3f(c,0.,-s), vec3f(0.,1.,0.), vec3f(s,0.,c));
+}
+fn rot_z(a: f32) -> mat3x3<f32> {
+  let c = cos(a); let s = sin(a);
+  return mat3x3<f32>(vec3f(c,s,0.), vec3f(-s,c,0.), vec3f(0.,0.,1.));
+}
+
 // ── March helpers ─────────────────────────────────────────────────────────────
+
+// Simple hash for stochastic bounce drop
+fn hash2(p: vec2f) -> f32 {
+  var n = dot(p, vec2f(127.1, 311.7));
+  n = fract(sin(n) * 43758.5453);
+  return n;
+}
 
 struct Hit {
   pos:      vec3f,
   found:    bool,
   hit_cube: bool,
-  edge:     bool,   // did the ray pass near a cube edge?
+  edge:     bool,
 }
 
-const EDGE_THRESH: f32 = 1.8;
+const EDGE_THRESH: f32 = 0.9;
 
-// March from pos_in along dir; abs(SDF) stepping handles inside/outside both shapes.
-// check_edges: only accumulate h.edge when inside the cube (dc < 0).
-fn march(pos_in: vec3f, dir: vec3f, ctr_cube: vec3f, hs: f32, ctr_sphere: vec3f, r: f32, check_edges: bool) -> Hit {
+// March from pos_in along dir; two separate objects (union), min SDF stepping.
+// hit_cube=true means hit cube A (axis-aligned), false means cube B (rotated).
+fn march(pos_in: vec3f, dir: vec3f, ctr_a: vec3f, hs_a: f32, rot_b: mat3x3<f32>, ctr_b: vec3f, hs_b: f32, check_edges: bool) -> Hit {
   var pos = pos_in;
   var h: Hit;
   for (var i = 0u; i < 600u; i++) {
-    let dc = sdf_box(pos - ctr_cube, hs);
-    let ds = length(pos - ctr_sphere) - r;
-    let d  = min(abs(dc), abs(ds));
+    let lp_a = pos - ctr_a;
+    let lp_b = transpose(rot_b) * (pos - ctr_b);
+    let da = sdf_box(lp_a, hs_a);
+    let db = sdf_box(lp_b, hs_b);
+    let d  = min(abs(da), abs(db));
 
-    // Edge detection: only when inside or just touching the cube surface
-    if check_edges && dc < 0.5 {
-      if dist_to_cube_edges(pos - ctr_cube, hs) < EDGE_THRESH { h.edge = true; }
+    if check_edges {
+      if da < 0.5 { if dist_to_cube_edges(lp_a, hs_a) < EDGE_THRESH { h.edge = true; } }
+      if db < 0.5 { if dist_to_cube_edges(lp_b, hs_b) < EDGE_THRESH { h.edge = true; } }
     }
 
     if d < 0.25 {
       h.pos      = pos;
       h.found    = true;
-      h.hit_cube = abs(dc) < abs(ds);
+      h.hit_cube = abs(da) < abs(db);
       return h;
     }
     pos += dir * max(d * 0.85, 0.4);
@@ -102,8 +124,8 @@ fn march(pos_in: vec3f, dir: vec3f, ctr_cube: vec3f, hs: f32, ctr_sphere: vec3f,
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-const CUBE_COLOR:   vec3f = vec3f(1.0, 0.60, 0.12);  // warm gold
-const SPHERE_COLOR: vec3f = vec3f(0.25, 0.60, 1.0);  // cool blue
+const CUBE_A_COLOR: vec3f = vec3f(1.0, 0.60, 0.12);  // warm gold
+const CUBE_B_COLOR: vec3f = vec3f(0.25, 0.60, 1.0);  // cool blue
 
 // ── Fragment ──────────────────────────────────────────────────────────────────
 
@@ -113,17 +135,19 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   let p        = coord * 0.0005 / uniforms.scale;
   let ray_unit = normalize(p.x * uniforms.rightward + p.y * uniforms.upward + 2.0 * uniforms.forward);
 
-  // Alternating sizes: cube via sin, sphere via cos — half speed
-  let ms = params.time * 0.0005;
-  let hs = 90.0 * (0.55 + 0.45 * sin(ms));
-  let r  = 70.0 * (0.55 + 0.45 * cos(ms));
+  // Alternating sizes: cube A via sin, cube B via cos — half speed
+  let ms   = params.time * 0.0005;
+  let hs_a = 90.0 * (0.55 + 0.45 * sin(ms));
+  let hs_b = 70.0 * (0.55 + 0.45 * cos(ms));
+  // Cube B rotates slowly and independently
+  let rot_b = rot_z(ms * 0.4) * rot_y(ms * 0.7) * rot_x(ms * 0.3);
 
-  // Cube: orbit in XY plane, period driven by ms*0.17
-  let oc = ms * 0.17;
-  let ctr_cube = vec3f(45.0 * cos(oc), 45.0 * sin(oc), 0.0);
-  // Sphere: orbit in a tilted plane, different speed + phase
-  let os = ms * 0.11 + 1.3;
-  let ctr_sphere = vec3f(45.0 * cos(os), 45.0 * sin(os) * 0.5, 45.0 * sin(os) * 0.87);
+  // Cube A: orbit in XY plane, radius 36, slow speed
+  let oa   = ms * 0.13;
+  let ctr_a = vec3f(36.0 * cos(oa), 36.0 * sin(oa), 0.0);
+  // Cube B: orbit in a tilted plane (XZ tilted 50° from XY), radius 36, different speed & phase
+  let ob    = ms * 0.09 + 1.8;
+  let ctr_b = vec3f(36.0 * cos(ob), 36.0 * sin(ob) * 0.64, 36.0 * sin(ob) * 0.77);
 
   var color     = vec3f(0.02, 0.01, 0.09);
   var edge_glow = vec3f(0.0);
@@ -131,12 +155,12 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   var vel       = ray_unit;
 
   // ── Determine starting condition ──────────────────────────────────────────
-  let inside_cube   = sdf_box(pos - ctr_cube, hs) < 0.0;
-  let inside_sphere = length(pos - ctr_sphere) < r;
-  let inside_any    = inside_cube || inside_sphere;
+  let inside_a   = sdf_box(pos - ctr_a, hs_a) < 0.0;
+  let inside_b   = sdf_box(transpose(rot_b) * (pos - ctr_b), hs_b) < 0.0;
+  let inside_any = inside_a || inside_b;
 
   if !inside_any {
-    let entry = march(pos, vel, ctr_cube, hs, ctr_sphere, r, false);
+    let entry = march(pos, vel, ctr_a, hs_a, rot_b, ctr_b, hs_b, false);
     if !entry.found {
       return vec4f(color / (1.0 + color), 1.0);
     }
@@ -148,7 +172,7 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   for (var bounce = 0u; bounce < 16u; bounce++) {
     let fade = 1.0 - f32(bounce) * 0.08;
 
-    var h = march(pos, vel, ctr_cube, hs, ctr_sphere, r, true);
+    var h = march(pos, vel, ctr_a, hs_a, rot_b, ctr_b, hs_b, true);
     // Edge glow: brighter on early bounces, dimmer later
     if h.edge {
       let edge_brightness = max(0.8, 4.0 - f32(bounce) * 0.04);
@@ -158,13 +182,15 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
 
     pos = h.pos;
     let hit_cube = h.hit_cube;
-    color += select(SPHERE_COLOR, CUBE_COLOR, hit_cube) * max(fade, 0.2) * 0.22;
+    color += select(CUBE_B_COLOR, CUBE_A_COLOR, hit_cube) * max(fade, 0.2) * 0.22;
 
+    // Normal opposing incoming ray (works for inner and outer face)
     var raw_n: vec3f;
     if hit_cube {
-      raw_n = box_normal(pos - ctr_cube, hs);
+      raw_n = box_normal(pos - ctr_a, hs_a);
     } else {
-      raw_n = normalize(pos - ctr_sphere);
+      let lp_b = transpose(rot_b) * (pos - ctr_b);
+      raw_n = rot_b * box_normal(lp_b, hs_b);
     }
     let n = select(raw_n, -raw_n, dot(vel, raw_n) > 0.0);
 
