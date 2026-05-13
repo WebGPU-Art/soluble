@@ -22,6 +22,10 @@ import { pixelRatio } from "./config.mjs";
 let prevTime = Date.now();
 let frameCount = 0;
 
+/** Frame-accumulated time for smooth animation — advances a fixed step per rendered frame */
+let accumulatedFrameTime = 0;
+const FRAME_TIME_STEP = 16;
+
 export type BaseCellParams = {
   position: Number4;
   velocity?: Number4;
@@ -412,7 +416,7 @@ export function paintSolubleTree(
   atomBufferNeedClear.reset(true);
   let device = atomDevice.deref();
 
-  let lifetime = Date.now() - startTime;
+  let lifetime = accumulatedFrameTime;
 
   let textures: GPUTexture[] = [];
   if (atomSolubleTree.deref()?.getTextures) {
@@ -457,6 +461,7 @@ export let callFramePaint = async (): Promise<void> => {
     await paintSolubleTree(atomSolubleTree.deref()?.getParams?.() || []);
     const dt = performance.now() - t0;
     frameCount++;
+    accumulatedFrameTime += FRAME_TIME_STEP;
     if (frameCount === 1) {
       console.log(`[soluble] first frame render time: ${dt.toFixed(1)}ms`);
     }
