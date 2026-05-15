@@ -30,12 +30,15 @@ struct BaseCell {
   p8: f32,
 };
 
-@group(1) @binding(0) var<storage, read> base_points: array<BaseCell>;
+@group(1) @binding(0) var<storage, read_write> base_points: array<BaseCell>;
 
 
-@compute @workgroup_size(8, 8, 1)
+@compute @workgroup_size(64)
 fn compute_main(@builtin(global_invocation_id) global_id: vec3u) {
-  var index = global_id.x + global_id.y * 8u;
+  let index = global_id.x;
+  if index >= arrayLength(&base_points) {
+    return;
+  }
   base_points[index].position.y += params.dt * 0.03 * base_points[index].velocity.y;
   if base_points[index].position.y > 200. {
     base_points[index].position.y = -200.;
