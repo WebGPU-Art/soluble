@@ -22,6 +22,10 @@ import { pixelRatio } from "./config.mjs";
 let prevTime = Date.now();
 let frameCount = 0;
 
+/** Frame-accumulated time for smooth animation — advances a fixed step per rendered frame */
+let accumulatedFrameTime = 0;
+const FRAME_TIME_STEP = 16;
+
 export type BaseCellParams = {
   position: Number4;
   velocity?: Number4;
@@ -200,7 +204,7 @@ export function computeBasePoints() {
   passEncoder.setPipeline(computePipeline);
   passEncoder.setBindGroup(0, uniformsBindGroup);
   passEncoder.setBindGroup(1, particlesUniformsBindGroup);
-  passEncoder.dispatchWorkgroups(64);
+  passEncoder.dispatchWorkgroups(Math.max(1, Math.ceil(cachedPointsBaseSize / 64)));
   passEncoder.end();
 
   device.queue.submit([commandEncoder.finish()]);
@@ -308,6 +312,8 @@ let buildCommandBuffer = (t: number, params: number[], textures: GPUTexture[]): 
     cache.textureLayout !== texturesInfo.layout
   ) {
     let hasSecondary = secondaryBuffer != null;
+    let pointsBufferBindingType: GPUBufferBindingType = atomSolubleTree.deref()?.useCompute ? "storage" : "read-only-storage";
+    let secondaryBufferBindingType: GPUBufferBindingType = atomSolubleTree.deref()?.useCompute ? "storage" : "read-only-storage";
 
     let uniformBindGroupLayout = device.createBindGroupLayout({
       entries: [
@@ -318,8 +324,10 @@ let buildCommandBuffer = (t: number, params: number[], textures: GPUTexture[]): 
 
     let particlesBindGroupLayout = device.createBindGroupLayout({
       entries: [
-        { binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { type: "storage" } } as GPUBindGroupLayoutEntry,
-        (hasSecondary ? { binding: 1, visibility: GPUShaderStage.FRAGMENT, buffer: { type: "storage" } } : undefined) as GPUBindGroupLayoutEntry,
+        { binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { type: pointsBufferBindingType } } as GPUBindGroupLayoutEntry,
+        (hasSecondary
+          ? { binding: 1, visibility: GPUShaderStage.FRAGMENT, buffer: { type: secondaryBufferBindingType } }
+          : undefined) as GPUBindGroupLayoutEntry,
       ].filter(Boolean),
     });
 
@@ -412,7 +420,7 @@ export function paintSolubleTree(
   atomBufferNeedClear.reset(true);
   let device = atomDevice.deref();
 
-  let lifetime = Date.now() - startTime;
+  let lifetime = accumulatedFrameTime;
 
   let textures: GPUTexture[] = [];
   if (atomSolubleTree.deref()?.getTextures) {
@@ -457,6 +465,7 @@ export let callFramePaint = async (): Promise<void> => {
     await paintSolubleTree(atomSolubleTree.deref()?.getParams?.() || []);
     const dt = performance.now() - t0;
     frameCount++;
+    accumulatedFrameTime += FRAME_TIME_STEP;
     if (frameCount === 1) {
       console.log(`[soluble] first frame render time: ${dt.toFixed(1)}ms`);
     }
