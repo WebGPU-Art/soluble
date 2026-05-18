@@ -1,6 +1,10 @@
 #import soluble::perspective
-#import soluble::math
 #import soluble::mirror
+
+const MAX_BRANCH_RAYS = 96u;
+const MIN_BRANCH_WEIGHT = 0.0005;
+const SURFACE_EPSILON = 0.12;
+const STOP_MARGIN = 0.25;
 
 struct Params {
   time: f32,
@@ -45,6 +49,14 @@ struct GlassHit {
   refracted: vec3<f32>,
   fresnel: f32,
   tir: bool,
+};
+
+struct RayState {
+  origin: vec3<f32>,
+  direction: vec3<f32>,
+  throughput: vec3<f32>,
+  inside: bool,
+  depth: u32,
 };
 
 @vertex
@@ -99,24 +111,33 @@ fn try_hit_glass(viewer_position: vec3f, ray_unit: vec3f, mirror: MirrorTriangle
   return GlassHit(true, hit_point, t, normal, reflected, refracted, fresnel, tir);
 }
 
-fn sample_segments(origin: vec3f, ray_unit: vec3f, stop_at: f32, attenuation: f32, require_front: bool, offset: f32) -> f32 {
-  var glow = 0.0;
+fn max_component(v: vec3<f32>) -> f32 {
+  return max(v.x, max(v.y, v.z));
+}
+
+fn glass_transmittance(distance: f32) -> vec3<f32> {
+  let absorb = vec3<f32>(0.00055, 0.00035, 0.00022);
+  return exp(-absorb * max(distance, 0.0));
+}
+
+fn sample_segments(origin: vec3f, ray_unit: vec3f, stop_at: f32, attenuation: f32, throughput: vec3<f32>, inside: bool, depth: u32, offset: f32) -> vec3<f32> {
+  var glow = vec3<f32>(0.0);
+  // Approximate the camera pixel footprint so high-order virtual images do not collapse below one sample.
+  let footprint = offset + min(0.035 + 0.075 * f32(depth), 0.42);
+  let visibility_boost = 1.0 + min(0.4 * f32(depth), 2.8);
   let segments_size = arrayLength(&secondary_points);
   for (var i = 0u; i < segments_size; i = i + 1u) {
-    if rand11(f32(i) * 17.31 + dot(origin.xy, vec2f(0.031, 0.047)) + dot(ray_unit.xy, vec2f(11.7, 5.3))) < 0.15 {
-      continue;
-    }
-
     let segment = Segment(secondary_points[i].a.xyz, secondary_points[i].b.xyz);
     let reach = ray_closest_point_to_line(origin, ray_unit, segment);
 
-    if require_front && !reach.positive_side { continue; }
-    if stop_at > 0.0 && reach.traveled > stop_at { continue; }
+    if !reach.positive_side { continue; }
+    if stop_at > 0.0 && reach.traveled > stop_at + STOP_MARGIN { continue; }
 
-    let distance = max(0.001, reach.distance - offset);
-    let core = 0.85 / pow(distance * 0.16 + 0.012, 2.25);
-    let halo = 0.18 / pow(distance * 0.055 + 0.04, 1.45);
-    glow += (core + halo) / attenuation;
+    let distance = max(0.001, reach.distance - footprint);
+    let core = 0.64 / pow(distance * 0.17 + 0.016, 2.0);
+    let halo = 0.08 / pow(distance * 0.06 + 0.052, 1.32);
+    let medium = select(vec3<f32>(1.0), glass_transmittance(reach.traveled), inside);
+    glow += throughput * medium * visibility_boost * ((core + halo) / attenuation);
   }
   return glow;
 }
@@ -128,52 +149,66 @@ fn fragment_main(vx_out: VertexOut) -> @location(0) vec4<f32> {
   let ray_unit = normalize(p.x * uniforms.rightward + p.y * uniforms.upward + 2.0 * uniforms.forward);
 
   let base_light = vec3<f32>(params.lr, params.lg, params.lb);
-  let bounce_tint = vec3<f32>(params.br, params.bg, params.bb);
   let color_cap = vec3<f32>(0.82, 0.92, 1.0);
 
   var total_color = vec3<f32>(0.006, 0.010, 0.024);
   total_color += vec3<f32>(0.004, 0.006, 0.010) * (0.5 + 0.5 * vx_out.uv.y);
 
-  var current_viewer = uniforms.viewer_position;
-  var current_ray_unit = ray_unit;
-
   let max_reflect_times = u32(params.max_reflections);
   let size = arrayLength(&base_points);
 
-  for (var times = 0u; times < max_reflect_times + 1u; times++) {
+  var rays: array<RayState, MAX_BRANCH_RAYS>;
+  var queued_count = 1u;
+  rays[0] = RayState(uniforms.viewer_position, ray_unit, vec3<f32>(1.0), false, 0u);
+
+  for (var ray_idx = 0u; ray_idx < MAX_BRANCH_RAYS; ray_idx = ray_idx + 1u) {
+    if ray_idx >= queued_count { break; }
     if all(total_color >= color_cap) { break; }
+
+    let state = rays[ray_idx];
+    if state.depth > max_reflect_times { continue; }
+    if max_component(state.throughput) < MIN_BRANCH_WEIGHT { continue; }
 
     var nearest = GlassHit(false, vec3<f32>(0.0), 1000000.0, vec3<f32>(0.0), vec3<f32>(0.0), vec3<f32>(0.0), 0.0, false);
     for (var mi = 0u; mi < size; mi = mi + 1u) {
       let cell = base_points[mi];
       let mirror = MirrorTriangle(cell.a.xyz, cell.b.xyz, cell.c.xyz);
-      let hit = try_hit_glass(current_viewer, current_ray_unit, mirror, params.eta);
+      let hit = try_hit_glass(state.origin, state.direction, mirror, params.eta);
       if hit.hit && hit.travel < nearest.travel {
         nearest = hit;
       }
     }
 
-    let attenuation = pow(f32(times) / 2.0 + 1.45, 2.05);
-    let line_glow = sample_segments(current_viewer, current_ray_unit, select(-1.0, nearest.travel, nearest.hit), attenuation, times == 0u, 0.22);
-    total_color += base_light * line_glow;
-
-    if !nearest.hit { break; }
-
-    let reflect_weight = clamp(nearest.fresnel + (1.0 - params.transmit) * 0.55, 0.06, 0.96);
-    let transmit_weight = (1.0 - reflect_weight) * params.transmit;
-
-    let reflected_probe = sample_segments(nearest.point + nearest.reflected * 0.18, nearest.reflected, -1.0, attenuation * 1.35, true, 0.22);
-    let refracted_probe = sample_segments(nearest.point + nearest.refracted * 0.18, nearest.refracted, -1.0, attenuation * 1.45, true, 0.22);
-
-    total_color += base_light * (reflected_probe * 0.26 * reflect_weight + refracted_probe * 0.38 * transmit_weight);
-    total_color += bounce_tint * (0.12 + 0.18 * reflect_weight);
+    let attenuation = pow(f32(state.depth) / 4.2 + 1.08, 1.22);
+    let stop = select(-1.0, nearest.travel, nearest.hit);
+    total_color += base_light * sample_segments(state.origin, state.direction, stop, attenuation, state.throughput, state.inside, state.depth, 0.18);
     total_color = min(total_color, color_cap);
 
-    let reflect_score = reflected_probe * reflect_weight;
-    let refract_score = refracted_probe * max(0.05, transmit_weight);
-    let choose_reflect = nearest.tir || reflect_score >= refract_score;
-    current_ray_unit = select(nearest.refracted, nearest.reflected, choose_reflect);
-    current_viewer = nearest.point + current_ray_unit * 0.35;
+    if !nearest.hit { continue; }
+    if state.depth == max_reflect_times { continue; }
+
+    let reflect_weight = select(nearest.fresnel, 1.0, nearest.tir);
+    let transmit_weight = select((1.0 - nearest.fresnel) * params.transmit, 0.0, nearest.tir);
+    let reflected_throughput = state.throughput * reflect_weight;
+    let refracted_throughput = state.throughput * transmit_weight;
+    let prefer_reflected = max_component(reflected_throughput) >= max_component(refracted_throughput);
+
+    let primary_direction = select(nearest.refracted, nearest.reflected, prefer_reflected);
+    let primary_throughput = select(refracted_throughput, reflected_throughput, prefer_reflected);
+    let primary_inside = select(!state.inside, state.inside, prefer_reflected);
+    let secondary_direction = select(nearest.reflected, nearest.refracted, prefer_reflected);
+    let secondary_throughput = select(reflected_throughput, refracted_throughput, prefer_reflected);
+    let secondary_inside = select(state.inside, !state.inside, prefer_reflected);
+
+    if max_component(primary_throughput) >= MIN_BRANCH_WEIGHT && queued_count < MAX_BRANCH_RAYS {
+      rays[queued_count] = RayState(nearest.point + primary_direction * SURFACE_EPSILON, primary_direction, primary_throughput, primary_inside, state.depth + 1u);
+      queued_count = queued_count + 1u;
+    }
+
+    if max_component(secondary_throughput) >= MIN_BRANCH_WEIGHT && queued_count < MAX_BRANCH_RAYS {
+      rays[queued_count] = RayState(nearest.point + secondary_direction * SURFACE_EPSILON, secondary_direction, secondary_throughput, secondary_inside, state.depth + 1u);
+      queued_count = queued_count + 1u;
+    }
   }
 
   return vec4(total_color, 1.0);

@@ -1,9 +1,14 @@
 // ShaderToy export of the crystal refraction demo.
 // Uses iResolution and iTime only.
 
-#define MAX_REFLECTIONS 14
+#define MAX_REFLECTIONS 18
 #define MIRROR_COUNT 24
 #define SEGMENT_COUNT 12
+#define MAX_BRANCH_RAYS 96
+#define MIN_BRANCH_WEIGHT 0.0005
+
+const float SURFACE_EPSILON = 0.12;
+const float STOP_MARGIN = 0.25;
 
 struct GlassHit {
   bool hit;
@@ -14,6 +19,14 @@ struct GlassHit {
   vec3 refracted;
   float fresnel;
   bool tir;
+};
+
+struct RayState {
+  vec3 origin;
+  vec3 direction;
+  vec3 throughput;
+  bool inside;
+  int depth;
 };
 
 struct RayReachSegment {
@@ -182,6 +195,15 @@ GlassHit tryHitGlass(vec3 viewerPosition, vec3 rayUnit, MirrorTriangle mirror, f
   return GlassHit(true, hitPoint, t, normal, reflected, refracted, fresnel, tir);
 }
 
+float maxComponent(vec3 v) {
+  return max(v.x, max(v.y, v.z));
+}
+
+vec3 glassTransmittance(float distance) {
+  vec3 absorb = vec3(0.00055, 0.00035, 0.00022);
+  return exp(-absorb * max(distance, 0.0));
+}
+
 RayReachSegment rayClosestPointToLine(vec3 viewerPosition, vec3 rayUnit, Segment s) {
   vec3 a = s.start - viewerPosition;
   vec3 b = s.end - viewerPosition;
@@ -224,43 +246,57 @@ RayReachSegment rayClosestPointToLine(vec3 viewerPosition, vec3 rayUnit, Segment
   return RayReachSegment(dMin, k > 0.0, k);
 }
 
-float sampleSegments(vec3 origin, vec3 rayUnit, float stopAt, float attenuation, bool requireFront, float offset, float time) {
-  float glow = 0.0;
+vec3 sampleSegments(vec3 origin, vec3 rayUnit, float stopAt, float attenuation, vec3 throughput, bool inside, int depth, float offset, float time) {
+  vec3 glow = vec3(0.0);
+  float footprint = offset + min(0.035 + 0.075 * float(depth), 0.42);
+  float visibilityBoost = 1.0 + min(0.4 * float(depth), 2.8);
   for (int i = 0; i < SEGMENT_COUNT; ++i) {
     Segment segment = getSegment(i, time);
     RayReachSegment reach = rayClosestPointToLine(origin, rayUnit, segment);
 
-    if (requireFront && !reach.positiveSide) {
+    if (!reach.positiveSide) {
       continue;
     }
-    if (stopAt > 0.0 && reach.traveled > stopAt) {
+    if (stopAt > 0.0 && reach.traveled > stopAt + STOP_MARGIN) {
       continue;
     }
 
-    float distance = max(0.001, reach.distance - offset);
-    float core = 0.85 / pow(distance * 0.16 + 0.012, 2.25);
-    float halo = 0.18 / pow(distance * 0.055 + 0.04, 1.45);
-    glow += (core + halo) / attenuation;
+    float distance = max(0.001, reach.distance - footprint);
+    float core = 0.64 / pow(distance * 0.17 + 0.016, 2.0);
+    float halo = 0.08 / pow(distance * 0.06 + 0.052, 1.32);
+    vec3 medium = inside ? glassTransmittance(reach.traveled) : vec3(1.0);
+    glow += throughput * medium * visibilityBoost * ((core + halo) / attenuation);
   }
   return glow;
 }
 
 vec3 traceCrystal(vec3 viewerPosition, vec3 rayUnit, float time) {
-  vec3 baseLight = vec3(0.006, 0.03, 0.04);
-  vec3 bounceTint = vec3(0.01, 0.018, 0.034);
+  vec3 baseLight = vec3(0.0045, 0.02, 0.027);
   vec3 colorCap = vec3(0.82, 0.92, 1.0);
   float etaGlass = 1.49;
-  float transmit = 0.78;
+  float transmit = 0.9;
 
   vec3 totalColor = vec3(0.006, 0.010, 0.024);
   totalColor += vec3(0.004, 0.006, 0.010) * (0.5 + 0.5 * rayUnit.y);
 
-  vec3 currentViewer = viewerPosition;
-  vec3 currentRayUnit = rayUnit;
+  RayState rays[MAX_BRANCH_RAYS];
+  int queuedCount = 1;
+  rays[0] = RayState(viewerPosition, rayUnit, vec3(1.0), false, 0);
 
-  for (int bounce = 0; bounce <= MAX_REFLECTIONS; ++bounce) {
+  for (int rayIdx = 0; rayIdx < MAX_BRANCH_RAYS; ++rayIdx) {
+    if (rayIdx >= queuedCount) {
+      break;
+    }
     if (all(greaterThanEqual(totalColor, colorCap))) {
       break;
+    }
+
+    RayState state = rays[rayIdx];
+    if (state.depth > MAX_REFLECTIONS) {
+      continue;
+    }
+    if (maxComponent(state.throughput) < MIN_BRANCH_WEIGHT) {
+      continue;
     }
 
     GlassHit nearest = makeGlassMiss();
@@ -268,35 +304,46 @@ vec3 traceCrystal(vec3 viewerPosition, vec3 rayUnit, float time) {
 
     for (int mi = 0; mi < MIRROR_COUNT; ++mi) {
       MirrorTriangle mirror = getMirror(mi, time);
-      GlassHit hit = tryHitGlass(currentViewer, currentRayUnit, mirror, etaGlass);
+      GlassHit hit = tryHitGlass(state.origin, state.direction, mirror, etaGlass);
       if (hit.hit && hit.travel < nearest.travel) {
         nearest = hit;
       }
     }
 
-    float attenuation = pow(float(bounce) / 2.0 + 1.45, 2.05);
-    float lineGlow = sampleSegments(currentViewer, currentRayUnit, nearest.hit ? nearest.travel : -1.0, attenuation, bounce == 0, 0.22, time);
-    totalColor += baseLight * lineGlow;
-
-    if (!nearest.hit) {
-      break;
-    }
-
-    float reflectWeight = clamp(nearest.fresnel + (1.0 - transmit) * 0.55, 0.06, 0.96);
-    float transmitWeight = (1.0 - reflectWeight) * transmit;
-
-    float reflectedProbe = sampleSegments(nearest.point + nearest.reflected * 0.18, nearest.reflected, -1.0, attenuation * 1.35, true, 0.22, time);
-    float refractedProbe = sampleSegments(nearest.point + nearest.refracted * 0.18, nearest.refracted, -1.0, attenuation * 1.45, true, 0.22, time);
-
-    totalColor += baseLight * (reflectedProbe * 0.26 * reflectWeight + refractedProbe * 0.38 * transmitWeight);
-    totalColor += bounceTint * (0.12 + 0.18 * reflectWeight);
+    float attenuation = pow(float(state.depth) / 4.2 + 1.08, 1.22);
+    float stopAt = nearest.hit ? nearest.travel : -1.0;
+    totalColor += baseLight * sampleSegments(state.origin, state.direction, stopAt, attenuation, state.throughput, state.inside, state.depth, 0.18, time);
     totalColor = min(totalColor, colorCap);
 
-    float reflectScore = reflectedProbe * reflectWeight;
-    float refractScore = refractedProbe * max(0.05, transmitWeight);
-    bool chooseReflect = nearest.tir || reflectScore >= refractScore;
-    currentRayUnit = chooseReflect ? nearest.reflected : nearest.refracted;
-    currentViewer = nearest.point + currentRayUnit * 0.35;
+    if (!nearest.hit) {
+      continue;
+    }
+    if (state.depth == MAX_REFLECTIONS) {
+      continue;
+    }
+
+    float reflectWeight = nearest.tir ? 1.0 : nearest.fresnel;
+    float transmitWeight = nearest.tir ? 0.0 : (1.0 - nearest.fresnel) * transmit;
+    vec3 reflectedThroughput = state.throughput * reflectWeight;
+    vec3 refractedThroughput = state.throughput * transmitWeight;
+    bool preferReflected = maxComponent(reflectedThroughput) >= maxComponent(refractedThroughput);
+
+    vec3 primaryDirection = preferReflected ? nearest.reflected : nearest.refracted;
+    vec3 primaryThroughput = preferReflected ? reflectedThroughput : refractedThroughput;
+    bool primaryInside = preferReflected ? state.inside : !state.inside;
+    vec3 secondaryDirection = preferReflected ? nearest.refracted : nearest.reflected;
+    vec3 secondaryThroughput = preferReflected ? refractedThroughput : reflectedThroughput;
+    bool secondaryInside = preferReflected ? !state.inside : state.inside;
+
+    if (maxComponent(primaryThroughput) >= MIN_BRANCH_WEIGHT && queuedCount < MAX_BRANCH_RAYS) {
+      rays[queuedCount] = RayState(nearest.point + primaryDirection * SURFACE_EPSILON, primaryDirection, primaryThroughput, primaryInside, state.depth + 1);
+      queuedCount += 1;
+    }
+
+    if (maxComponent(secondaryThroughput) >= MIN_BRANCH_WEIGHT && queuedCount < MAX_BRANCH_RAYS) {
+      rays[queuedCount] = RayState(nearest.point + secondaryDirection * SURFACE_EPSILON, secondaryDirection, secondaryThroughput, secondaryInside, state.depth + 1);
+      queuedCount += 1;
+    }
   }
 
   return totalColor;

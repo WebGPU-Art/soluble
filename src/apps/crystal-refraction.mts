@@ -30,7 +30,7 @@ const geometry = buildPolyhedronCells(vertices, faces);
 
 let store = {
   startedAt: performance.now(),
-  maxReflections: 8,
+  maxReflections: 16,
   angleY: 0,
   lastTickAt: performance.now(),
 };
@@ -46,6 +46,6 @@ export const crystalRefractionConfigs: SolubleApp = {
   getParams: () => {
     const t = performance.now() - store.startedAt;
     updateHeldYRotation(store, geometry.mirrors, geometry.segments);
-    return [t, store.maxReflections, 0.006, 0.03, 0.04, 0.01, 0.018, 0.034, 1.49, 0.78];
+    return [t, store.maxReflections, 0.0045, 0.02, 0.027, 0.01, 0.018, 0.034, 1.49, 0.9];
   },
 };
