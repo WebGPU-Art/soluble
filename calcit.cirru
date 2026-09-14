@@ -3,8 +3,7 @@
   :about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `calcit query` to inspect and `calcit edit`/`calcit tree` to modify. Run `calcit docs agents --contract` before mutations; use `--full` for first orientation or changed contract digest. Manual edits must follow format and schema conventions, then run `calcit edit format`."
   :package |app
   :entries $ {} $ :default
-    {} (:description |) (:init-fn 'app.main/main!) (:mode :native)
-      :reload-fn 'app.main/reload!
+    {} (:description |) (:init-fn 'app.main/main!) (:mode :native) (:reload-fn 'app.main/reload!)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |reel.calcit/
       :type-slots $ {}
@@ -15,20 +14,22 @@
           :code $ quote $ defcomp comp-container (reel)
             let
                 store $ :store reel
-                states $ :states store
-                cursor $ or (:cursor states) ([])
-                state $ or (:data states)
-                  {} $ :content |
+                states $ assert-type
+                  option:unwrap-or (get store :states) ({})
+                  :: 'Map 'Tag 'Dynamic
               div
                 {} $ :class-name $ str-spaced css/global css/row
                 comp-nav store
                 when dev? $ comp-reel (>> states :reel) reel $ {}
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
+            :args $ [] $ :: 'reel.typed/State 'Enum (:: 'Map 'Tag 'Dynamic)
         'comp-nav $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-nav (store)
             let
-                tab $ :tab store
+                tab $ assert-type
+                  option:unwrap-or (get store :tab) :inversion-circles
+                  , 'Tag
               div
                 {} $ :class-name style-nav-wrapper
                 when (not hide-tabs?)
@@ -38,8 +39,8 @@
                       {} $ :style $ {} (:display :flex) (:flex-direction :row) (:gap 4) (:align-items :flex-start)
                       -> tab-groups $ map $ fn (group)
                         let
-                            gname $ nth group 0
-                            gtabs $ nth group 1
+                            gname $ assert-type (nth group 0) 'String
+                            gtabs $ assert-type (nth group 1) (:: 'List 'Enum)
                           [] gname $ div
                             {} $ :class-name style-nav-col
                             div
@@ -48,18 +49,19 @@
                             list-> ({})
                               -> gtabs $ map $ fn (pair)
                                 let
-                                    t $ nth pair 0
-                                    name $ nth pair 1
+                                    t $ assert-type (&enum:nth pair 0) 'Tag
+                                    name $ assert-type (&enum:nth pair 1) 'String
                                   [] t $ div
                                     {}
                                       :class-name $ str-spaced style-tab css/font-fancy!
                                       :on-click $ fn (e d!)
-                                        d! $ :: :tab t $ nth pair 2
+                                        d! $ :: :tab t $ assert-type (&enum:nth pair 2) 'Tag
                                       :style $ if (= tab t)
                                         {} $ :color :white
                                     <> name
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
+            :args $ [] $ :: 'Map 'Tag 'Dynamic
         'style-group-header $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-group-header
             {} $ |& $ {} (:font-size 10)
@@ -68,29 +70,26 @@
               :text-transform :uppercase
               :letter-spacing 1
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'String
         'style-nav $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-nav
             {} $ |& $ {} (:display :flex) (:flex-direction :row) (:gap 4) (:padding 8) (:align-items :flex-start)
               :background-color $ hsl 0 0 0 0.5
               :border-radius |4px
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'String
         'style-nav-col $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-nav-col
             {} $ |& $ {} (:display :flex) (:flex-direction :column) (:min-width 120)
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'String
         'style-nav-wrapper $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-nav-wrapper
             {}
-              |& $ {} (:position :absolute) (:top 0) (:left 0) (:opacity 0)
-                :transition-duration |300ms
-                :transition-property |opacity
-                :z-index 10
+              |& $ {} (:position :absolute) (:top 0) (:left 0) (:opacity 0) (:transition-duration |300ms) (:transition-property |opacity) (:z-index 10)
               |&:hover $ {} $ :opacity 1
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'String
         'style-tab $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-tab
             {}
@@ -104,121 +103,22 @@
                 :background-color $ hsl 0 0 0 0.5
                 :color :white
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'String
         'tab-groups $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def tab-groups
             []
-              [] |Fractals $ [] (:: :cubic-fire "|Cubic Fire" :dark)
-                :: :quaternion-fractal "|Quaternion Fractal" :dark
-                :: :complex-fractal "|Complex Fractal" :dark
-                :: :newton-fractal "|Newton Fractal" :dark
-                :: :newton-cosh-fractal "|Newton Cosh Fractal" :dark
-                :: :space-fractal "|Space Fractal" :dark
-                :: :sphere-fractal "|Sphere Fractal" :dark
-                :: :slow-fractal "|Slow Fractal" :dark
-                :: :apollonian-twist "|Apollonian Twist" :dark
-                :: :apollonian-mobius "|Apollonian Mobius" :dark
-                :: :apollonian-helix "|Apollonian Helix" :dark
-                :: :apollonian-mobius-helix "|Apollonian Mobius Helix" :dark
-              [] |Effects $ [] (:: :orbits |Orbits :dark) (:: :stars |Stars :dark) (:: :rings |Rings :dark) (:: :circles |Circles :dark) (:: :kaleidoscope |Kaleidoscope :dark) (:: :image |Image :dark) (:: :clocking |Clocking :dark) (:: :ripple |Ripple :dark) (:: :dots-clock "|Dots Clock" :dark)
-                :: :inversion-circles "|Inversion Circles" :dark
-              [] |Mirrors $ [] (:: :surround-mirror "|Surrond Mirror" :dark)
-                :: :kaleidoscope-mirror "|Kaleidoscope Mirror" :dark
-                :: :parallel-mirror "|Parallel Mirror" :dark
-                :: :sphere-mirror "|Sphere Mirror" :dark
-                :: :packing-sphere-mirror "|Packing Sphere Mirror" :dark
-                :: :orbit-spheres-mirror "|Orbit Spheres Mirror" :dark
-                :: :gravity-spheres "|Gravity Spheres" :dark
-                :: :pulse-spheres "|Pulse Spheres" :dark
-                :: :gravity-cubes "|Gravity Cubes" :dark
-                :: :gravity-octahedron "|Gravity Octahedron" :dark
-                :: :hollow-mirror "|Hollow Mirror" :dark
-                :: :box-mirror "|Box Mirror" :dark
-                :: :pyramid-mirror "|Pyramid Mirror" :dark
-              [] |Polyhedra $ []
-                :: :tetrahedron-mirror "|Tetrahedron Mirror" :dark
-                :: :tetrahedron-parabola-mirror "|Tetrahedron Parabola" :dark
-                :: :tetrahedron-arc-mirror "|Tetrahedron Arc" :dark
-                :: :cube-parabola-mirror "|Cube Parabola" :dark
-                :: :octahedron-mirror "|Octahedron Mirror" :dark
-                :: :octahedron-parabola-mirror "|Octahedron Parabola" :dark
-                :: :truncated-octahedron-mirror "|Truncated Octahedron" :dark
-                :: :cuboctahedron-mirror "|Cuboctahedron Mirror" :dark
-                :: :prism-mirror "|Prism Mirror" :dark
-                :: :hex-prism-mirror "|Hex Prism Mirror" :dark
-                :: :icosahedron-mirror "|Icosahedron Mirror" :dark
-                :: :wedge-mirror "|Wedge Mirror" :dark
-                :: :rhombohedron-mirror "|Rhombohedron Mirror" :dark
-                :: :rhombic-mirror "|Rhombic Mirror" :dark
-                :: :rhombic-dodecahedron-diagonals-mirror "|Rhombic Dodecahedron Diagonals" :dark
-                :: :rhombic-dodecahedron-parabola-mirror "|Rhombic Dodecahedron Parabola" :dark
-                :: :rhombic-dodecahedron-rotating-mirror "|Rhombic Dodecahedron Rotating" :dark
-                :: :rt-mirror "|Rhombic Triacontahedron" :dark
-                :: :deltoidal-icositetrahedron-mirror "|Deltoidal Icositetrahedron" :dark
-                :: :dodecahedron-mirror "|Dodecahedron Mirror" :dark
-                :: :crystal-refraction "|Crystal Refraction" :dark
+              [] |Fractals $ [] (:: :cubic-fire "|Cubic Fire" :dark) (:: :quaternion-fractal "|Quaternion Fractal" :dark) (:: :complex-fractal "|Complex Fractal" :dark) (:: :newton-fractal "|Newton Fractal" :dark) (:: :newton-cosh-fractal "|Newton Cosh Fractal" :dark) (:: :space-fractal "|Space Fractal" :dark) (:: :sphere-fractal "|Sphere Fractal" :dark) (:: :slow-fractal "|Slow Fractal" :dark) (:: :apollonian-twist "|Apollonian Twist" :dark) (:: :apollonian-mobius "|Apollonian Mobius" :dark) (:: :apollonian-helix "|Apollonian Helix" :dark) (:: :apollonian-mobius-helix "|Apollonian Mobius Helix" :dark)
+              [] |Effects $ [] (:: :orbits |Orbits :dark) (:: :stars |Stars :dark) (:: :rings |Rings :dark) (:: :circles |Circles :dark) (:: :kaleidoscope |Kaleidoscope :dark) (:: :image |Image :dark) (:: :clocking |Clocking :dark) (:: :ripple |Ripple :dark) (:: :dots-clock "|Dots Clock" :dark) (:: :inversion-circles "|Inversion Circles" :dark)
+              [] |Mirrors $ [] (:: :surround-mirror "|Surrond Mirror" :dark) (:: :kaleidoscope-mirror "|Kaleidoscope Mirror" :dark) (:: :parallel-mirror "|Parallel Mirror" :dark) (:: :sphere-mirror "|Sphere Mirror" :dark) (:: :packing-sphere-mirror "|Packing Sphere Mirror" :dark) (:: :orbit-spheres-mirror "|Orbit Spheres Mirror" :dark) (:: :gravity-spheres "|Gravity Spheres" :dark) (:: :pulse-spheres "|Pulse Spheres" :dark) (:: :gravity-cubes "|Gravity Cubes" :dark) (:: :gravity-octahedron "|Gravity Octahedron" :dark) (:: :hollow-mirror "|Hollow Mirror" :dark) (:: :box-mirror "|Box Mirror" :dark) (:: :pyramid-mirror "|Pyramid Mirror" :dark)
+              [] |Polyhedra $ [] (:: :tetrahedron-mirror "|Tetrahedron Mirror" :dark) (:: :tetrahedron-parabola-mirror "|Tetrahedron Parabola" :dark) (:: :tetrahedron-arc-mirror "|Tetrahedron Arc" :dark) (:: :cube-parabola-mirror "|Cube Parabola" :dark) (:: :octahedron-mirror "|Octahedron Mirror" :dark) (:: :octahedron-parabola-mirror "|Octahedron Parabola" :dark) (:: :truncated-octahedron-mirror "|Truncated Octahedron" :dark) (:: :cuboctahedron-mirror "|Cuboctahedron Mirror" :dark) (:: :prism-mirror "|Prism Mirror" :dark) (:: :hex-prism-mirror "|Hex Prism Mirror" :dark) (:: :icosahedron-mirror "|Icosahedron Mirror" :dark) (:: :wedge-mirror "|Wedge Mirror" :dark) (:: :rhombohedron-mirror "|Rhombohedron Mirror" :dark) (:: :rhombic-mirror "|Rhombic Mirror" :dark) (:: :rhombic-dodecahedron-diagonals-mirror "|Rhombic Dodecahedron Diagonals" :dark) (:: :rhombic-dodecahedron-parabola-mirror "|Rhombic Dodecahedron Parabola" :dark) (:: :rhombic-dodecahedron-rotating-mirror "|Rhombic Dodecahedron Rotating" :dark) (:: :rt-mirror "|Rhombic Triacontahedron" :dark) (:: :deltoidal-icositetrahedron-mirror "|Deltoidal Icositetrahedron" :dark) (:: :dodecahedron-mirror "|Dodecahedron Mirror" :dark) (:: :crystal-refraction "|Crystal Refraction" :dark)
               [] |Pair $ [] (:: :twin-pulse "|Twin Pulse" :dark) (:: :twin-cubes "|Twin Cubes" :dark) (:: :tetra-octa |Tetra-Octa :dark)
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'List $ :: 'List 'Dynamic
         'tabs $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def tabs
-            [] (:: :cubic-fire "|Cubic Fire" :dark)
-              :: :quaternion-fractal "|Quaternion Fractal" :dark
-              :: :complex-fractal "|Complex Fractal" :dark
-              :: :newton-fractal "|Newton Fractal" :dark
-              :: :newton-cosh-fractal "|Newton Cosh Fractal" :dark
-              :: :space-fractal "|Space Fractal" :dark
-              :: :sphere-fractal "|Sphere Fractal" :dark
-              :: :slow-fractal "|Slow Fractal" :dark
-              :: :apollonian-twist "|Apollonian Twist" :dark
-              :: :apollonian-mobius "|Apollonian Mobius" :dark
-              :: :apollonian-helix "|Apollonian Helix" :dark
-              :: :apollonian-mobius-helix "|Apollonian Mobius Helix" :dark
-              :: :orbits |Orbits :dark
-              :: :stars |Stars :dark
-              :: :rings |Rings :dark
-              :: :circles |Circles :dark
-              :: :kaleidoscope |Kaleidoscope :dark
-              :: :image |Image :dark
-              :: :clocking |Clocking :dark
-              :: :ripple |Ripple :dark
-              :: :surround-mirror "|Surrond Mirror" :dark
-              :: :kaleidoscope-mirror "|Kaleidoscope Mirror" :dark
-              :: :parallel-mirror "|Parallel Mirror" :dark
-              :: :sphere-mirror "|Sphere Mirror" :dark
-              :: :packing-sphere-mirror "|Packing Sphere Mirror" :dark
-              :: :orbit-spheres-mirror "|Orbit Spheres Mirror" :dark
-              :: :hollow-mirror "|Hollow Mirror" :dark
-              :: :box-mirror "|Box Mirror" :dark
-              :: :pyramid-mirror "|Pyramid Mirror" :dark
-              :: :tetrahedron-mirror "|Tetrahedron Mirror" :dark
-              :: :tetrahedron-parabola-mirror "|Tetrahedron Parabola" :dark
-              :: :tetrahedron-arc-mirror "|Tetrahedron Arc" :dark
-              :: :cube-parabola-mirror "|Cube Parabola" :dark
-              :: :octahedron-mirror "|Octahedron Mirror" :dark
-              :: :octahedron-parabola-mirror "|Octahedron Parabola" :dark
-              :: :truncated-octahedron-mirror "|Truncated Octahedron" :dark
-              :: :cuboctahedron-mirror "|Cuboctahedron Mirror" :dark
-              :: :prism-mirror "|Prism Mirror" :dark
-              :: :hex-prism-mirror "|Hex Prism Mirror" :dark
-              :: :icosahedron-mirror "|Icosahedron Mirror" :dark
-              :: :wedge-mirror "|Wedge Mirror" :dark
-              :: :rhombohedron-mirror "|Rhombohedron Mirror" :dark
-              :: :rhombic-mirror "|Rhombic Mirror" :dark
-              :: :rhombic-dodecahedron-diagonals-mirror "|Rhombic Dodecahedron Diagonals" :dark
-              :: :rhombic-dodecahedron-parabola-mirror "|Rhombic Dodecahedron Parabola" :dark
-              :: :rhombic-dodecahedron-rotating-mirror "|Rhombic Dodecahedron Rotating" :dark
-              :: :rt-mirror "|Rhombic Triacontahedron" :dark
-              :: :deltoidal-icositetrahedron-mirror "|Deltoidal Icositetrahedron" :dark
-              :: :dodecahedron-mirror "|Dodecahedron Mirror" :dark
-              :: :crystal-refraction "|Crystal Refraction" :dark
-              :: :dots-clock "|Dots Clock" :dark
-              :: :inversion-circles "|Inversion Circles" :dark
-              :: :twin-pulse "|Twin Pulse" :dark
-              :: :twin-cubes "|Twin Cubes" :dark
-              :: :tetra-octa |Tetra-Octa :dark
+            [] (:: :cubic-fire "|Cubic Fire" :dark) (:: :quaternion-fractal "|Quaternion Fractal" :dark) (:: :complex-fractal "|Complex Fractal" :dark) (:: :newton-fractal "|Newton Fractal" :dark) (:: :newton-cosh-fractal "|Newton Cosh Fractal" :dark) (:: :space-fractal "|Space Fractal" :dark) (:: :sphere-fractal "|Sphere Fractal" :dark) (:: :slow-fractal "|Slow Fractal" :dark) (:: :apollonian-twist "|Apollonian Twist" :dark) (:: :apollonian-mobius "|Apollonian Mobius" :dark) (:: :apollonian-helix "|Apollonian Helix" :dark) (:: :apollonian-mobius-helix "|Apollonian Mobius Helix" :dark) (:: :orbits |Orbits :dark) (:: :stars |Stars :dark) (:: :rings |Rings :dark) (:: :circles |Circles :dark) (:: :kaleidoscope |Kaleidoscope :dark) (:: :image |Image :dark) (:: :clocking |Clocking :dark) (:: :ripple |Ripple :dark) (:: :surround-mirror "|Surrond Mirror" :dark) (:: :kaleidoscope-mirror "|Kaleidoscope Mirror" :dark) (:: :parallel-mirror "|Parallel Mirror" :dark) (:: :sphere-mirror "|Sphere Mirror" :dark) (:: :packing-sphere-mirror "|Packing Sphere Mirror" :dark) (:: :orbit-spheres-mirror "|Orbit Spheres Mirror" :dark) (:: :hollow-mirror "|Hollow Mirror" :dark) (:: :box-mirror "|Box Mirror" :dark) (:: :pyramid-mirror "|Pyramid Mirror" :dark) (:: :tetrahedron-mirror "|Tetrahedron Mirror" :dark) (:: :tetrahedron-parabola-mirror "|Tetrahedron Parabola" :dark) (:: :tetrahedron-arc-mirror "|Tetrahedron Arc" :dark) (:: :cube-parabola-mirror "|Cube Parabola" :dark) (:: :octahedron-mirror "|Octahedron Mirror" :dark) (:: :octahedron-parabola-mirror "|Octahedron Parabola" :dark) (:: :truncated-octahedron-mirror "|Truncated Octahedron" :dark) (:: :cuboctahedron-mirror "|Cuboctahedron Mirror" :dark) (:: :prism-mirror "|Prism Mirror" :dark) (:: :hex-prism-mirror "|Hex Prism Mirror" :dark) (:: :icosahedron-mirror "|Icosahedron Mirror" :dark) (:: :wedge-mirror "|Wedge Mirror" :dark) (:: :rhombohedron-mirror "|Rhombohedron Mirror" :dark) (:: :rhombic-mirror "|Rhombic Mirror" :dark) (:: :rhombic-dodecahedron-diagonals-mirror "|Rhombic Dodecahedron Diagonals" :dark) (:: :rhombic-dodecahedron-parabola-mirror "|Rhombic Dodecahedron Parabola" :dark) (:: :rhombic-dodecahedron-rotating-mirror "|Rhombic Dodecahedron Rotating" :dark) (:: :rt-mirror "|Rhombic Triacontahedron" :dark) (:: :deltoidal-icositetrahedron-mirror "|Deltoidal Icositetrahedron" :dark) (:: :dodecahedron-mirror "|Dodecahedron Mirror" :dark) (:: :crystal-refraction "|Crystal Refraction" :dark) (:: :dots-clock "|Dots Clock" :dark) (:: :inversion-circles "|Inversion Circles" :dark) (:: :twin-pulse "|Twin Pulse" :dark) (:: :twin-cubes "|Twin Cubes" :dark) (:: :tetra-octa |Tetra-Octa :dark)
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'List 'Enum
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.container
           :require (respo-ui.css :as css)
@@ -227,43 +127,46 @@
             respo.core :refer $ defcomp defeffect <> >> div button textarea span input list->
             respo.comp.space :refer $ =<
             reel.comp.reel :refer $ comp-reel
+            reel.typed :as typed
             app.config :refer $ dev? hide-tabs?
     'app.config $ %{} 'FileEntry
       :defs $ {}
+        'default-tab $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ def default-tab
+            turn-tag $ option:unwrap-or (get-env |tab) |inversion-circles
+          :examples $ []
+          :schema $ :: 'Tag
         'dev? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def dev?
-            = |dev $ get-env |mode |release
+            = |dev $ option:unwrap-or (get-env |mode) |release
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Bool
         'hide-tabs? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def hide-tabs?
-            = |true $ get-env |hide-tabs |false
+            = |true $ option:unwrap-or (get-env |hide-tabs) |false
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Bool
         'interval $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ def interval
-            w-js-log $ parse-float $ get-env |interval |40
+          :code $ quote $ def interval 40
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Number
         'resource-base-url $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ def resource-base-url
-            get-env |resource-base-url
+          :code $ quote $ def resource-base-url (get-env |resource-base-url)
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Option 'String
         'site $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def site
             {} $ :storage-key |workflow
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Map 'Tag 'String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.config
     'app.img-counter $ %{} 'FileEntry
       :defs $ {}
-        '*counter $ %{} 'CodeEntry
-          :doc "|0-8 slots for pictures"
+        '*counter $ %{} 'CodeEntry (:doc "|0-8 slots for pictures")
           :code $ quote $ defatom *counter 0
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Ref 'Number
         'img-slot! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn img-slot! ()
             let
@@ -271,50 +174,65 @@
               if (< ret 8) (swap! *counter inc) (reset! *counter 0)
               , ret
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Number)
+            :args $ []
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.img-counter
     'app.main $ %{} 'FileEntry
       :defs $ {}
-        '*compute-shader $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defatom *compute-shader nil
-          :examples $ []
-          :schema $ :: 'Dynamic
         '*raf $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defatom *raf 0
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Ref 'Number
         '*reel $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defatom *reel
-            -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
+          :code $ quote $ defatom *reel (typed/new-reel schema/store)
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Ref $ :: 'reel.typed/State 'Enum (:: 'Map 'Tag 'Dynamic)
         '*timeout $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defatom *timeout 0
           :examples $ []
-          :schema $ :: 'Dynamic
-        'canvas $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ def canvas
-            js/document.querySelector |canvas
+          :schema $ :: 'Ref 'Number
+        'build-shortcut? $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn build-shortcut? (event)
+            and
+              or
+                unsafe-coerce (.-metaKey event) 'Bool
+                unsafe-coerce (.-ctrlKey event) 'Bool
+              = |b $ unsafe-coerce (.-key event) 'String
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Bool)
+            :args $ [] 'Dynamic
+            :features $ #{} :js-ffi
+        'current-tab $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn current-tab ()
+            let
+                store $ :store @*reel
+              assert-type
+                option:unwrap-or (get store :tab) config/default-tab
+                , 'Tag
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'Tag)
+            :args $ []
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
-            hint-fn $ {} $ :async true
             when
               and config/dev? $ not= op :states
               js/console.log |Dispatch: op
-            tag-match op
-              (:tab t theme)
-                do
-                  js/cancelAnimationFrame @*raf
-                  js/clearTimeout @*timeout
-                  js-await $ solublejs/waitForRenderIdle
-                  reset! *reel $ reel-updater updater @*reel op
-                  loop-paint!
-              _ $ reset! *reel $ reel-updater updater @*reel op
+            match op
+              (:tab t theme) (js/setTimeout handle-tab-op! 0 op)
+              _ $ reset! *reel $ next-reel op
+            , &unit
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Unit)
+            :args $ [] 'Dynamic
+            :features $ #{} :js-ffi
+        'document-hidden? $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn document-hidden? ()
+            = |hidden $ unsafe-coerce js/document.visibilityState 'String
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'Bool)
+            :args $ []
+            :features $ #{} :js-ffi
         'get-app $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-app (tab)
             case-default tab
@@ -379,7 +297,50 @@
               :inversion-circles inversionCirclesConfigs
               :dots-clock dotsClockConfigs
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+            :args $ [] 'Tag
+            :features $ #{} :js-ffi
+        'get-canvas $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn get-canvas () (js/document.querySelector |canvas)
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+            :args $ []
+            :features $ #{} :js-ffi
+        'get-mount-target $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn get-mount-target () (js/document.querySelector |.app)
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+            :args $ []
+            :features $ #{} :js-ffi
+        'handle-gamepad! $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn handle-gamepad! (events)
+            let
+                raw-handler $ .?-onButtonEvent $ .?-value atomSolubleTree
+              if (js-present? raw-handler)
+                do
+                  let
+                      call! $ unsafe-coerce raw-handler $ :: 'Fn
+                        {} (:return 'Dynamic)
+                          :args $ [] 'Dynamic
+                    call! events
+                  , &unit
+                , &unit
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'Unit)
+            :args $ [] 'Dynamic
+            :features $ #{} :js-ffi
+        'handle-tab-op! $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn handle-tab-op! (op)
+            hint-fn $ {} $ :async true
+            js/cancelAnimationFrame @*raf
+            js/clearTimeout @*timeout
+            js-await $ solublejs/waitForRenderIdle
+            reset! *reel $ next-reel op
+            loop-paint!
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:async true) (:return 'Dynamic)
+            :args $ [] 'Dynamic
+            :features $ #{} :js-ffi
         'load-textures! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn load-textures! (device)
             hint-fn $ {} $ :async true
@@ -393,45 +354,30 @@
                 img-circles $ solublejs/loadImageAsTexture device $ replace-url |https://cos-sh.tiye.me/cos-up/80e5932494210d46c600b402a029f973/circles.jpg
                 img-sparks $ solublejs/loadImageAsTexture device $ replace-url |https://cos-sh.tiye.me/cos-up/3fd6b05f2f9b9a1985224ac39e7b3aee/sparks.jpg
                 img-rhombic $ solublejs/loadImageAsTexture device $ replace-url |https://cos-sh.tiye.me/cos-up/309de8ad40b61cb865b32adedf1b2dc4/rhombic-mirror.png
-              js-set
-                .!deref solublejs/atomSharedTextures
-                , |tiye $ js-await img-tiye
-              js-set
-                .!deref solublejs/atomSharedTextures
-                , |candy $ js-await img-candy
-              js-set
-                .!deref solublejs/atomSharedTextures
-                , |bubbles $ js-await img-bubbles
-              js-set
-                .!deref solublejs/atomSharedTextures
-                , |rugs $ js-await img-rugs
-              js-set
-                .!deref solublejs/atomSharedTextures
-                , |stripes $ js-await img-stripes
-              js-set
-                .!deref solublejs/atomSharedTextures
-                , |pigment $ js-await img-pigment
-              js-set
-                .!deref solublejs/atomSharedTextures
-                , |circles $ js-await img-circles
-              js-set
-                .!deref solublejs/atomSharedTextures
-                , |sparks $ js-await img-sparks
-              js-set
-                .!deref solublejs/atomSharedTextures
-                , |yulan $ js-await img-rhombic
+              js-set (.!deref solublejs/atomSharedTextures) |tiye $ js-await img-tiye
+              js-set (.!deref solublejs/atomSharedTextures) |candy $ js-await img-candy
+              js-set (.!deref solublejs/atomSharedTextures) |bubbles $ js-await img-bubbles
+              js-set (.!deref solublejs/atomSharedTextures) |rugs $ js-await img-rugs
+              js-set (.!deref solublejs/atomSharedTextures) |stripes $ js-await img-stripes
+              js-set (.!deref solublejs/atomSharedTextures) |pigment $ js-await img-pigment
+              js-set (.!deref solublejs/atomSharedTextures) |circles $ js-await img-circles
+              js-set (.!deref solublejs/atomSharedTextures) |sparks $ js-await img-sparks
+              js-set (.!deref solublejs/atomSharedTextures) |yulan $ js-await img-rhombic
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:async true) (:return 'Dynamic)
+            :args $ [] 'Dynamic
+            :features $ #{} :js-ffi
         'loop-paint! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn loop-paint! ()
             hint-fn $ {} $ :async true
             js-await $ solublejs/callFramePaint
             if (> config/interval 10)
-              reset! *timeout $ flipped js/setTimeout config/interval $ fn ()
-                reset! *raf $ js/requestAnimationFrame $ fn (t) (loop-paint!)
-              reset! *raf $ js/requestAnimationFrame $ fn (t) (loop-paint!)
+              reset! *timeout $ schedule-next-paint!
+              reset! *raf $ request-next-frame!
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:async true) (:return 'Unit)
+            :args $ []
+            :features $ #{} :js-ffi
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             hint-fn $ {} $ :async true
@@ -443,41 +389,31 @@
               if
                 contains?
                   #{} :image :surround-mirror $ ; :sphere-mirror
-                  -> @*reel :store :tab
+                  current-tab
                 do
                   js-await $ load-textures! device
                   js/window.addEventListener |keydown $ fn (event)
                     hint-fn $ {} $ :async true
                     js/console.log event
-                    if
-                      and
-                        or (.-metaKey event) (.-ctrlKey event)
-                        = |b $ .-key event
+                    if (build-shortcut? event)
                       let
                           texture $ js-await $ solublejs/loadImageFromInputEl device
                           k $ img-slot!
-                        js-set
-                          .!deref solublejs/atomSharedTextures
-                          , k texture
+                        js-set (.!deref solublejs/atomSharedTextures) k texture
                         js/console.log "|image added to slot" k
                 do (load-textures! device) nil
             render-app!
             loop-paint!
-            solublejs/resetCanvasHeight canvas
+            solublejs/resetCanvasHeight $ get-canvas
             js/window.addEventListener |resize $ fn (event)
-              solublejs/resetCanvasHeight canvas
+              solublejs/resetCanvasHeight $ get-canvas
               solublejs/paintSolubleTree
-            solublejs/loadGamepadControl $ fn (events)
-              if-let
-                f $ .-onButtonEvent $ .-value atomSolubleTree
-                f events
+            solublejs/loadGamepadControl handle-gamepad!
             add-watch *reel :changes $ fn (reel prev) (render-app!)
             listen-devtools! |k dispatch!
             js/window.addEventListener |beforeunload $ fn (event) (persist-storage!)
             js/window.addEventListener |visibilitychange $ fn (event)
-              if
-                = |hidden js/document.visibilityState
-                persist-storage!
+              if (document-hidden?) (persist-storage!)
             ; flipped js/setInterval 60000 persist-storage!
             ; let
               (raw (js/localStorage.getItem (:storage-key config/site)))
@@ -485,19 +421,30 @@
                 dispatch! $ :: :hydrate-storage $ parse-cirru-edn raw
             println "|App started."
           :examples $ []
-          :schema $ :: 'Dynamic
-        'mount-target $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ def mount-target
-            js/document.querySelector |.app
+          :schema $ :: 'Fn $ {} (:async true) (:return 'Dynamic)
+            :args $ []
+            :features $ #{} :js-ffi
+        'next-reel $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn next-reel (op)
+            typed/record-op updater
+              assert-type @*reel $ :: 'reel.typed/State 'Enum $ :: 'Map 'Tag 'Dynamic
+              assert-type op 'Enum
+              generate-id!
+              unsafe-coerce js/Date.now 'Number
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {}
+            :args $ [] 'Dynamic
+            :features $ #{} :js-ffi
+            :return $ :: 'reel.typed/State 'Enum $ :: 'Map 'Tag 'Dynamic
         'persist-storage! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn persist-storage! ()
-            println "|Saved at" $ .!toISOString $ new js/Date
+          :code $ quote $ defn persist-storage! () (println "|Saving local state")
             js/localStorage.setItem (:storage-key config/site)
               format-cirru-edn $ :store @*reel
+            , &unit
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Unit)
+            :args $ []
+            :features $ #{} :js-ffi
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if (nil? build-errors)
@@ -506,30 +453,54 @@
                 js/cancelAnimationFrame @*raf
                 render-app!
                 loop-paint!
-                reset! *reel $ refresh-reel @*reel schema/store updater
+                reset! *reel $ typed/refresh updater
+                  assert-type @*reel $ :: 'reel.typed/State 'Enum $ :: 'Map 'Tag 'Dynamic
+                  assert-type schema/store $ :: 'Map 'Tag 'Dynamic
                 hud! |ok~ |Ok
               hud! |error build-errors
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Unit)
+            :args $ []
+            :features $ #{} :js-ffi
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
             let
-                tab $ :tab $ :store @*reel
+                tab $ current-tab
                 app-config $ get-app tab
               solublejs/clearPointsBuffer
               .!initPointsBuffer app-config
               solublejs/renderSolubleTree app-config
-            render! mount-target (comp-container @*reel) dispatch!
+            render! (get-mount-target) (comp-container @*reel) dispatch!
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Unit)
+            :args $ []
+            :features $ #{} :js-ffi
         'replace-url $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn replace-url (url)
-            if
-              some? config/resource-base-url
-              str config/resource-base-url |/ $ last $ .split url |/
+            if (option:some? config/resource-base-url)
+              str (option:unwrap config/resource-base-url) |/ $ last $ split url |/
               , url
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'String)
+            :args $ [] 'String
+        'request-next-frame! $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn request-next-frame! ()
+            unsafe-coerce
+              js/requestAnimationFrame $ fn (t) (loop-paint!)
+              , 'Number
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'Number)
+            :args $ []
+            :features $ #{} :js-ffi
+        'schedule-next-paint! $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn schedule-next-paint! ()
+            unsafe-coerce
+              flipped js/setTimeout config/interval $ fn () $ reset! *raf (request-next-frame!)
+              , 'Number
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'Number)
+            :args $ []
+            :features $ #{} :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.main
           :require
@@ -537,9 +508,8 @@
             app.comp.container :refer $ comp-container
             app.updater :refer $ updater
             app.schema :as schema
-            reel.util :refer $ listen-devtools!
-            reel.core :refer $ reel-updater refresh-reel
-            reel.schema :as reel-schema
+            reel.util :refer $ listen-devtools! generate-id!
+            reel.typed :as typed
             app.config :as config
             |./calcit.build-errors :default build-errors
             |bottom-tip :default hud!
@@ -609,34 +579,35 @@
       :defs $ {} $ 'store
         %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
-            {}
-              :tab $ turn-tag $ or
-                .!get
-                  new js/URLSearchParams $ .-search js/location
-                  , |tab
-                get-env |tab |inversion-circles
+            {} (:tab default-tab)
               :states $ {} $ :cursor ([])
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Map 'Tag 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.schema
+          :require $ app.config :refer $ default-tab
     'app.updater $ %{} 'FileEntry
-      :defs $ {} $ 'updater
-        %{} 'CodeEntry (:doc |)
+      :defs $ {}
+        'replace-tab-url! $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn replace-tab-url! (tab)
+            .?!replaceState js/history nil || $ str |?tab= $ turn-string tab
+            , &unit
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'Unit)
+            :args $ [] 'Tag
+            :features $ #{} :js-ffi
+        'updater $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn updater (store op op-id op-time)
-            tag-match op
+            match op
               (:states cursor s) (update-states store cursor s)
               (:tab t theme)
-                do
-                  let
-                      params $ new js/URLSearchParams $ .-search js/location
-                      _ $ .!set params |tab $ turn-string t
-                    .!replaceState js/history nil || $ str |? $ .!toString params
-                  assoc store :tab t
+                do (replace-tab-url! t) (assoc store :tab t)
               (:hydrate-storage data) data
               _ $ do (eprintln "|unknown op:" op) store
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {}
+            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Enum 'String 'Number
+            :return $ :: 'Map 'Tag 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
           :require $ respo.cursor :refer $ update-states

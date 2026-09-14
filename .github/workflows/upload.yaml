@@ -25,10 +25,20 @@ jobs:
       - uses: calcit-lang/setup-calcit@704b3f5cd6f9ce3bd1e0c926dbdd1d181adb8180 # v1.4.0
 
       - name: "deps"
-        run: caps --ci && yarn install --immutable
+        run: caps --strict --ci && yarn install --immutable
+
+      - name: Verify Calcit runtime toolchain
+        run: caps verify --toolchain
+
+      - name: Validate Calcit snapshot and types
+        run: |
+          calcit calcit.cirru edit format
+          git diff --exit-code -- calcit.cirru
+          calcit calcit.cirru --check-only
+          calcit calcit.cirru analyze dynamic-methods --max 0
 
       - name: "compiles calcit to js"
-        run: cr js
+        run: calcit calcit.cirru js
 
       - name: Build web assets
         run: yarn vite build --base=./
