@@ -194,11 +194,13 @@
           :schema $ :: 'Ref 'Number
         'build-shortcut? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn build-shortcut? (event)
-            and
-              or
-                unsafe-coerce (.-metaKey event) 'Bool
-                unsafe-coerce (.-ctrlKey event) 'Bool
-              = |b $ unsafe-coerce (.-key event) 'String
+            let
+                host-event $ unsafe-coerce event KeyboardEventHost
+              and
+                or
+                  unsafe-coerce (js-get host-event :meta-key?) 'Bool
+                  unsafe-coerce (js-get host-event :ctrl-key?) 'Bool
+                = |b $ unsafe-coerce (js-get host-event :key) 'String
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Bool)
             :args $ [] 'Dynamic
@@ -312,6 +314,26 @@
           :schema $ :: 'Fn $ {} (:return 'Dynamic)
             :args $ []
             :features $ #{} :js-ffi
+        'get-tab-from-url $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn get-tab-from-url ()
+            let
+                host-location $ unsafe-coerce js/location LocationHost
+                params $ search-params-create $ unsafe-coerce (js-get host-location :search) 'String
+                raw-tab $ search-params-get params |tab
+              if (option:some? raw-tab)
+                let
+                    tab $ turn-tag $ option:unwrap raw-tab
+                    found $ find tabs $ fn (item)
+                      hint-fn $ {} (:return 'Bool)
+                        :args $ [] 'Enum
+                      = tab $ assert-type (&enum:nth item 0) 'Tag
+                  if (option:some? found) (%some tab) (%none)
+                %none
+          :examples $ []
+          :schema $ :: 'Fn $ {}
+            :args $ []
+            :features $ #{} :js-ffi
+            :return $ :: 'Option 'Tag
         'handle-gamepad! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn handle-gamepad! (events)
             let
@@ -381,6 +403,12 @@
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             hint-fn $ {} $ :async true
+            let
+                initial-tab $ get-tab-from-url
+              when (option:some? initial-tab)
+                reset! *reel $ assert-type
+                  typed/new-reel $ assoc schema/store :tab $ option:unwrap initial-tab
+                  :: 'reel.typed/State 'Enum $ :: 'Map 'Tag 'Dynamic
             println "|Running mode:" $ if config/dev? |dev |release
             if config/dev? $ load-console-formatter!
             let
@@ -505,12 +533,14 @@
         :code $ quote $ ns app.main
           :require
             respo.core :refer $ render! clear-cache!
-            app.comp.container :refer $ comp-container
+            app.comp.container :refer $ comp-container tabs
             app.updater :refer $ updater
             app.schema :as schema
             reel.util :refer $ listen-devtools! generate-id!
             reel.typed :as typed
             app.config :as config
+            js-ffi.browser :refer $ KeyboardEventHost LocationHost
+            js-ffi.shared :refer $ search-params-create search-params-get
             |./calcit.build-errors :default build-errors
             |bottom-tip :default hud!
             |../src/index.mts :as solublejs

@@ -3,5 +3,6 @@
   :dependencies $ {} (|Respo/reel.calcit |0.6.24)
     |Respo/respo-ui.calcit |0.7.23
     |Respo/respo.calcit |0.16.102
+    |calcit-lang/js-ffi |0.1.17
     |calcit-lang/lilac |0.5.9
     |calcit-lang/memof |0.0.33
