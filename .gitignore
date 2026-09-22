@@ -14,4 +14,6 @@ js-out/
 
 .DS_Store
 
-.yarn/*.gz
+.yarn/*.gzdl-out
+.pnp.cjs
+.pnp.loader.mjs

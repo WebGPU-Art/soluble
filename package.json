@@ -1,6 +1,6 @@
 {
   "name": "@triadica/soluble",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
   "main": "./lib/index.mjs",
   "scripts": {
@@ -9,7 +9,7 @@
   },
   "packageManager": "yarn@4.12.0",
   "devDependencies": {
-    "@calcit/procs": "0.14.17",
+    "@calcit/procs": "0.18.1",
     "@types/node": "^25.0.3",
     "@webgpu/types": "^0.1.69",
     "bottom-tip": "^0.1.5",
