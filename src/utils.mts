@@ -30,7 +30,7 @@ export function getComputeShaderModule(device: GPUDevice, shaderCode: string) {
   return shaderModule;
 }
 
-export let createTextureFromSource = (device: GPUDevice, source: { w: number; h: number; source: GPUImageCopyExternalImageSource }) => {
+export let createTextureFromSource = (device: GPUDevice, source: { w: number; h: number; source: GPUCopyExternalImageSource }) => {
   let texture = device.createTexture({
     size: { width: source.w, height: source.h },
     format: "rgba8unorm",
