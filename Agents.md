@@ -40,7 +40,7 @@ yarn build                     # Calcit、TypeScript 和前端构建到 dist/
 
 ### Calcit 编辑规则
 
-- **永远不要直接编辑 `js-out/`**——由 `cr js` 自动生成，手动改会被覆盖。
+- **永远不要直接编辑 `js-out/`**——由 `calcit` 自动生成，手动改会被覆盖。
 - 优先用结构化编辑：`cr tree target-replace` / `cr tree replace` / `cr tree insert-*`。
 - 整段重写才用 `cr edit def --overwrite`。
 - 改之前先 `cr query search <keyword> -f <ns/def>` 拿路径，`cr tree show` 确认上下文。
@@ -173,7 +173,7 @@ getParams: () => [performance.now() - store.startedAt, store.maxReflections];
 1. 在 `src/apps/` 新增 `<name>-mirror.mts` 和 `<name>-mirror.wgsl`。
 2. `.mts` 中用 `makeCell(a, b, c)` 构造 mirror 和 segment，实现 `SolubleApp`。
 3. 使用 Calcit 结构化工具修改 `calcit.cirru` 中的 `app.main` 导入与注册，以及 `app.comp.container/tab-groups`；不要修改生成的 JavaScript。
-4. 运行 `calcit` 更新忽略的 `js-out/`，再 `yarn vite build` 验证。
+4. 运行 `yarn build`，编译 Calcit、TypeScript 并验证前端打包；生成文件不入库。
 
 ---
 
@@ -181,12 +181,14 @@ getParams: () => [performance.now() - store.startedAt, store.maxReflections];
 
 ```bash
 yarn install --immutable
-cr js
-yarn exec tsc -d --project tsconfig.json --outDir lib/ 2>&1  # 检查 TS 错误
-yarn vite build --base=./                                     # 检查 WGSL + bundle
+yarn build  # 检查 Calcit、TypeScript、WGSL 和前端 bundle
 ```
 
-CI 使用同一链路（`.github/workflows/upload.yaml`），部署 `dist/*`。
+CI 使用同一构建链路（`.github/workflows/upload.yaml`），通过 `VITE_BASE_URL` 指定 COS CDN 路径，部署 `dist/*`。本地复现生产资源路径时可运行：
+
+```bash
+VITE_BASE_URL=https://cos-sh.tiye.me/WebGPU-Art/soluble/ yarn build
+```
 
 ---
 
