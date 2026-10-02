@@ -2,17 +2,17 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 8
+  version: 10
   cacheKey: 10c0
 
-"@calcit/procs@npm:0.22.0-alpha.3":
-  version: 0.22.0-alpha.3
-  resolution: "@calcit/procs@npm:0.22.0-alpha.3"
+"@calcit/procs@npm:0.27.0":
+  version: 0.27.0
+  resolution: "@calcit/procs@npm:0.27.0"
   dependencies:
     "@calcit/ternary-tree": "npm:0.0.26"
     "@cirru/parser.ts": "npm:^0.0.9"
     "@cirru/writer.ts": "npm:^0.1.9"
-  checksum: 10c0/b6aa28ae40918bef2e5363adbd4f5b36ec2ee26eda1a45b5e6c628b12c0d2746554d1106c5b0c86e2ff1be0fc726bed7173df1984e1dcb9a07d846b849db2a4e
+  checksum: 10c0/85edf1724beaf5e3b895f456b9d81ae93100316802b19bc20ab7cbcc61e295892e787c2f9cca0c9c231ba1cc3c3d320ae158d3f8c9fd39eda24500c56ebe99b1
   languageName: node
   linkType: hard
 
@@ -249,10 +249,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@triadica/soluble@workspace:."
   dependencies:
-    "@calcit/procs": "npm:0.22.0-alpha.3"
+    "@calcit/procs": "npm:0.27.0"
     "@triadica/touch-control": "npm:^0.0.4-a1"
     "@types/node": "npm:^25.0.3"
-    "@webgpu/types": "npm:^0.1.69"
+    "@types/web": "npm:0.0.357"
     bottom-tip: "npm:^0.1.5"
     gamecontroller.js: "npm:^1.5.0"
     ismobilejs: "npm:^1.1.1"
@@ -289,10 +289,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webgpu/types@npm:^0.1.69":
-  version: 0.1.69
-  resolution: "@webgpu/types@npm:0.1.69"
-  checksum: 10c0/52b95a176de5ee918fd1d7132103c35029006a0b4eb321767479a9e430560d272926c0994c3795a5bbaa22cebcc7dce71e66ba8b6496e01c90c0d179a02bd968
+"@types/web@npm:0.0.357":
+  version: 0.0.357
+  resolution: "@types/web@npm:0.0.357"
+  checksum: 10c0/173e5c58be7413e12eb194db4bf0804eca0c8d25890a53a9e0086c519c26ddd8351c8ce6a5cef9ef3fef6c4cd1e66d22fcad191b7f72b15039c6652ed4563e46
   languageName: node
   linkType: hard
 

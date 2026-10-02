@@ -2,7 +2,7 @@
 
 This project is a **WebGPU art renderer** with two code layers:
 
-- **Calcit/Respo** (UI, tab switching, state) — source in `compact.cirru`, compiled to `js-out/` via `cr js`.
+- **Calcit/Respo** (UI, tab switching, state) — source in `calcit.cirru`, compiled to ignored `js-out/` via `calcit` (the default entry targets JavaScript in the browser).
 - **TypeScript + WGSL** (WebGPU rendering, mirror/fractal demos) — source in `src/`, compiled to `lib/` via `tsc`.
 
 ---
@@ -26,16 +26,16 @@ cr libs readme respo.calcit -f docs/Respo-Agent.md
 
 ```bash
 cr --version
-corepack enable && corepack prepare yarn@4.12.0 --activate
+corepack enable && corepack prepare yarn@4.18.0 --activate
 yarn --version
 ```
 
 ### 常用开发命令
 
 ```bash
-cr js                           # 把 compact.cirru 编译到 js-out/
+calcit                          # 把 calcit.cirru 编译到 js-out/，生成文件不入库
 yarn vite                       # 启动开发服务器（HMR）
-yarn vite build --base=./       # 生产构建到 dist/
+yarn build                     # Calcit、TypeScript 和前端构建到 dist/
 ```
 
 ### Calcit 编辑规则
@@ -172,8 +172,8 @@ getParams: () => [performance.now() - store.startedAt, store.maxReflections];
 
 1. 在 `src/apps/` 新增 `<name>-mirror.mts` 和 `<name>-mirror.wgsl`。
 2. `.mts` 中用 `makeCell(a, b, c)` 构造 mirror 和 segment，实现 `SolubleApp`。
-3. 在 `js-out/app.main.mjs`（由 Calcit 生成）里 `import` 并注册 —— **实际要改 `compact.cirru`** 里的 `app.main` 和 `app.comp.container/tabs`。
-4. 运行 `cr js` 更新 `js-out/`，再 `yarn vite build` 验证。
+3. 使用 Calcit 结构化工具修改 `calcit.cirru` 中的 `app.main` 导入与注册，以及 `app.comp.container/tab-groups`；不要修改生成的 JavaScript。
+4. 运行 `calcit` 更新忽略的 `js-out/`，再 `yarn vite build` 验证。
 
 ---
 
@@ -192,7 +192,7 @@ CI 使用同一链路（`.github/workflows/upload.yaml`），部署 `dist/*`。
 
 ## 项目特定注意事项
 
-- `compact.cirru` 是 Calcit 源码的唯一真相，**不要手动编辑 `js-out/`**。
+- `calcit.cirru` 是 Calcit 源码的唯一真相，依赖由 `deps.cirru` 管理；**不要手动编辑或提交 `js-out/`**。
 - `deps.cirru` 的 `:calcit-version` 与 `package.json` `@calcit/procs` 保持一致。
 - `app.comp.container/on-keydown` 使用 `read-string`（来自 `cljs.reader`）。
 - Yarn Berry，`nodeLinker: node-modules`。

@@ -3,9 +3,9 @@
   :about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `calcit query` to inspect and `calcit edit`/`calcit tree` to modify. Run `calcit docs agents --contract` before mutations; use `--full` for first orientation or changed contract digest. Manual edits must follow format and schema conventions, then run `calcit edit format`."
   :package |app
   :entries $ {} $ :default
-    {} (:description |) (:init-fn 'app.main/main!) (:mode :native) (:reload-fn 'app.main/reload!)
+    {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!) (:target :browser)
       :feature-policy $ {}
-      :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |reel.calcit/
+      :modules $ [] |respo.calcit/ |respo-ui.calcit/ |reel.calcit/ |js-ffi/
       :type-slots $ {}
   :files $ {}
     'app.comp.container $ %{} 'FileEntry
@@ -20,7 +20,7 @@
               div
                 {} $ :class-name $ str-spaced css/global css/row
                 comp-nav store
-                when dev? $ comp-reel (>> states :reel) reel $ {}
+                when dev? $ comp-typed-reel (>> states :reel) reel $ {}
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
             :args $ [] $ :: 'reel.typed/State 'Enum (:: 'Map 'Tag 'Dynamic)
@@ -39,8 +39,12 @@
                       {} $ :style $ {} (:display :flex) (:flex-direction :row) (:gap 4) (:align-items :flex-start)
                       -> tab-groups $ map $ fn (group)
                         let
-                            gname $ assert-type (nth group 0) 'String
-                            gtabs $ assert-type (nth group 1) (:: 'List 'Enum)
+                            gname $ assert-type
+                              .unwrap $ nth group 0
+                              , 'String
+                            gtabs $ assert-type
+                              .unwrap $ nth group 1
+                              :: 'List 'Enum
                           [] gname $ div
                             {} $ :class-name style-nav-col
                             div
@@ -126,7 +130,7 @@
             respo.util.format :refer $ hsl
             respo.core :refer $ defcomp defeffect <> >> div button textarea span input list->
             respo.comp.space :refer $ =<
-            reel.comp.reel :refer $ comp-reel
+            reel.comp.reel :refer $ comp-typed-reel
             reel.typed :as typed
             app.config :refer $ dev? hide-tabs?
     'app.config $ %{} 'FileEntry
@@ -506,7 +510,9 @@
         'replace-url $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn replace-url (url)
             if (option:some? config/resource-base-url)
-              str (option:unwrap config/resource-base-url) |/ $ last $ split url |/
+              str (option:unwrap config/resource-base-url) |/ $ .unwrap-or
+                last $ split url |/
+                , |
               , url
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'String)
