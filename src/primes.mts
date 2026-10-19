@@ -24,7 +24,7 @@ export interface SolubleObjectData {
   length: number;
   indices?: GPUBuffer;
   useCompute: boolean;
-  onButtonEvent: (events: any) => void;
+  onButtonEvent?: (events: ButtonEvents) => void;
   getParams?: () => number[];
   getTextures?: (obj: Record<string, GPUTexture>) => GPUTexture[];
 }

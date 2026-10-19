@@ -7,7 +7,7 @@ import { pixelRatio } from "./config.mjs";
 import { type ButtonEvents } from "./control.mjs";
 
 /** init canvas context */
-export const initializeContext = async (): Promise<any> => {
+export const initializeContext = async (): Promise<{ device: GPUDevice } | null> => {
   // ~~ INITIALIZE ~~ Make sure we can initialize WebGPU
   if (!navigator.gpu) {
     console.error("WebGPU cannot be initialized - navigator.gpu not found");
@@ -19,9 +19,8 @@ export const initializeContext = async (): Promise<any> => {
     return null;
   }
   const device = await adapter.requestDevice();
-  device.lost.then(() => {
+  device.lost.then((): void => {
     console.error("WebGPU cannot be initialized - Device has been lost");
-    return null as any;
   });
 
   // set as a shared device
