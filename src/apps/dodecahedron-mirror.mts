@@ -65,7 +65,7 @@ function adjacent(i: number, j: number) {
 }
 
 // Recover the dodecahedron graph from edge length, then walk the graph to recover its 12 pentagons.
-const adj: number[][] = Array.from({ length: 20 }, () => []);
+const adj: number[][] = Array.from({ length: 20 }, (): number[] => []);
 for (let i = 0; i < 20; i++) {
   for (let j = i + 1; j < 20; j++) {
     if (adjacent(i, j)) {

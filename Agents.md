@@ -1,203 +1,55 @@
 # Soluble — Agent Guide
 
-This project is a **WebGPU art renderer** with two code layers:
+本项目包含两层：Calcit/Respo 管理标签、UI 和 Reel；TypeScript/WGSL 管理 GPU 渲染和输入。
 
-- **Calcit/Respo** (UI, tab switching, state) — source in `calcit.cirru`, compiled to ignored `js-out/` via `calcit` (the default entry targets JavaScript in the browser).
-- **TypeScript + WGSL** (WebGPU rendering, mirror/fractal demos) — source in `src/`, compiled to `lib/` via `tsc`.
+## Calcit 源码与类型
 
----
+- 唯一源码快照为 `calcit.cirru`，依赖声明为 `deps.cirru`；不恢复 `compact.cirru` 或 `package.cirru`。
+- 开始修改前读 `calcit docs agents --contract`；首次使用或超出紧凑契约时读 `calcit docs agents --full`。
+- 只用官方 query/tree/edit/config 读取和修改快照。多步事务先 dry-run，再传返回的 scoped revision。
+- API 事实以当前固定 CLI 的 `--help`、`query def/type/context` 为准，不复制过期 cr/libs 命令。
+- Respo 文档：`calcit docs read docs/Respo-Agent.md --module respo.calcit --full`；示例仍须按当前严格合同核实。
+- Store、Op、Tab、TabGroup 位于 `app.schema`；5 组、59 个标签为唯一导航/URL 校验数据源。
+- RuntimeAPI 声明具体宿主方法与回调合同；不要用裸 Fn、伪 JsObject 或 unsafe 隐藏开放输入。
+- `src/calcit-runtime.mts` 持有 Promise/GPU 对象，不把它们传回应用状态。
+- Reel 保留开发历史；状态树只更新 Store.states，避免重复嵌套 store。watcher 接受新、旧值并返回 Unit。
+- 标签通过 URL 持久化；旧 workflow localStorage 存档不再读写，不要为升级删除用户数据。
 
-## Calcit 层：必读前置
+## 开发和检查
 
-在任何 `cr edit` / `cr tree` 修改之前，先获取最新的 Calcit Agent 指南：
-
-```bash
-cr docs agents --full
-# 保存在 ~/.config/calcit/Agents.md，后续可直接读该文件
-```
-
-如需 Respo 组件写法，读库文档：
-
-```bash
-cr libs readme respo.calcit -f docs/Respo-Agent.md
-```
-
-### Calcit 工具链
+固定配对 Calcit/procs 0.30.1-alpha.5、Node 24、Yarn 4.18.0。正式 0.30.1 资产未齐备前不混用运行时。
 
 ```bash
-cr --version
-corepack enable && corepack prepare yarn@4.18.0 --activate
-yarn --version
-```
-
-### 常用开发命令
-
-```bash
-calcit                          # 把 calcit.cirru 编译到 js-out/，生成文件不入库
-yarn vite                       # 启动开发服务器（HMR）
-yarn build                     # Calcit、TypeScript 和前端构建到 dist/
-```
-
-### Calcit 编辑规则
-
-- **永远不要直接编辑 `js-out/`**——由 `calcit` 自动生成，手动改会被覆盖。
-- 优先用结构化编辑：`cr tree target-replace` / `cr tree replace` / `cr tree insert-*`。
-- 整段重写才用 `cr edit def --overwrite`。
-- 改之前先 `cr query search <keyword> -f <ns/def>` 拿路径，`cr tree show` 确认上下文。
-
-### Calcit 查询速查
-
-```bash
-cr query defs app.comp.container    # 列出命名空间定义
-cr query peek app.comp.container/comp-nav   # 轻看定义轮廓
-cr query def  app.comp.container/comp-nav   # 看完整定义
-cr query search on-click -f app.comp.container/comp-nav  # 拿路径
-cr tree show app.comp.container/comp-nav -p '3.2'        # 查子树
-```
-
-### 依赖管理
-
-```bash
-caps outdated --yes   # 更新 deps.cirru（无交互）
-caps                  # 下载/同步模块
+caps --strict --ci
 yarn install --immutable
+calcit --check-only --all-defs
+calcit fix --workflow strict --verify
+calcit test --require-match
+yarn build
 ```
 
-- `deps.cirru` 的 `:calcit-version` 与 `package.json` 的 `@calcit/procs` 保持同版本链路。
+遵守用户对本地 Caps 的额外限制；CI 独立解析依赖。`yarn dev` 初次编译后启动 Vite，另一个终端
+`yarn watch` 监听 Calcit。`yarn build` 顺序编译 Calcit、TypeScript 和前端；不添加 concurrently。
+js-out/、lib/、dist/ 和 .calcit/ 都是忽略的生成/临时目录，不能手工修改生成代码或提交它们。
+大快照 diff 用 `calcit analyze program-diff <base-ref>` 先审阅语义分类，再验证真实行为。
 
----
+## TypeScript / WGSL
 
-## TypeScript / WGSL 层
+- src/index.mts 保留公开渲染 API；src/primes.mts 定义 SolubleApp、V2/V3/V4 等类型。
+- 新场景在 src/apps/ 添加 .mts / .wgsl，加入 runtime 的配置表和 app.schema/tab-groups。
+  参数、名称和 ID 保持一一对应；不要编辑 js-out/app.main.mjs。
+- 单独检查 TypeScript：`yarn exec tsc -d --project tsconfig.json --outDir lib/`。
+- shader 的 perspective/math/mirror 导入由现有构建链处理；不要改资源路径来掩盖类型问题。
+- BaseCell.a/b/c 对应 position/velocity/arm；mirror 三角面存三个顶点，segment 存两端与 zeros。
+- getParams() 数组顺序必须与 WGSL Params 字段一致，不能只按 JS 调用成功推断布局正确。
+- points 与 secondary buffer 缓存大小独立维护，切换时销毁旧 buffer；先 waitForRenderIdle 再重建。
+- 使用 callFramePaint 串行提交帧，避免叠加渲染循环。渲染源更新刷新 GPU context，Calcit UI 有独立 HMR。
+- 手柄 ButtonEvents、轴变换、threshold 和镜面 shader 参数沿用原约定，不在迁移中偷偷更改算法。
 
-### 文件结构
+## 部署与验收
 
-```
-src/
-  index.mts           # 公开 API（createRenderer, paintSolubleTree, createGlobalPointsBuffer 等）
-  render.mts          # WebGPU 初始化、pipeline 创建
-  paint.mts           # 每帧绘制、buffer 管理（createGlobalPointsBuffer / createSecondaryDataBuffer）
-  global.mts          # 全局 atoms（atomDevice, atomPointsBuffer, atomSecondaryBuffer 等）
-  primes.mts          # 核心类型（SolubleApp, SolubleObjectData, V3/V4）
-  math.mts            # 数学工具（Number4, rand, randBalance 等）
-  perspective.mts     # 相机位置（atomViewerPosition, atomViewerScale 等）
-  control.mts         # 按钮/手柄事件（ButtonEvents）
-  atom.mts            # 响应式 Atom<T>
-  apps/               # 每个 demo 对应一对 .mts + .wgsl 文件
-shaders/
-  soluble-perspective.wgsl   # UniformsData（screen_wh, scale, forward/upward/rightward, viewer_position）
-  soluble-math.wgsl          # rand11, perpendicular, product/conjugate/divide 等
-  soluble-mirror.wgsl        # ray_closest_point_to_line, try_reflect_ray_with_mirror, MirrorTriangle, Segment
-  sdf.wgsl                   # SDF 工具函数
-  stroke.wgsl                # 笔触相关
-```
-
-### TypeScript 编译
-
-```bash
-yarn exec tsc -d --project tsconfig.json --outDir lib/
-```
-
-输出到 `lib/`，供 Vite 打包。`tsconfig.json` 的 `target: es2015`，`moduleResolution: Bundler`。
-
-### SolubleApp 接口（每个 demo 必须实现）
-
-```typescript
-type SolubleApp = {
-  initPointsBuffer: () => void; // 初始化 mirror buffer 和 segment buffer
-  useCompute: boolean; // 通常 false（不用 compute shader）
-  renderShader: string; // 导入的 .wgsl 字符串
-  getParams?: () => number[]; // 传给 WGSL Params uniform，索引 [0]=time 等
-  onButtonEvent?: (events: ButtonEvents) => void;
-  onDestroy?: () => void;
-  getTextures?: (obj: Record<string, GPUTexture>) => GPUTexture[];
-};
-```
-
-### Buffer 管理
-
-```typescript
-// Mirror 三角面（base_points）
-createGlobalPointsBuffer(count, (idx) => mirrors[idx]); // position=a, velocity=b, arm=c
-
-// 发光线段（secondary_points）
-createSecondaryDataBuffer(count, (idx) => segments[idx]);
-// segment: { position: start, velocity: end, arm: zero }
-```
-
-- `cachedPointsBaseSize` / `cachedSecondaryBaseSize` 各自独立——切换 demo 时 size 不一致会触发重建，记得 `.destroy()` 旧 buffer。
-
-### WGSL 基础结构（mirror demo 模板）
-
-```wgsl
-#import soluble::perspective   // UniformsData uniforms
-#import soluble::math          // rand11, PI 等
-#import soluble::mirror        // MirrorTriangle, Segment, try_reflect_ray_with_mirror, ray_closest_point_to_line
-
-struct Params { time: f32, dt: f32, lifetime: f32, max_reflections: f32 }
-@group(0) @binding(1) var<uniform> params: Params;
-
-struct BaseCell { a: vec4<f32>, b: vec4<f32>, c: vec4<f32> }
-@group(1) @binding(0) var<storage, read_write> base_points:      array<BaseCell>;  // mirrors
-@group(1) @binding(1) var<storage, read_write> secondary_points: array<BaseCell>;  // segments
-```
-
-- `BaseCell.a.xyz` / `.b.xyz` / `.c.xyz` = 三角面三顶点（mirror）或线段两端 + zeros（segment）。
-- **WGSL `#import` 通过 `vite-plugin-glsl` 处理。**
-
-### WGSL 光线追踪循环（标准模式）
-
-```wgsl
-// fragment_main 中：
-for (var times = 0u; times < max_reflect_times + 1u; times++) {
-  // 1) 找最近 mirror 碰撞
-  // 2) 对 secondary_points 里每条线段计算 color 贡献
-  //    let seg_len = length(segment.end - segment.start);
-  //    let distance = max(0.001, reach.distance - offset);
-  //    var color_scale = C / pow(distance * k + 0.01, 1.8) / f;
-  // 3) 随机丢弃（降噪）：if rand11(...) < 0.15 { break; }
-  // 4) 更新 current_viewer / current_ray_unit
-}
-```
-
-### Params buffer 约定
-
-`getParams()` 返回值按顺序映射到 `Params` struct 字段：
-
-```typescript
-getParams: () => [performance.now() - store.startedAt, store.maxReflections];
-// → time=params[0], max_reflections=params[1]（或 dt/lifetime 视 shader 定义）
-```
-
-### Mirror demo 新建流程
-
-1. 在 `src/apps/` 新增 `<name>-mirror.mts` 和 `<name>-mirror.wgsl`。
-2. `.mts` 中用 `makeCell(a, b, c)` 构造 mirror 和 segment，实现 `SolubleApp`。
-3. 使用 Calcit 结构化工具修改 `calcit.cirru` 中的 `app.main` 导入与注册，以及 `app.comp.container/tab-groups`；不要修改生成的 JavaScript。
-4. 运行 `yarn build`，编译 Calcit、TypeScript 并验证前端打包；生成文件不入库。
-
----
-
-## 验证清单（推荐顺序）
-
-```bash
-yarn install --immutable
-yarn build  # 检查 Calcit、TypeScript、WGSL 和前端 bundle
-```
-
-CI 使用同一构建链路（`.github/workflows/upload.yaml`），通过 `VITE_BASE_URL` 指定 COS CDN 路径，部署 `dist/*`。本地复现生产资源路径时可运行：
-
-```bash
-VITE_BASE_URL=https://cos-sh.tiye.me/WebGPU-Art/soluble/ yarn build
-```
-
----
-
-## 项目特定注意事项
-
-- `calcit.cirru` 是 Calcit 源码的唯一真相，依赖由 `deps.cirru` 管理；**不要手动编辑或提交 `js-out/`**。
-- `deps.cirru` 的 `:calcit-version` 与 `package.json` `@calcit/procs` 保持一致。
-- `app.comp.container/on-keydown` 使用 `read-string`（来自 `cljs.reader`）。
-- Yarn Berry，`nodeLinker: node-modules`。
-- URL tab 持久化：tab 切换调用 `history.replaceState`，写入 `?tab=` 参数；`app.schema/store` 初始化时读取 `URLSearchParams`。
-- `paint.mts` 中 `cachedPointsBaseSize` 和 `cachedSecondaryBaseSize` 独立管理，避免内存泄漏。
-- 所有 mirror demo 的 `bounce_tint` 约为原始值的 3×，rand drop 阈值 `< 0.15`。
+- VITE_BASE_URL=https://cos-sh.tiye.me/WebGPU-Art/soluble/ 只配置前端构建资源。
+- 保留原图片 URL、COS action 内置校验、main 新鲜度保护、串行生产队列及 rsync 原路径。
+- PR 只检查和构建，不上传或部署。不增加重复上传验证器、质量基线或逐项目规则脚本。
+- 区分 Calcit 类型检查、TS 编译、真实 WebGPU 出帧、URL/标签切换和物理手柄输入。
+  构建、mock 或 synthetic 证据不等于真实 GPU/手柄验收。
