@@ -143,6 +143,8 @@ let raf = 0;
 let timeout = 0;
 let interval = 40;
 let initialized = false;
+let activeTab = "";
+let texturesPromise: Promise<void> | null = null;
 let imageSlot = 0;
 let onError: (message: string) => void = message => console.error(message);
 
@@ -208,6 +210,7 @@ function resized(): void {
 }
 
 function keydown(event: KeyboardEvent): void {
+  if (activeTab !== "image" && activeTab !== "surround-mirror") return;
   if (!(event.metaKey || event.ctrlKey) || event.key !== "b") return;
   void loadImageFromInputEl(atomDevice.deref()).then(texture => {
     atomSharedTextures.deref()[imageSlot] = texture;
@@ -225,19 +228,20 @@ function initialize(
 ): void {
   interval = frameInterval;
   onError = failed;
+  activeTab = id;
   const current = stopLoop();
   void (async () => {
     const context = await initializeContext();
     if (context === null) throw new Error("WebGPU context is unavailable");
-    const textures = loadTextures(transformURL);
+    texturesPromise = loadTextures(transformURL);
     if (id === "image" || id === "surround-mirror") {
-      await textures;
-      window.addEventListener("keydown", keydown);
+      await texturesPromise;
     } else {
-      void textures.catch(reportError);
+      void texturesPromise.catch(reportError);
     }
     if (current !== revision) return;
     initialized = true;
+    window.addEventListener("keydown", keydown);
     renderTab(id);
     onReady();
     await paintNext(current);
@@ -252,8 +256,13 @@ function initialize(
 /** Wait for the old frame before rebuilding; a newer selection wins. */
 function selectTab(id: string): void {
   if (!initialized) return;
+  activeTab = id;
   const current = stopLoop();
   void (async () => {
+    if ((id === "image" || id === "surround-mirror") && texturesPromise) {
+      await texturesPromise;
+      if (current !== revision) return;
+    }
     await waitForRenderIdle();
     if (current !== revision) return;
     renderTab(id);

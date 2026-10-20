@@ -165,10 +165,6 @@
                 (:none)
                   let
                       action $ schema/normalize-op op
-                    match action
-                      (:tab id theme)
-                        browser/history-replace-state! $ str |?tab= $ to-string id
-                      (:states cursor data) &unit
                     reset! *reel $ typed/record-op updater @*reel action (shared/random-uuid) (shared/now-ms)
               raise "|Expected a Soluble operation Enum"
             , &unit
@@ -212,7 +208,10 @@
               not=
                 :tab $ :store reel
                 :tab $ :store previous
-              runtime/select-tab! $ to-string $ :tab (:store reel)
+              let
+                  tab $ to-string $ :tab (:store reel)
+                browser/history-replace-state! $ str |?tab= tab
+                runtime/select-tab! tab
             , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
@@ -426,7 +425,7 @@
             []
               TabGroup :name |Fractals :tabs $ [] (Tab :id :cubic-fire :name "|Cubic Fire" :theme :dark) (Tab :id :quaternion-fractal :name "|Quaternion Fractal" :theme :dark) (Tab :id :complex-fractal :name "|Complex Fractal" :theme :dark) (Tab :id :newton-fractal :name "|Newton Fractal" :theme :dark) (Tab :id :newton-cosh-fractal :name "|Newton Cosh Fractal" :theme :dark) (Tab :id :space-fractal :name "|Space Fractal" :theme :dark) (Tab :id :sphere-fractal :name "|Sphere Fractal" :theme :dark) (Tab :id :slow-fractal :name "|Slow Fractal" :theme :dark) (Tab :id :apollonian-twist :name "|Apollonian Twist" :theme :dark) (Tab :id :apollonian-mobius :name "|Apollonian Mobius" :theme :dark) (Tab :id :apollonian-helix :name "|Apollonian Helix" :theme :dark) (Tab :id :apollonian-mobius-helix :name "|Apollonian Mobius Helix" :theme :dark)
               TabGroup :name |Effects :tabs $ [] (Tab :id :orbits :name |Orbits :theme :dark) (Tab :id :stars :name |Stars :theme :dark) (Tab :id :rings :name |Rings :theme :dark) (Tab :id :circles :name |Circles :theme :dark) (Tab :id :kaleidoscope :name |Kaleidoscope :theme :dark) (Tab :id :image :name |Image :theme :dark) (Tab :id :clocking :name |Clocking :theme :dark) (Tab :id :ripple :name |Ripple :theme :dark) (Tab :id :dots-clock :name "|Dots Clock" :theme :dark) (Tab :id :inversion-circles :name "|Inversion Circles" :theme :dark)
-              TabGroup :name |Mirrors :tabs $ [] (Tab :id :surround-mirror :name "|Surrond Mirror" :theme :dark) (Tab :id :kaleidoscope-mirror :name "|Kaleidoscope Mirror" :theme :dark) (Tab :id :parallel-mirror :name "|Parallel Mirror" :theme :dark) (Tab :id :sphere-mirror :name "|Sphere Mirror" :theme :dark) (Tab :id :packing-sphere-mirror :name "|Packing Sphere Mirror" :theme :dark) (Tab :id :orbit-spheres-mirror :name "|Orbit Spheres Mirror" :theme :dark) (Tab :id :gravity-spheres :name "|Gravity Spheres" :theme :dark) (Tab :id :pulse-spheres :name "|Pulse Spheres" :theme :dark) (Tab :id :gravity-cubes :name "|Gravity Cubes" :theme :dark) (Tab :id :gravity-octahedron :name "|Gravity Octahedron" :theme :dark) (Tab :id :hollow-mirror :name "|Hollow Mirror" :theme :dark) (Tab :id :box-mirror :name "|Box Mirror" :theme :dark) (Tab :id :pyramid-mirror :name "|Pyramid Mirror" :theme :dark)
+              TabGroup :name |Mirrors :tabs $ [] (Tab :id :surround-mirror :name "|Surround Mirror" :theme :dark) (Tab :id :kaleidoscope-mirror :name "|Kaleidoscope Mirror" :theme :dark) (Tab :id :parallel-mirror :name "|Parallel Mirror" :theme :dark) (Tab :id :sphere-mirror :name "|Sphere Mirror" :theme :dark) (Tab :id :packing-sphere-mirror :name "|Packing Sphere Mirror" :theme :dark) (Tab :id :orbit-spheres-mirror :name "|Orbit Spheres Mirror" :theme :dark) (Tab :id :gravity-spheres :name "|Gravity Spheres" :theme :dark) (Tab :id :pulse-spheres :name "|Pulse Spheres" :theme :dark) (Tab :id :gravity-cubes :name "|Gravity Cubes" :theme :dark) (Tab :id :gravity-octahedron :name "|Gravity Octahedron" :theme :dark) (Tab :id :hollow-mirror :name "|Hollow Mirror" :theme :dark) (Tab :id :box-mirror :name "|Box Mirror" :theme :dark) (Tab :id :pyramid-mirror :name "|Pyramid Mirror" :theme :dark)
               TabGroup :name |Polyhedra :tabs $ [] (Tab :id :tetrahedron-mirror :name "|Tetrahedron Mirror" :theme :dark) (Tab :id :tetrahedron-parabola-mirror :name "|Tetrahedron Parabola" :theme :dark) (Tab :id :tetrahedron-arc-mirror :name "|Tetrahedron Arc" :theme :dark) (Tab :id :cube-parabola-mirror :name "|Cube Parabola" :theme :dark) (Tab :id :octahedron-mirror :name "|Octahedron Mirror" :theme :dark) (Tab :id :octahedron-parabola-mirror :name "|Octahedron Parabola" :theme :dark) (Tab :id :truncated-octahedron-mirror :name "|Truncated Octahedron" :theme :dark) (Tab :id :cuboctahedron-mirror :name "|Cuboctahedron Mirror" :theme :dark) (Tab :id :prism-mirror :name "|Prism Mirror" :theme :dark) (Tab :id :hex-prism-mirror :name "|Hex Prism Mirror" :theme :dark) (Tab :id :icosahedron-mirror :name "|Icosahedron Mirror" :theme :dark) (Tab :id :wedge-mirror :name "|Wedge Mirror" :theme :dark) (Tab :id :rhombohedron-mirror :name "|Rhombohedron Mirror" :theme :dark) (Tab :id :rhombic-mirror :name "|Rhombic Mirror" :theme :dark) (Tab :id :rhombic-dodecahedron-diagonals-mirror :name "|Rhombic Dodecahedron Diagonals" :theme :dark) (Tab :id :rhombic-dodecahedron-parabola-mirror :name "|Rhombic Dodecahedron Parabola" :theme :dark) (Tab :id :rhombic-dodecahedron-rotating-mirror :name "|Rhombic Dodecahedron Rotating" :theme :dark) (Tab :id :rt-mirror :name "|Rhombic Triacontahedron" :theme :dark) (Tab :id :deltoidal-icositetrahedron-mirror :name "|Deltoidal Icositetrahedron" :theme :dark) (Tab :id :dodecahedron-mirror :name "|Dodecahedron Mirror" :theme :dark) (Tab :id :crystal-refraction :name "|Crystal Refraction" :theme :dark)
               TabGroup :name |Pair :tabs $ [] (Tab :id :twin-pulse :name "|Twin Pulse" :theme :dark) (Tab :id :twin-cubes :name "|Twin Cubes" :theme :dark) (Tab :id :tetra-octa :name |Tetra-Octa :theme :dark)
           :examples $ []

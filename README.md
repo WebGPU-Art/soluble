@@ -29,9 +29,12 @@ Reel 开发历史保留；状态游标仍是如实开放的异构 UI 边界。
 `src/calcit-runtime.mts` 管理 GPU、Promise、纹理和帧调度；Calcit 只通过具备具体
 参数/回调合同的 RuntimeAPI 调用它。不再把宿主函数或对象假断言成 Number、Map、Enum。
 切换场景等待旧帧结束，快速连续选择只绘制最新请求；普通 UI 状态更新不再重建 GPU buffer。
+进入 Image 或 Surround Mirror 会先等待共享纹理加载，再等待旧帧结束后重建 buffer。
 
-标签仍通过 `?tab=` 恢复。旧代码只写不读的 `workflow` localStorage 自动存档已移除，
-既有存档不读取、覆盖或删除。图片 URL、Ctrl/Cmd+B 初始图片场景绑定规则及手柄算法保持原逻辑。
+标签仍通过 `?tab=` 恢复，Reel 回溯、单步和运行也会同步 URL。
+旧代码只写不读的 `workflow` localStorage 自动存档已移除，既有存档不读取、覆盖或删除。
+Ctrl/Cmd+B 按当前标签启用，仅在 Image 和 Surround Mirror 中选择图片，不再取决于初始标签。
+原图片 URL、图片槽位轮换及手柄算法保持不变。
 
 运行 `calcit --check-only --all-defs`、`calcit fix --workflow strict --verify`、
 `calcit test --require-match` 与 `yarn build` 验证。原生测试附在定义上，不新增上传检查脚本或质量预算。
