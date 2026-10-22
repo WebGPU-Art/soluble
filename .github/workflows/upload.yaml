@@ -32,6 +32,7 @@ jobs:
         with:
           tools: calcit,caps
           caps-version: "0.1.1"
+          deps-file: deps.cirru
       - name: Install immutable dependencies
         run: |
           set -euo pipefail
@@ -46,7 +47,7 @@ jobs:
           test ! -e compact.cirru
           test ! -e package.cirru
           calcit --check-only --all-defs
-          calcit fix --workflow strict --verify
+          calcit fix --workflow strict --verify --format json | jq -e '.data.workflow.status == "passed" and .diagnostics == []'
           calcit test --require-match
       - name: Select frontend CDN path
         id: asset-path
@@ -63,6 +64,14 @@ jobs:
         env:
           VITE_BASE_URL: ${{ steps.asset-path.outputs.base-url }}
         run: yarn build
+      - name: Preserve PR frontend for isolated acceptance
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: frontend-${{ github.run_id }}-${{ github.run_attempt }}
+          path: dist/
+          retention-days: 3
+          if-no-files-found: error
       - name: Check current production revision
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         id: production

@@ -22,7 +22,7 @@ export interface SolubleObjectData {
   shaderModule: GPUShaderModule;
   vertexBuffers: GPUBuffer[];
   length: number;
-  indices?: GPUBuffer;
+  indices: GPUBuffer;
   useCompute: boolean;
   onButtonEvent?: (events: ButtonEvents) => void;
   getParams?: () => number[];

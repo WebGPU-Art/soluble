@@ -189,7 +189,7 @@ function renderTab(id: string): void {
 }
 
 async function loadTextures(transformURL: (url: string) => string): Promise<void> {
-  const device = atomDevice.deref();
+  const device = atomDevice.derefRequired();
   const loaded = await Promise.all(textureSources.map(async ([key, url]) => {
     const texture = await loadImageAsTexture(device, transformURL(url));
     return [key, texture] as const;
@@ -212,7 +212,7 @@ function resized(): void {
 function keydown(event: KeyboardEvent): void {
   if (activeTab !== "image" && activeTab !== "surround-mirror") return;
   if (!(event.metaKey || event.ctrlKey) || event.key !== "b") return;
-  void loadImageFromInputEl(atomDevice.deref()).then(texture => {
+  void loadImageFromInputEl(atomDevice.derefRequired()).then(texture => {
     atomSharedTextures.deref()[imageSlot] = texture;
     imageSlot = imageSlot < 8 ? imageSlot + 1 : 0;
   }).catch(reportError);
