@@ -10,6 +10,11 @@ export class Atom<T> {
   deref(): T {
     return this.value;
   }
+  derefRequired(): NonNullable<T> {
+    const value = this.value;
+    if (value === null || value === undefined) throw new Error("Atom value is not initialized");
+    return value;
+  }
   reset(value: T) {
     let prev = this.value;
     this.value = value;

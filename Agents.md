@@ -17,7 +17,7 @@
 
 ## 开发和检查
 
-固定配对 Calcit/procs 0.30.1-alpha.5、Node 24、Yarn 4.18.0。正式 0.30.1 资产未齐备前不混用运行时。
+固定配对正式 Calcit/procs 0.30.1、Node 24、Yarn 4.18.0，不混用旧 alpha 编译器和正式 runtime。正式编译和完整门禁以当前提交 CI 为准，旧 alpha 验收不作替代。
 
 ```bash
 caps --strict --ci
@@ -43,6 +43,7 @@ js-out/、lib/、dist/ 和 .calcit/ 都是忽略的生成/临时目录，不能�
 - BaseCell.a/b/c 对应 position/velocity/arm；mirror 三角面存三个顶点，segment 存两端与 zeros。
 - getParams() 数组顺序必须与 WGSL Params 字段一致，不能只按 JS 调用成功推断布局正确。
 - points 与 secondary buffer 缓存大小独立维护，切换时销毁旧 buffer；先 waitForRenderIdle 再重建。
+- 保留 `strictNullChecks`；全局 GPU Atom 初始化前/释放后可为空，读取必需资源时使用已检查的 `derefRequired()`，不以 `!` 或伪纹理视图强转消除诊断。可选纹理布局用条件数组，索引缓冲区遵守既有 indexed 绘制合同。
 - 使用 callFramePaint 串行提交帧，避免叠加渲染循环。渲染源更新刷新 GPU context，Calcit UI 有独立 HMR。
 - 手柄 ButtonEvents、轴变换、threshold 和镜面 shader 参数沿用原约定，不在迁移中偷偷更改算法。
 

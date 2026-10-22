@@ -27,7 +27,8 @@ let loopPaint = () => {
 };
 
 window.onload = async () => {
-  await initializeContext();
+  if (!canvas) throw new Error("Soluble canvas is missing");
+  if (await initializeContext() === null) return;
   appConfigs.initPointsBuffer();
   renderSolubleTree(appConfigs);
   loadTouchControl();
@@ -56,6 +57,7 @@ window.onload = async () => {
 };
 
 import.meta.hot?.accept("./app.mts", (app) => {
+  if (!app) return;
   let newAppConfigs = app.default as typeof appConfigs;
   newAppConfigs.initPointsBuffer();
 

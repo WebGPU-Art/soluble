@@ -61,20 +61,19 @@ let collectBaseCellItems = (baseSize: number, f: (idx: number) => BaseCellParams
 
 /** hold item data */
 export const createGlobalPointsBuffer = (baseSize: number, f: (idx: number) => BaseCellParams): GPUBuffer => {
-  if (atomPointsBuffer.deref() && baseSize === cachedPointsBaseSize) {
-    return atomPointsBuffer.deref();
-  }
   const old = atomPointsBuffer.deref();
+  if (old && baseSize === cachedPointsBaseSize) return old;
   cachedPointsBaseSize = baseSize;
-  let device = atomDevice.deref();
+  let device = atomDevice.derefRequired();
   let items = collectBaseCellItems(baseSize, f);
-  atomPointsBuffer.reset(createBuffer(items, GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST, device));
+  const buffer = createBuffer(items, GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST, device);
+  atomPointsBuffer.reset(buffer);
   old?.destroy();
-  return atomPointsBuffer.deref();
+  return buffer;
 };
 
 export const updateGlobalPointsBuffer = (baseSize: number, f: (idx: number) => BaseCellParams): GPUBuffer => {
-  let device = atomDevice.deref();
+  let device = atomDevice.derefRequired();
   let items = collectBaseCellItems(baseSize, f);
   let buffer = atomPointsBuffer.deref();
 
@@ -87,12 +86,13 @@ export const updateGlobalPointsBuffer = (baseSize: number, f: (idx: number) => B
 
   buffer?.destroy();
   cachedPointsBaseSize = baseSize;
-  atomPointsBuffer.reset(createBuffer(items, GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST, device));
-  return atomPointsBuffer.deref();
+  const next = createBuffer(items, GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST, device);
+  atomPointsBuffer.reset(next);
+  return next;
 };
 
 export const updateSecondaryDataBuffer = (baseSize: number, f: (idx: number) => BaseCellParams): GPUBuffer => {
-  let device = atomDevice.deref();
+  let device = atomDevice.derefRequired();
   let items = collectBaseCellItems(baseSize, f);
   let buffer = atomSecondaryBuffer.deref();
 
@@ -105,13 +105,14 @@ export const updateSecondaryDataBuffer = (baseSize: number, f: (idx: number) => 
 
   buffer?.destroy();
   cachedSecondaryBaseSize = baseSize;
-  atomSecondaryBuffer.reset(createBuffer(items, GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST, device));
-  return atomSecondaryBuffer.deref();
+  const next = createBuffer(items, GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST, device);
+  atomSecondaryBuffer.reset(next);
+  return next;
 };
 
 /** write pre-built Float32Array directly into the existing points buffer, skipping callback overhead */
 export const writePointsBufferRaw = (data: Float32Array): void => {
-  let device = atomDevice.deref();
+  let device = atomDevice.derefRequired();
   let buffer = atomPointsBuffer.deref();
   if (buffer) {
     let bytes = new Uint8Array(data.byteLength);
@@ -122,16 +123,15 @@ export const writePointsBufferRaw = (data: Float32Array): void => {
 
 /** hold secondary data, possible not called since not used */
 export const createSecondaryDataBuffer = (baseSize: number, f: (idx: number) => BaseCellParams): GPUBuffer => {
-  if (atomSecondaryBuffer.deref() && baseSize === cachedSecondaryBaseSize) {
-    return atomSecondaryBuffer.deref();
-  }
   const old = atomSecondaryBuffer.deref();
+  if (old && baseSize === cachedSecondaryBaseSize) return old;
   cachedSecondaryBaseSize = baseSize;
-  let device = atomDevice.deref();
+  let device = atomDevice.derefRequired();
   let items = collectBaseCellItems(baseSize, f);
-  atomSecondaryBuffer.reset(createBuffer(items, GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST, device));
+  const buffer = createBuffer(items, GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST, device);
+  atomSecondaryBuffer.reset(buffer);
   old?.destroy();
-  return atomSecondaryBuffer.deref();
+  return buffer;
 };
 
 /** true while GPU frame is being submitted and awaited */
@@ -156,12 +156,12 @@ export function clearPointsBuffer() {
 }
 
 export function computeBasePoints() {
-  let device = atomDevice.deref();
+  let device = atomDevice.derefRequired();
   const commandEncoder = device.createCommandEncoder();
 
-  let { shaderModule } = atomSolubleTree.deref();
+  let { shaderModule } = atomSolubleTree.derefRequired();
 
-  let basePointsBuffer = atomPointsBuffer.deref();
+  let basePointsBuffer = atomPointsBuffer.derefRequired();
   let now = Date.now() - startTime;
   let uniformBuffer = getUniformBuffer(now); // TODO t
   let paramsBuffer = createBuffer(new Float32Array([now, now - prevTime, 0, 0]), GPUBufferUsage.UNIFORM, device);
@@ -210,29 +210,6 @@ export function computeBasePoints() {
   device.queue.submit([commandEncoder.finish()]);
 }
 
-const presentationFormat = window.navigator.gpu.getPreferredCanvasFormat();
-
-// ~~ CREATE RENDER PASS DESCRIPTOR ~~
-var renderPassDescriptor = {
-  colorAttachments: [
-    {
-      clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 1.0 },
-      loadOp: "clear" as GPULoadOp,
-      storeOp: "store" as GPUStoreOp,
-      view: null as GPUTextureView,
-    },
-  ],
-  depthStencilAttachment: {
-    view: null as GPUTextureView,
-    depthClearValue: 1,
-    depthLoadOp: "clear" as GPULoadOp,
-    depthStoreOp: "store" as GPUStoreOp,
-    stentialClearValue: 0,
-    stencilLoadOp: "clear" as GPULoadOp,
-    stencilStoreOp: "store" as GPUStoreOp,
-  },
-};
-
 /** from global states */
 let getUniformBuffer = (t: number): GPUBuffer => {
   // create uniforms
@@ -265,7 +242,7 @@ let getUniformBuffer = (t: number): GPUBuffer => {
     // alignment
     0,
   ]);
-  let device = atomDevice.deref();
+  let device = atomDevice.derefRequired();
 
   let uniformBuffer = createBuffer(uniformData, GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST, device);
   return uniformBuffer;
@@ -275,7 +252,7 @@ type RendererPipelineCache = {
   shaderModule: GPUShaderModule;
   pointsBuffer: GPUBuffer;
   secondaryBuffer: GPUBuffer | null;
-  textureLayout: GPUBindGroupLayout | null;
+  textureLayout: GPUBindGroupLayout | undefined;
   uniformBindGroupLayout: GPUBindGroupLayout;
   particlesBindGroupLayout: GPUBindGroupLayout;
   particlesBindGroup: GPUBindGroup;
@@ -285,9 +262,10 @@ type RendererPipelineCache = {
 let rendererPipelineCache: RendererPipelineCache | null = null;
 
 let buildCommandBuffer = (t: number, params: number[], textures: GPUTexture[]): GPUCommandBuffer => {
-  let { topology, shaderModule, vertexBuffersDescriptors, vertexBuffers, indices } = atomSolubleTree.deref();
+  let { topology, shaderModule, vertexBuffersDescriptors, vertexBuffers, indices, useCompute } = atomSolubleTree.derefRequired();
 
-  let device = atomDevice.deref();
+  let device = atomDevice.derefRequired();
+  const presentationFormat = window.navigator.gpu.getPreferredCanvasFormat();
   let now = Date.now() - startTime;
 
   let uniformBuffer = getUniformBuffer(t);
@@ -299,7 +277,7 @@ let buildCommandBuffer = (t: number, params: number[], textures: GPUTexture[]): 
   let texturesInfo = prepareTextures(device, textures, "texturesInfo");
 
   let secondaryBuffer = atomSecondaryBuffer.deref();
-  let pointsBuffer = atomPointsBuffer.deref();
+  let pointsBuffer = atomPointsBuffer.derefRequired();
 
   // Rebuild pipeline only when shader, buffers, or texture layout changes
   // (i.e. on hot reload or app switch — NOT every frame)
@@ -311,9 +289,8 @@ let buildCommandBuffer = (t: number, params: number[], textures: GPUTexture[]): 
     cache.secondaryBuffer !== secondaryBuffer ||
     cache.textureLayout !== texturesInfo.layout
   ) {
-    let hasSecondary = secondaryBuffer != null;
-    let pointsBufferBindingType: GPUBufferBindingType = atomSolubleTree.deref()?.useCompute ? "storage" : "read-only-storage";
-    let secondaryBufferBindingType: GPUBufferBindingType = atomSolubleTree.deref()?.useCompute ? "storage" : "read-only-storage";
+    let pointsBufferBindingType: GPUBufferBindingType = useCompute ? "storage" : "read-only-storage";
+    let secondaryBufferBindingType: GPUBufferBindingType = useCompute ? "storage" : "read-only-storage";
 
     let uniformBindGroupLayout = device.createBindGroupLayout({
       entries: [
@@ -324,21 +301,22 @@ let buildCommandBuffer = (t: number, params: number[], textures: GPUTexture[]): 
 
     let particlesBindGroupLayout = device.createBindGroupLayout({
       entries: [
-        { binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { type: pointsBufferBindingType } } as GPUBindGroupLayoutEntry,
-        (hasSecondary
-          ? { binding: 1, visibility: GPUShaderStage.FRAGMENT, buffer: { type: secondaryBufferBindingType } }
-          : undefined) as GPUBindGroupLayoutEntry,
-      ].filter(Boolean),
+        { binding: 0, visibility: GPUShaderStage.FRAGMENT, buffer: { type: pointsBufferBindingType } },
+        ...(secondaryBuffer ? [{ binding: 1, visibility: GPUShaderStage.FRAGMENT, buffer: { type: secondaryBufferBindingType } }] : []),
+      ],
     });
 
     let particlesBindGroup = device.createBindGroup({
       layout: particlesBindGroupLayout,
-      entries: [{ binding: 0, resource: { buffer: pointsBuffer } }, hasSecondary && { binding: 1, resource: { buffer: secondaryBuffer } }].filter(Boolean),
+      entries: [
+        { binding: 0, resource: { buffer: pointsBuffer } },
+        ...(secondaryBuffer ? [{ binding: 1, resource: { buffer: secondaryBuffer } }] : []),
+      ],
     });
 
     let renderLayout = device.createPipelineLayout({
       label: "renderLayout",
-      bindGroupLayouts: [uniformBindGroupLayout, particlesBindGroupLayout, texturesInfo.layout].filter(Boolean),
+      bindGroupLayouts: [uniformBindGroupLayout, particlesBindGroupLayout, ...(texturesInfo.layout ? [texturesInfo.layout] : [])],
     });
 
     let pipeline = device.createRenderPipeline({
@@ -375,15 +353,27 @@ let buildCommandBuffer = (t: number, params: number[], textures: GPUTexture[]): 
   let needClear = atomBufferNeedClear.deref();
   atomBufferNeedClear.reset(false);
 
-  let loadOpValue = (needClear ? "clear" : "load") as GPULoadOp;
+  let loadOpValue: GPULoadOp = needClear ? "clear" : "load";
 
-  let context = atomContext.deref();
-  let depthTexture = atomDepthTexture.deref();
-
-  renderPassDescriptor.colorAttachments[0].loadOp = loadOpValue;
-  renderPassDescriptor.depthStencilAttachment.depthLoadOp = loadOpValue;
-  renderPassDescriptor.colorAttachments[0].view = context.getCurrentTexture().createView();
-  renderPassDescriptor.depthStencilAttachment.view = depthTexture.createView();
+  let context = atomContext.derefRequired();
+  let depthTexture = atomDepthTexture.derefRequired();
+  const renderPassDescriptor: GPURenderPassDescriptor = {
+    colorAttachments: [{
+      clearValue: { r: 0, g: 0, b: 0, a: 1 },
+      loadOp: loadOpValue,
+      storeOp: "store",
+      view: context.getCurrentTexture().createView(),
+    }],
+    depthStencilAttachment: {
+      view: depthTexture.createView(),
+      depthClearValue: 1,
+      depthLoadOp: loadOpValue,
+      depthStoreOp: "store",
+      stencilClearValue: 0,
+      stencilLoadOp: "clear",
+      stencilStoreOp: "store",
+    },
+  };
 
   const commandEncoder = device.createCommandEncoder();
   const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
@@ -418,14 +408,13 @@ export function paintSolubleTree(
 ): Promise<void> {
   // console.log("paint params", params);
   atomBufferNeedClear.reset(true);
-  let device = atomDevice.deref();
+  let device = atomDevice.derefRequired();
 
   let lifetime = accumulatedFrameTime;
 
   let textures: GPUTexture[] = [];
-  if (atomSolubleTree.deref()?.getTextures) {
-    textures = atomSolubleTree.deref().getTextures(atomSharedTextures.deref());
-  }
+  const tree = atomSolubleTree.derefRequired();
+  if (tree.getTextures) textures = tree.getTextures(atomSharedTextures.deref());
 
   let bufferList: GPUCommandBuffer[] = [buildCommandBuffer(lifetime, params || [], textures || [])];
   device.queue.submit(bufferList);
@@ -481,8 +470,8 @@ export let callFramePaint = async (): Promise<void> => {
 
 /** based on code https://webgpu.github.io/webgpu-samples/?sample=imageBlur#fullscreenTexturedQuad.wgsl */
 function prepareTextures(device: GPUDevice, textures: GPUTexture[], label: string) {
-  let textureBindGroup: GPUBindGroup = undefined;
-  let layout: GPUBindGroupLayout = undefined;
+  let textureBindGroup: GPUBindGroup | undefined;
+  let layout: GPUBindGroupLayout | undefined;
 
   if (textures && textures[0]) {
     let entries: GPUBindGroupLayoutEntry[] = [

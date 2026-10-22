@@ -26,7 +26,8 @@ export const initializeContext = async (): Promise<{ device: GPUDevice } | null>
   // set as a shared device
   atomDevice.reset(device);
 
-  const canvas = document.getElementById("canvas-container") as HTMLCanvasElement;
+  const canvas = document.getElementById("canvas-container");
+  if (!(canvas instanceof HTMLCanvasElement)) throw new Error("Soluble canvas is missing");
   const context = canvas.getContext("webgpu");
   if (!context) {
     console.error("WebGPU cannot be initialized - Canvas does not support WebGPU");
@@ -81,16 +82,16 @@ export let createRenderer = (options: {
   vertices: (Float32Array | Uint32Array)[];
   indices: Uint32Array;
   useCompute: boolean;
-  onButtonEvent: (events: ButtonEvents) => void;
+  onButtonEvent?: (events: ButtonEvents) => void;
   getParams?: () => number[];
   getTextures?: (obj: Record<string, GPUTexture>) => GPUTexture[];
 }): SolubleObjectData => {
   // load shared device
-  let device = atomDevice.deref();
+  let device = atomDevice.derefRequired();
   let { shaderCode, topology, attrsList, verticesLength, vertices, indices, useCompute } = options;
 
   let vertexBuffers = vertices.map((v) => createBuffer(v, GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST, device));
-  let indecesBuffer = indices ? createBuffer(indices, GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST, device) : null;
+  let indecesBuffer = createBuffer(indices, GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST, device);
 
   const vertexBuffersDescriptors = attrsList.map((info, idx) => {
     let stride = info.size * (info.unitSize || 4);

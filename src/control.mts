@@ -61,8 +61,8 @@ export function loadTouchControl() {
   startControlLoop(10, onControlEvent);
 }
 
-let prevButtons: GameButtons = undefined;
-let currentButtons: GameButtons = undefined;
+let prevButtons: GameButtons | undefined;
+let currentButtons: GameButtons | undefined;
 let currentButtonsAt = 0;
 /** wrapped events from GameButtons */
 export type ButtonEvents = Partial<{
