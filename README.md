@@ -15,7 +15,8 @@ Calcit 源码与依赖分别保存在 `calcit.cirru`、`deps.cirru`；`js-out/`�
 
 生产构建使用 `VITE_BASE_URL=https://cos-sh.tiye.me/WebGPU-Art/soluble/`。
 仅前端 `dist/` 上传 COS，上传 action 的 `public-base-url` 负责内容校验，
-没有独立 CDN 校验脚本。原 rsync 服务器路径保持不变。PR 只检查和构建，不部署。
+没有独立 CDN 校验脚本。原 rsync 服务器路径保持不变。PR 只检查和构建，不部署；
+PR artifact 使用相对资源路径，下载后可直接由本地 HTTP 服务加载，不依赖未上传的 PR CDN 资源。
 生产任务串行且不中途取消：开始上传前检查 main revision；开始后完成同一 revision
 的 COS 和服务器部署，新提交排队处理。这不是与 main 原子同步的保证。
 

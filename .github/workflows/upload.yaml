@@ -62,7 +62,7 @@ jobs:
           echo "base-url=https://cos-sh.tiye.me/${asset_prefix}" >> "$GITHUB_OUTPUT"
       - name: Build frontend
         env:
-          VITE_BASE_URL: ${{ steps.asset-path.outputs.base-url }}
+          VITE_BASE_URL: ${{ github.event_name == 'pull_request' && './' || steps.asset-path.outputs.base-url }}
         run: yarn build
       - name: Preserve PR frontend for isolated acceptance
         if: github.event_name == 'pull_request'
