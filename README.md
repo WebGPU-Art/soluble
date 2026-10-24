@@ -6,8 +6,12 @@ Live demo https://r.tiye.me/Triadica/soluble/ .
 
 使用配对的正式 Calcit / @calcit/procs 0.30.1、Node.js 24 和 Yarn 4.18.0，
 不应混用旧 alpha 编译器与正式 runtime。
-Respo 0.16.124、Reel 0.6.41、UI 0.8.0、js-ffi 0.2.5 使用精确正式版本。UI 0.8 基础样式可能影响外观；
-原 59 个场景、图片 URL、手柄算法和存储/部署路径不因工具链升级改变。运行 `caps --strict --ci`、
+Respo 0.16.126、Reel 0.6.42、UI 0.8.1、js-ffi 0.2.6 使用精确正式版本，传递 Router 0.8.38；Vite 固定8.3.3。
+请重新安装完整图并重建，UI 基础样式升级可能影响外观，不承诺逐像素相同。
+本轮迁移五处 Option 调用和一处已知 String 的 Tag 转换，原测试中的三个 List 长度和一个 Set 计数改用对应方法。
+公开 schema、实际 `hud!`、59个场景和原三项测试断言保持；不添加强转、质量预算或校验脚本。
+触控 npm 包仍受 [#31](https://github.com/WebGPU-Art/soluble/issues/31) 的正式发行缺口约束，不猜测不同 API 的替换包。
+原图片 URL、手柄算法和存储/部署路径不因工具链升级改变。运行 `caps --strict --ci`、
 `yarn install --immutable` 后，`yarn dev` 启动页面；另一个终端运行
 `yarn watch` 监听 Calcit 源码。`yarn build` 编译 Calcit、TypeScript 和前端资源。
 Calcit 源码与依赖分别保存在 `calcit.cirru`、`deps.cirru`；`js-out/`、`lib/` 和
