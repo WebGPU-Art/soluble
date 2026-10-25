@@ -115,17 +115,17 @@
       :defs $ {}
         'default-tab $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def default-tab
-            turn-tag $ option:unwrap-or (get-env |tab) |inversion-circles
+            to-tag $ .unwrap-or (get-env |tab) |inversion-circles
           :examples $ []
           :schema $ :: 'Tag
         'dev? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def dev?
-            = |dev $ option:unwrap-or (get-env |mode) |release
+            = |dev $ .unwrap-or (get-env |mode) |release
           :examples $ []
           :schema $ :: 'Bool
         'hide-tabs? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def hide-tabs?
-            = |true $ option:unwrap-or (get-env |hide-tabs) |false
+            = |true $ .unwrap-or (get-env |hide-tabs) |false
           :examples $ []
           :schema $ :: 'Bool
         'interval $ %{} 'CodeEntry (:doc |)
@@ -242,8 +242,8 @@
             :args $ []
         'replace-url $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn replace-url (url)
-            if (option:some? config/resource-base-url)
-              str (option:unwrap config/resource-base-url) |/ $ .unwrap-or
+            if (.some? config/resource-base-url)
+              str (.unwrap config/resource-base-url) |/ $ .unwrap-or
                 last $ split url |/
                 , |
               , url
@@ -386,10 +386,10 @@
           :schema $ :: 'StructDef
           :tests $ [] $ %{} 'TestEntry (:name |all-navigation-tabs-have-unique-identities)
             :code $ quote $ do
-              assert= 5 $ count tab-groups
-              assert= 59 $ count tabs
-              assert= (count tabs)
-                count $ .to-set $ .map tabs
+              assert= 5 $ .len tab-groups
+              assert= 59 $ .len tabs
+              assert= (.len tabs)
+                .len $ .to-set $ .map tabs
                   fn (tab) (:id tab)
               assert= true $ .some? $ find-tab :gravity-spheres
               assert= true $ .none? $ find-tab :not-an-app

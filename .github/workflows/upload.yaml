@@ -39,11 +39,12 @@ jobs:
           caps --strict --ci
           yarn install --immutable
           caps verify --toolchain
+          git diff --quiet -- deps.cirru package.json yarn.lock .yarnrc.yml
       - name: Check canonical Calcit and types
         run: |
           set -euo pipefail
           calcit edit format
-          git diff --exit-code -- calcit.cirru
+          git diff --quiet -- calcit.cirru
           test ! -e compact.cirru
           test ! -e package.cirru
           calcit --check-only --all-defs
