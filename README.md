@@ -4,12 +4,18 @@ Live demo https://r.tiye.me/Triadica/soluble/ .
 
 ### 开发与部署
 
-使用配对的正式 Calcit / @calcit/procs 0.30.1、Node.js 24 和 Yarn 4.18.0，
+使用配对的正式 Calcit / @calcit/procs 0.32.1、Node.js 24 和 Yarn 4.18.0，
 不应混用旧 alpha 编译器与正式 runtime。
-Respo 0.16.126、Reel 0.6.42、UI 0.8.1、js-ffi 0.2.6 使用精确正式版本，传递 Router 0.8.38；Vite 固定8.3.3。
+Respo 0.17.1、Reel 0.7.0、UI 0.9.0、js-ffi 0.2.9 使用精确正式版本；
+UI 的 Router 0.9.0-alpha.4 沿用其发布依赖图，Vite 仍固定 8.3.3。
 请重新安装完整图并重建，UI 基础样式升级可能影响外观，不承诺逐像素相同。
-本轮迁移五处 Option 调用和一处已知 String 的 Tag 转换，原测试中的三个 List 长度和一个 Set 计数统一改用首选 `.len`。
-公开 schema、实际 `hud!`、59个场景和原三项测试断言保持；不添加强转、质量预算或校验脚本。
+本轮同步 0.32.1 的类型标注语法，并显式标注原有开放 dispatch 类型槽：入口同时接收应用操作和 Reel 匿名控制消息，
+保持既有 Fn<Dynamic,Unit> 合同；现有 Enum 检查和解码后才进入 app.schema/Op / reel.typed/Control，
+不把开放入口冒称为单一封闭名义类型，也不向业务 Store 或 updater 扩散 Dynamic。
+38 个定义的执行代码和公开 schema 保持不变。原三项测试名称、标签和断言数量保留，
+仅将 get-in 成功断言的旧 Option(:some true) 更新为现合同 Result(:ok true)，仍验证同一路径和值。
+此前迁移已清理旧 Option 调用、String→Tag 转换及集合长度写法，这些历史说明不代替本轮验收。
+公开 schema、实际 `hud!`、59 个场景目录及原三项测试覆盖保持；不添加强转、质量预算或校验脚本。
 触控 npm 包仍受 [#31](https://github.com/WebGPU-Art/soluble/issues/31) 的正式发行缺口约束，不猜测不同 API 的替换包。
 原图片 URL、手柄算法和存储/部署路径不因工具链升级改变。运行 `caps --strict --ci`、
 `yarn install --immutable` 后，`yarn dev` 启动页面；另一个终端运行
@@ -30,6 +36,20 @@ TypeScript/WGSL 渲染层、原图片资源 URL 和手柄行为不因 CDN 前缀
 使用会实际检查缺失值的 `derefRequired()`；`createRenderer.onButtonEvent` 与场景合同一致为可选。
 `SolubleObjectData.indices` 修正为既有 indexed 绘制所需的必填字段，手工构造该对象的消费者须提供索引缓冲区。
 渲染 pass 使用真实纹理视图，不再用 `null as GPUTextureView` 占位；WGSL、布局顺序与帧调度算法不变。
+
+### 本轮验收与限制
+
+正式 0.32.1 的完整定义检查、strict workflow（diagnostics=[]）、原三项测试及
+TypeScript/WGSL 前端构建通过；五个 Calcit 模块经 Caps strict 与工具链校验。
+保留原全部门禁，不新增强转或放宽业务类型。npm 安装统一等待一小时，不保留旧 procs 豁免。
+
+隔离本地构建已确认 Stars、Rings、Image、Twin Pulse 实际 WebGPU 出帧，
+五组标签导航的 URL 切换及 Rings 刷新恢复通过。首次加载曾出现一次纹理 Failed to fetch，
+刷新后恢复；九个原 URL 当前 HTTP 200 且允许跨域，但不据此承诺未来外部资源可用性。
+未逐一验收全部 59 个场景、文件导入或物理手柄。构建保留原大包提示。
+原开放回调与封闭 renderer 合同的编译器关系已补充至
+[Calcit #2499](https://github.com/calcit-lang/calcit/issues/2499#issuecomment-6555174221)，
+不为本项目增加编译器迁移特判。
 
 ### 类型与运行边界
 
