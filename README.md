@@ -4,11 +4,15 @@ Live demo https://r.tiye.me/Triadica/soluble/ .
 
 ### 开发与部署
 
-使用配对的正式 Calcit / @calcit/procs 0.32.1、Node.js 24 和 Yarn 4.18.0，
+使用配对的正式 Calcit / @calcit/procs 0.35.1、Node.js 24 和 Yarn 4.18.0，
 不应混用旧 alpha 编译器与正式 runtime。
-Respo 0.17.1、Reel 0.7.0、UI 0.9.0、js-ffi 0.2.9 使用精确正式版本；
-UI 的 Router 0.9.0-alpha.4 沿用其发布依赖图，Vite 仍固定 8.3.3。
+Respo 0.19.4、Reel 0.9.2、UI 0.15.1 和 js-ffi 0.2.13 使用精确正式版本。
+UI 的发布依赖图使用 Router 0.12.1，Vite 固定 8.3.3。
 请重新安装完整图并重建，UI 基础样式升级可能影响外观，不承诺逐像素相同。
+导航显隐和开发面板使用 `Option`，状态路径使用 Respo 的 `CoordKey`。URL 仍使用原标签 ID。前端重建后可沿用原链接。
+
+#### 0.32.1 迁移记录
+
 本轮同步 0.32.1 的类型标注语法，并显式标注原有开放 dispatch 类型槽：入口同时接收应用操作和 Reel 匿名控制消息，
 保持既有 Fn<Dynamic,Unit> 合同；现有 Enum 检查和解码后才进入 app.schema/Op / reel.typed/Control，
 不把开放入口冒称为单一封闭名义类型，也不向业务 Store 或 updater 扩散 Dynamic。
