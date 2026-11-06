@@ -6,7 +6,7 @@
     {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!) (:target :browser)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/ |reel.calcit/ |js-ffi/
-      :type-slots $ {} $ :dispatch-op 'Dynamic
+      :type-slots $ {} $ :dispatch-op |app.schema/DispatchOp
   :files $ {}
     'app.comp.container $ %{} 'FileEntry
       :defs $ {}
@@ -18,7 +18,9 @@
               div
                 {} $ :class-name $ str-spaced css/global css/row
                 comp-nav store
-                when dev? $ comp-typed-reel (>> states :reel) reel $ {}
+                if dev?
+                  Option :some $ comp-typed-reel (>> states :reel) reel $ {}
+                  Option :none
           :examples $ []
           :schema $ quote $ Fn (reel.typed/State app.schema/Op app.schema/Store) (-> respo.schema/Component)
         'comp-nav $ %{} 'CodeEntry (:doc |)
@@ -27,8 +29,8 @@
                 tab $ :tab store
               div
                 {} $ :class-name style-nav-wrapper
-                when (not hide-tabs?)
-                  div
+                if (not hide-tabs?)
+                  Option :some $ div
                     {} $ :class-name style-nav
                     list->
                       {} $ :style $ {} (:display :flex) (:flex-direction :row) (:gap 4) (:align-items :flex-start)
@@ -53,7 +55,9 @@
                                         d! $ schema/Op :tab t $ :theme pair
                                       :style $ if (= tab t)
                                         {} $ :color :white
+                                        {}
                                     <> name
+                  Option :none
           :examples $ []
           :schema $ quote $ Fn app.schema/Store (-> respo.schema/Component)
         'style-group-header $ %{} 'CodeEntry (:doc |)
@@ -262,14 +266,14 @@
       :defs $ {}
         'RuntimeAPI $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait RuntimeAPI
-            .initialize! $ quote $ Fn app.runtime/RuntimeAPI String Number
+            .initialize! $ Fn app.runtime/RuntimeAPI String Number
               Fn String $ -> String
               Fn $ -> Unit
               Fn String $ -> Unit
               -> Unit
-            .select-tab! $ quote $ Fn app.runtime/RuntimeAPI String (-> Unit)
-            .reload! $ quote $ Fn app.runtime/RuntimeAPI String (-> Unit)
-            .get-url-tab $ quote $ Fn app.runtime/RuntimeAPI (-> String)
+            .select-tab! $ Fn app.runtime/RuntimeAPI String $ -> Unit
+            .reload! $ Fn app.runtime/RuntimeAPI String $ -> Unit
+            .get-url-tab $ Fn app.runtime/RuntimeAPI $ -> String
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
             :names $ {} (:get-url-tab |getUrlTab) (:initialize! |initialize) (:reload! |reload) (:select-tab! |selectTab)
@@ -319,21 +323,23 @@
           :require $ |../src/calcit-runtime.mts :default runtime
     'app.schema $ %{} 'FileEntry
       :defs $ {}
+        'DispatchOp $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ def DispatchOp (:: :unhandled)
+          :examples $ []
+          :schema $ quote AnyEnum
         'Op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defenum Op
-            :states
-              quote $ List Dynamic
-              , 'Dynamic
-            :tab 'Tag 'Tag
+            :states (List respo.schema/CoordKey) Dynamic
+            :tab Tag Tag
           :examples $ []
           :schema $ quote EnumDef
         'Store $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct Store (:tab 'Tag)
-            :states $ quote $ Map Dynamic Dynamic
+          :code $ quote $ defstruct Store (:tab Tag)
+            :states $ Map Dynamic Dynamic
           :examples $ []
           :schema $ quote StructDef
         'Tab $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct Tab (:id 'Tag) (:name 'String) (:theme 'Tag)
+          :code $ quote $ defstruct Tab (:id Tag) (:name String) (:theme Tag)
           :examples $ []
           :schema $ quote StructDef
           :tests $ [] $ %{} 'TestEntry (:name |lookup-preserves-names-and-themes)
@@ -344,8 +350,8 @@
               assert= :inversion-circles $ :id tab
             :tags $ #{} :unit
         'TabGroup $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct TabGroup (:name 'String)
-            :tabs $ quote $ List app.schema/Tab
+          :code $ quote $ defstruct TabGroup (:name String)
+            :tabs $ List app.schema/Tab
           :examples $ []
           :schema $ quote StructDef
           :tests $ [] $ %{} 'TestEntry (:name |all-navigation-tabs-have-unique-identities)
@@ -370,13 +376,13 @@
             match op
               (:states cursor data)
                 Op :states
-                  decode-map-as cursor $ :: 'List 'Dynamic
+                  decode-map-as cursor $ List respo.schema/CoordKey
                   , data
               (:tab id theme)
                 Op :tab (decode-map-as id 'Tag) (decode-map-as theme 'Tag)
               _ $ raise "|Unknown Soluble operation"
           :examples $ []
-          :schema $ quote $ Fn Enum (-> app.schema/Op)
+          :schema $ quote $ Fn AnyEnum (-> app.schema/Op)
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             Store :tab default-tab :states $ {} $ :cursor ([])
@@ -408,7 +414,7 @@
               (:states cursor data)
                 struct-with store $ :states $ decode-map-as
                   update-state-tree (:states store) cursor data
-                  :: 'Map 'Dynamic 'Dynamic
+                  Map Dynamic Dynamic
               (:tab id theme)
                 struct-with store $ :tab id
           :examples $ []
