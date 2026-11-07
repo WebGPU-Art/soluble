@@ -163,10 +163,13 @@
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             if (enum? op)
-              match (typed/decode-control op)
-                (:some control) (dispatch-resolved! control)
-                (:none)
-                  dispatch-resolved! $ schema/normalize-op op
+              if
+                = (enum-definition op) (Option :some typed/Control)
+                dispatch-resolved! $ decode-map-as op 'reel.typed/Control
+                match (typed/decode-control op)
+                  (:some control) (dispatch-resolved! control)
+                  (:none)
+                    dispatch-resolved! $ schema/normalize-op op
               raise "|Expected a Soluble operation Enum"
             , &unit
           :examples $ []

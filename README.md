@@ -9,7 +9,7 @@ Live demo https://r.tiye.me/Triadica/soluble/ .
 Respo 0.19.5、Reel 0.10.0、UI 0.15.2 和 js-ffi 0.2.13 使用精确正式版本。
 UI 的发布依赖图使用 Router 0.12.2，Vite 固定 8.3.3。
 请重新安装完整图并重建，UI 基础样式升级可能影响外观，不承诺逐像素相同。
-导航显隐和开发面板使用 `Option`，状态路径使用 Respo 的 `CoordKey`。URL 仍使用原标签 ID。前端重建后可沿用原链接。 标签点击使用具名 `Op`，应用派发使用 `Op | reel.typed/Control`。
+导航显隐和开发面板使用 `Option`，状态路径使用 Respo 的 `CoordKey`。URL 仍使用原标签 ID。前端重建后可沿用原链接。 标签点击使用具名 `Op`，应用派发使用 `Op | reel.typed/Control`。 共享入口接受具名 Reel 控制和原匿名控制事件。
 
 #### 0.32.1 迁移记录
 
