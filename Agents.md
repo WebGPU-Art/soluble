@@ -17,7 +17,7 @@
 
 ## 开发和检查
 
-固定配对正式 Calcit/procs 0.35.1、Node 24、Yarn 4.18.0，不混用旧 alpha 编译器和正式 runtime。正式编译和完整门禁以当前提交 CI 为准，旧 alpha 验收不作替代。
+固定配对正式 Calcit/procs 0.37.0、Node 24、Yarn 4.18.0，不混用旧 alpha 编译器和正式 runtime。正式编译和完整门禁以当前提交 CI 为准，旧 alpha 验收不作替代。
 
 ```bash
 caps --strict --ci
