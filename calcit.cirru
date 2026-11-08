@@ -6,7 +6,7 @@
     {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!) (:target :browser)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/ |reel.calcit/ |js-ffi/
-      :type-slots $ {} $ :dispatch-op |app.schema/DispatchOp
+      :type-slots $ {} $ :dispatch-op 'app.schema/DispatchOp
   :files $ {}
     'app.comp.container $ %{} 'FileEntry
       :defs $ {}
@@ -52,6 +52,9 @@
                                     {}
                                       :class-name $ str-spaced style-tab css/font-fancy!
                                       :on-click $ fn (e d!)
+                                        hint-fn $ Fn respo.schema/RespoEvent
+                                          Fn app.schema/Op $ -> Unit
+                                          -> Unit
                                         d! $ schema/Op :tab t $ :theme pair
                                       :style $ if (= tab t)
                                         {} $ :color :white
@@ -160,17 +163,26 @@
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             if (enum? op)
-              match (typed/decode-control op)
-                (:some control)
-                  reset! *reel $ typed/apply-control updater @*reel control
-                (:none)
-                  let
-                      action $ schema/normalize-op op
-                    reset! *reel $ typed/record-op updater @*reel action (shared/random-uuid) (shared/now-ms)
+              if
+                = (enum-definition op) (Option :some typed/Control)
+                dispatch-resolved! $ decode-map-as op 'reel.typed/Control
+                match (typed/decode-control op)
+                  (:some control) (dispatch-resolved! control)
+                  (:none)
+                    dispatch-resolved! $ schema/normalize-op op
               raise "|Expected a Soluble operation Enum"
             , &unit
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> Unit)
+          :schema $ quote $ Fn AnyEnum (-> Unit)
+        'dispatch-resolved! $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn dispatch-resolved! (op)
+            hint-fn $ Fn app.schema/ResolvedOp $ -> Unit
+            reset! *reel $ match op
+              (reel.typed/Control control) (typed/apply-control updater @*reel control)
+              (app.schema/Op action)
+                typed/record-op updater @*reel action (shared/random-uuid) (shared/now-ms)
+            , &unit
+          :examples $ []
         'get-tab-from-url $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-tab-from-url ()
             let
@@ -333,6 +345,10 @@
             :tab Tag Tag
           :examples $ []
           :schema $ quote EnumDef
+        'ResolvedOp $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion ResolvedOp Op reel.typed/Control
+          :examples $ []
+          :schema $ quote UnionDef
         'Store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Store (:tab Tag)
             :states $ Map Dynamic Dynamic
