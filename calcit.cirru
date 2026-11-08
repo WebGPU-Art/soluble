@@ -6,12 +6,12 @@
     {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!) (:target :browser)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/ |reel.calcit/ |js-ffi/
-      :type-slots $ {} $ :dispatch-op 'app.schema/DispatchOp
+      :type-slots $ {} $ :dispatch-op 'app.schema/Op
   :files $ {}
     'app.comp.container $ %{} 'FileEntry
       :defs $ {}
         'comp-container $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defcomp comp-container (reel)
+          :code $ quote $ defcomp comp-container (reel on-control!)
             let
                 store $ :store reel
                 states $ :states store
@@ -19,10 +19,12 @@
                 {} $ :class-name $ str-spaced css/global css/row
                 comp-nav store
                 if dev?
-                  Option :some $ comp-typed-reel (>> states :reel) reel $ {}
+                  Option :some $ comp-typed-reel (>> states :reel) reel ({}) on-control!
                   Option :none
           :examples $ []
-          :schema $ quote $ Fn (reel.typed/State app.schema/Op app.schema/Store) (-> respo.schema/Component)
+          :schema $ quote $ Fn (reel.typed/State app.schema/Op app.schema/Store)
+            Fn reel.typed/Control $ -> Unit
+            -> respo.schema/Component
         'comp-nav $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-nav (store)
             let
@@ -161,28 +163,18 @@
           :examples $ []
           :schema $ quote $ Fn (-> Tag)
         'dispatch! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn dispatch! (op)
-            if (enum? op)
-              if
-                = (enum-definition op) (Option :some typed/Control)
-                dispatch-resolved! $ decode-map-as op 'reel.typed/Control
-                match (typed/decode-control op)
-                  (:some control) (dispatch-resolved! control)
-                  (:none)
-                    dispatch-resolved! $ schema/normalize-op op
-              raise "|Expected a Soluble operation Enum"
-            , &unit
+          :code $ quote $ defn dispatch! (op) (dispatch-resolved! op)
           :examples $ []
-          :schema $ quote $ Fn AnyEnum (-> Unit)
+          :schema $ quote $ Fn app.schema/Op (-> Unit)
         'dispatch-resolved! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch-resolved! (op)
-            hint-fn $ Fn app.schema/ResolvedOp $ -> Unit
             reset! *reel $ match op
               (reel.typed/Control control) (typed/apply-control updater @*reel control)
               (app.schema/Op action)
                 typed/record-op updater @*reel action (shared/random-uuid) (shared/now-ms)
             , &unit
           :examples $ []
+          :schema $ quote $ Fn app.schema/ResolvedOp (-> Unit)
         'get-tab-from-url $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-tab-from-url ()
             let
@@ -203,7 +195,7 @@
               (:none) &unit
             when config/dev? $ load-console-formatter!
             add-watch! *reel :changes on-change!
-            when config/dev? $ listen-devtools! |k dispatch!
+            when config/dev? $ listen-devtools! |k on-control!
             println "|Running mode:" $ if config/dev? |dev |release
             runtime/initialize!
               to-string $ current-tab
@@ -224,6 +216,10 @@
             , &unit
           :examples $ []
           :schema $ quote $ Fn (reel.typed/State app.schema/Op app.schema/Store) (reel.typed/State app.schema/Op app.schema/Store) (-> Unit)
+        'on-control! $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn on-control! (control) (dispatch-resolved! control) &unit
+          :examples $ []
+          :schema $ quote $ Fn reel.typed/Control (-> Unit)
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if (js-nullish? build-errors)
@@ -241,7 +237,7 @@
           :code $ quote $ defn render-app! ()
             render-with!
               .unwrap $ dom/query-selector |.app
-              fn () $ comp-container @*reel
+              fn () $ comp-container @*reel on-control!
               , dispatch!
           :examples $ []
           :schema $ quote $ Fn (-> Unit)
@@ -335,10 +331,6 @@
           :require $ |../src/calcit-runtime.mts :default runtime
     'app.schema $ %{} 'FileEntry
       :defs $ {}
-        'DispatchOp $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ def DispatchOp (:: :unhandled)
-          :examples $ []
-          :schema $ quote AnyEnum
         'Op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defenum Op
             :states (List respo.schema/CoordKey) Dynamic
@@ -387,18 +379,6 @@
           :examples $ []
           :schema $ quote $ Fn Tag
             -> $ Option app.schema/Tab
-        'normalize-op $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn normalize-op (op)
-            match op
-              (:states cursor data)
-                Op :states
-                  decode-map-as cursor $ List respo.schema/CoordKey
-                  , data
-              (:tab id theme)
-                Op :tab (decode-map-as id 'Tag) (decode-map-as theme 'Tag)
-              _ $ raise "|Unknown Soluble operation"
-          :examples $ []
-          :schema $ quote $ Fn AnyEnum (-> app.schema/Op)
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             Store :tab default-tab :states $ {} $ :cursor ([])

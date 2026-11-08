@@ -4,12 +4,12 @@ Live demo https://r.tiye.me/Triadica/soluble/ .
 
 ### 开发与部署
 
-使用配对的正式 Calcit / @calcit/procs 0.37.0、Node.js 24 和 Yarn 4.18.0，
+使用配对的正式 Calcit / @calcit/procs 0.38.0、Node.js 24 和 Yarn 4.18.0，
 不应混用旧 alpha 编译器与正式 runtime。
-Respo 0.19.5、Reel 0.10.0、UI 0.15.2 和 js-ffi 0.2.13 使用精确正式版本。
+Respo 0.19.5、Reel 0.11.0、UI 0.15.2 和 js-ffi 0.2.13 使用精确正式版本。
 UI 的发布依赖图使用 Router 0.12.2，Vite 固定 8.3.3。
 请重新安装完整图并重建，UI 基础样式升级可能影响外观，不承诺逐像素相同。
-导航显隐和开发面板使用 `Option`，状态路径使用 Respo 的 `CoordKey`。URL 仍使用原标签 ID。前端重建后可沿用原链接。 标签点击使用具名 `Op`，应用派发使用 `Op | reel.typed/Control`。 共享入口接受具名 Reel 控制和原匿名控制事件。
+导航显隐和开发面板使用 `Option`，状态路径使用 Respo 的 `CoordKey`。URL 仍使用原标签 ID。前端重建后可沿用原链接。 标签点击使用具名 `Op`，应用派发使用 `Op | reel.typed/Control`。 应用分发与 Reel 控制分别走具名回调，旧匿名 Reel 控制随 0.11.0 退役。
 
 #### 0.32.1 迁移记录
 
