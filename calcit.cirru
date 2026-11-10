@@ -57,7 +57,7 @@
                                         hint-fn $ Fn respo.schema/RespoEvent
                                           Fn app.schema/Op $ -> Unit
                                           -> Unit
-                                        d! $ schema/Op :tab t $ :theme pair
+                                        d! $ schema/Op :tab t
                                       :style $ if (= tab t)
                                         {} $ :color :white
                                         {}
@@ -334,7 +334,7 @@
         'Op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defenum Op
             :states (List respo.schema/CoordKey) Dynamic
-            :tab Tag Tag
+            :tab Tag
           :examples $ []
           :schema $ quote EnumDef
         'ResolvedOp $ %{} 'CodeEntry (:doc |)
@@ -411,13 +411,13 @@
                 struct-with store $ :states $ decode-map-as
                   update-state-tree (:states store) cursor data
                   Map Dynamic Dynamic
-              (:tab id theme)
-                struct-with store $ :tab id
+              (:tab tab)
+                struct-with store $ :tab tab
           :examples $ []
           :schema $ quote $ Fn app.schema/Store app.schema/Op String Number (-> app.schema/Store)
           :tests $ [] $ %{} 'TestEntry (:name |tab-and-cursor-updates-preserve-store-shape)
             :code $ quote $ let
-                selected $ updater app.schema/store (app.schema/Op :tab :rings :dark) |tab 1
+                selected $ updater app.schema/store (app.schema/Op :tab :rings) |tab 1
                 edited $ updater selected
                   app.schema/Op :states ([] :reel |mixed)
                     {} $ :open true
