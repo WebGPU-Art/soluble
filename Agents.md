@@ -12,12 +12,12 @@
 - Store、Op、Tab、TabGroup 位于 `app.schema`；5 组、59 个标签为唯一导航/URL 校验数据源。
 - RuntimeAPI 声明具体宿主方法与回调合同；不要用裸 Fn、伪 JsObject 或 unsafe 隐藏开放输入。
 - `src/calcit-runtime.mts` 持有 Promise/GPU 对象，不把它们传回应用状态。
-- Reel 保留开发历史；状态树只更新 Store.states，避免重复嵌套 store。watcher 接受新、旧值并返回 Unit。
+- Reel 保留开发历史，面板通过独立的 Control 回调派发；Store 只记录标签。watcher 接受新、旧值并返回 Unit。
 - 标签通过 URL 持久化；旧 workflow localStorage 存档不再读写，不要为升级删除用户数据。
 
 ## 开发和检查
 
-固定配对正式 Calcit/procs 0.40.0、Node 24、Yarn 4.18.0，不混用旧 alpha 编译器和正式 runtime。正式编译和完整门禁以当前提交 CI 为准，旧 alpha 验收不作替代。
+固定配对正式 Calcit/procs 0.41.0、Node 24、Yarn 4.18.0，不混用旧 alpha 编译器和正式 runtime。正式编译和完整门禁以当前提交 CI 为准，旧 alpha 验收不作替代。
 
 ```bash
 caps --strict --ci

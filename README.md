@@ -4,7 +4,7 @@ Live demo https://r.tiye.me/Triadica/soluble/ .
 
 ### 开发与部署
 
-使用配对的正式 Calcit / @calcit/procs 0.40.0、Node.js 24 和 Yarn 4.18.0，
+使用配对的正式 Calcit / @calcit/procs 0.41.0、Node.js 24 和 Yarn 4.18.0，
 不应混用旧 alpha 编译器与正式 runtime。
 Respo 0.19.5、Reel 0.11.0、UI 0.15.2 和 js-ffi 0.2.13 使用精确正式版本。
 UI 的发布依赖图使用 Router 0.12.2，Vite 固定 8.3.3。
@@ -59,7 +59,7 @@ TypeScript/WGSL 前端构建通过；五个 Calcit 模块经 Caps strict 与工�
 
 `app.schema` 定义真实 Store、Op、Tab 和 TabGroup。5 组共 59 个标签与渲染配置对应，
 URL 校验由同一份标签数据派生，也支持原白名单漏掉的 4 个已有场景。
-Reel 开发历史保留；状态游标仍是如实开放的异构 UI 边界。
+Reel 开发历史保留，面板操作通过独立的 Control 回调派发。
 
 `src/calcit-runtime.mts` 管理 GPU、Promise、纹理和帧调度；Calcit 只通过具备具体
 参数/回调合同的 RuntimeAPI 调用它。不再把宿主函数或对象假断言成 Number、Map、Enum。

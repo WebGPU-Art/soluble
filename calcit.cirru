@@ -14,16 +14,15 @@
           :code $ quote $ defcomp comp-container (reel on-control!)
             let
                 store $ :store reel
-                states $ :states store
               div
                 {} $ :class-name $ str-spaced css/global css/row
                 comp-nav store
                 if dev?
-                  Option :some $ comp-typed-reel (>> states :reel) reel ({}) on-control!
-                  Option :none
+                  Some $ comp-typed-reel ({}) reel ({}) on-control!
+                  , None
           :examples $ []
-          :schema $ quote $ Fn (reel.typed/State app.schema/Op app.schema/Store)
-            Fn reel.typed/Control $ -> Unit
+          :schema $ quote $ Fn (typed/State schema/Op schema/Store)
+            Fn typed/Control $ -> Unit
             -> respo.schema/Component
         'comp-nav $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-nav (store)
@@ -32,7 +31,7 @@
               div
                 {} $ :class-name style-nav-wrapper
                 if (not hide-tabs?)
-                  Option :some $ div
+                  Some $ div
                     {} $ :class-name style-nav
                     list->
                       {} $ :style $ {} (:display :flex) (:flex-direction :row) (:gap 4) (:align-items :flex-start)
@@ -62,9 +61,9 @@
                                         {} $ :color :white
                                         {}
                                     <> name
-                  Option :none
+                  , None
           :examples $ []
-          :schema $ quote $ Fn app.schema/Store (-> respo.schema/Component)
+          :schema $ quote $ Fn schema/Store (-> respo.schema/Component)
         'style-group-header $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstyle style-group-header
             {} $ |& $ {} (:font-size 10)
@@ -112,7 +111,7 @@
           :require (respo-ui.css :as css)
             respo.css :refer $ defstyle
             respo.util.format :refer $ hsl
-            respo.core :refer $ defcomp defeffect <> >> div button textarea span input list->
+            respo.core :refer $ defcomp defeffect <> div button textarea span input list->
             respo.comp.space :refer $ =<
             reel.comp.reel :refer $ comp-typed-reel
             reel.typed :as typed
@@ -151,12 +150,12 @@
           :code $ quote $ defref *reel
             %{} typed/State (:base schema/store) (:store schema/store)
               :records $ []
-              :pointer $ Option :none
+              :pointer None
               :stopped? false
               :display? false
               :merged? false
           :examples $ []
-          :schema $ quote $ Ref (reel.typed/State app.schema/Op app.schema/Store)
+          :schema $ quote $ Ref (typed/State schema/Op schema/Store)
         'current-tab $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn current-tab ()
             :tab $ :store @*reel
@@ -165,7 +164,7 @@
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op) (dispatch-resolved! op)
           :examples $ []
-          :schema $ quote $ Fn app.schema/Op (-> Unit)
+          :schema $ quote $ Fn schema/Op (-> Unit)
         'dispatch-resolved! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch-resolved! (op)
             reset! *reel $ match op
@@ -174,7 +173,7 @@
                 typed/record-op updater @*reel action (shared/random-uuid) (shared/now-ms)
             , &unit
           :examples $ []
-          :schema $ quote $ Fn app.schema/ResolvedOp (-> Unit)
+          :schema $ quote $ Fn schema/ResolvedOp (-> Unit)
         'get-tab-from-url $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-tab-from-url ()
             let
@@ -215,11 +214,11 @@
                 runtime/select-tab! tab
             , &unit
           :examples $ []
-          :schema $ quote $ Fn (reel.typed/State app.schema/Op app.schema/Store) (reel.typed/State app.schema/Op app.schema/Store) (-> Unit)
+          :schema $ quote $ Fn (typed/State schema/Op schema/Store) (typed/State schema/Op schema/Store) (-> Unit)
         'on-control! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-control! (control) (dispatch-resolved! control) &unit
           :examples $ []
-          :schema $ quote $ Fn reel.typed/Control (-> Unit)
+          :schema $ quote $ Fn typed/Control (-> Unit)
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if (js-nullish? build-errors)
@@ -289,7 +288,7 @@
         'api $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn api () (js-cast runtime 'RuntimeAPI)
           :examples $ []
-          :schema $ quote $ Fn (-> app.runtime/RuntimeAPI) (:features :js-ffi)
+          :schema $ quote $ Fn (-> RuntimeAPI) (:features :js-ffi)
         'initialize! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn initialize! (tab interval transform-url ready! failed!)
             let
@@ -332,9 +331,7 @@
     'app.schema $ %{} 'FileEntry
       :defs $ {}
         'Op $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defenum Op
-            :states (List respo.schema/CoordKey) Dynamic
-            :tab Tag
+          :code $ quote $ defenum Op (:tab Tag)
           :examples $ []
           :schema $ quote EnumDef
         'ResolvedOp $ %{} 'CodeEntry (:doc |)
@@ -343,7 +340,6 @@
           :schema $ quote UnionDef
         'Store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Store (:tab Tag)
-            :states $ Map Dynamic Dynamic
           :examples $ []
           :schema $ quote StructDef
         'Tab $ %{} 'CodeEntry (:doc |)
@@ -378,12 +374,11 @@
               = id $ :id tab
           :examples $ []
           :schema $ quote $ Fn Tag
-            -> $ Option app.schema/Tab
+            -> $ Option Tab
         'store $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ def store
-            Store :tab default-tab :states $ {} $ :cursor ([])
+          :code $ quote $ def store (Store :tab default-tab)
           :examples $ []
-          :schema $ quote app.schema/Store
+          :schema $ quote Store
         'tab-groups $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def tab-groups
             []
@@ -393,12 +388,12 @@
               TabGroup :name |Polyhedra :tabs $ [] (Tab :id :tetrahedron-mirror :name "|Tetrahedron Mirror" :theme :dark) (Tab :id :tetrahedron-parabola-mirror :name "|Tetrahedron Parabola" :theme :dark) (Tab :id :tetrahedron-arc-mirror :name "|Tetrahedron Arc" :theme :dark) (Tab :id :cube-parabola-mirror :name "|Cube Parabola" :theme :dark) (Tab :id :octahedron-mirror :name "|Octahedron Mirror" :theme :dark) (Tab :id :octahedron-parabola-mirror :name "|Octahedron Parabola" :theme :dark) (Tab :id :truncated-octahedron-mirror :name "|Truncated Octahedron" :theme :dark) (Tab :id :cuboctahedron-mirror :name "|Cuboctahedron Mirror" :theme :dark) (Tab :id :prism-mirror :name "|Prism Mirror" :theme :dark) (Tab :id :hex-prism-mirror :name "|Hex Prism Mirror" :theme :dark) (Tab :id :icosahedron-mirror :name "|Icosahedron Mirror" :theme :dark) (Tab :id :wedge-mirror :name "|Wedge Mirror" :theme :dark) (Tab :id :rhombohedron-mirror :name "|Rhombohedron Mirror" :theme :dark) (Tab :id :rhombic-mirror :name "|Rhombic Mirror" :theme :dark) (Tab :id :rhombic-dodecahedron-diagonals-mirror :name "|Rhombic Dodecahedron Diagonals" :theme :dark) (Tab :id :rhombic-dodecahedron-parabola-mirror :name "|Rhombic Dodecahedron Parabola" :theme :dark) (Tab :id :rhombic-dodecahedron-rotating-mirror :name "|Rhombic Dodecahedron Rotating" :theme :dark) (Tab :id :rt-mirror :name "|Rhombic Triacontahedron" :theme :dark) (Tab :id :deltoidal-icositetrahedron-mirror :name "|Deltoidal Icositetrahedron" :theme :dark) (Tab :id :dodecahedron-mirror :name "|Dodecahedron Mirror" :theme :dark) (Tab :id :crystal-refraction :name "|Crystal Refraction" :theme :dark)
               TabGroup :name |Pair :tabs $ [] (Tab :id :twin-pulse :name "|Twin Pulse" :theme :dark) (Tab :id :twin-cubes :name "|Twin Cubes" :theme :dark) (Tab :id :tetra-octa :name |Tetra-Octa :theme :dark)
           :examples $ []
-          :schema $ quote $ List app.schema/TabGroup
+          :schema $ quote $ List TabGroup
         'tabs $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def tabs
             .flat-map tab-groups $ fn (group) (:tabs group)
           :examples $ []
-          :schema $ quote $ List app.schema/Tab
+          :schema $ quote $ List Tab
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.schema
           :require $ app.config :refer $ default-tab
@@ -406,28 +401,15 @@
       :defs $ {} $ 'updater
         %{} 'CodeEntry (:doc |)
           :code $ quote $ defn updater (store op op-id op-time)
-            match op
-              (:states cursor data)
-                struct-with store $ :states $ decode-map-as
-                  update-state-tree (:states store) cursor data
-                  Map Dynamic Dynamic
-              (:tab tab)
-                struct-with store $ :tab tab
+            match op $
+              :tab tab
+              struct-with store $ :tab tab
           :examples $ []
           :schema $ quote $ Fn app.schema/Store app.schema/Op String Number (-> app.schema/Store)
-          :tests $ [] $ %{} 'TestEntry (:name |tab-and-cursor-updates-preserve-store-shape)
+          :tests $ [] $ %{} 'TestEntry (:name |tab-update-selects-renderer)
             :code $ quote $ let
                 selected $ updater app.schema/store (app.schema/Op :tab :rings) |tab 1
-                edited $ updater selected
-                  app.schema/Op :states ([] :reel |mixed)
-                    {} $ :open true
-                  , |state 2
-              assert= :rings $ :tab edited
-              assert= (Result :ok true)
-                get-in (:states edited) ([] :reel |mixed :data :open)
-              assert= false $ contains? (:states edited) :states
-              assert= (:states app.schema/store) (:states selected)
+              assert= :rings $ :tab selected
             :tags $ #{} :unit
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
-          :require $ respo.cursor :refer $ update-state-tree
