@@ -54,7 +54,7 @@
                                       :class-name $ str-spaced style-tab css/font-fancy!
                                       :on-click $ fn (e d!)
                                         hint-fn $ Fn respo.schema/RespoEvent
-                                          Fn app.schema/Op $ -> Unit
+                                          Fn schema/Op $ -> Unit
                                           -> Unit
                                         d! $ schema/Op :tab t
                                       :style $ if (= tab t)
@@ -147,13 +147,7 @@
     'app.main $ %{} 'FileEntry
       :defs $ {}
         '*reel $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defref *reel
-            %{} typed/State (:base schema/store) (:store schema/store)
-              :records $ []
-              :pointer None
-              :stopped? false
-              :display? false
-              :merged? false
+          :code $ quote $ defref *reel (typed/new-reel schema/store)
           :examples $ []
           :schema $ quote $ Ref (typed/State schema/Op schema/Store)
         'current-tab $ %{} 'CodeEntry (:doc |)
