@@ -154,11 +154,11 @@
           :code $ quote $ defn current-tab ()
             :tab $ :store @*reel
           :examples $ []
-          :schema $ quote $ Fn (-> Tag)
+          :schema $ quote $ Fn (-> Tag) (:features :state)
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op) (dispatch-resolved! op)
           :examples $ []
-          :schema $ quote $ Fn schema/Op (-> Unit)
+          :schema $ quote $ Fn schema/Op (-> Unit) (:features :state)
         'dispatch-resolved! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch-resolved! (op)
             reset! *reel $ match op
@@ -167,7 +167,7 @@
                 typed/record-op updater @*reel action (shared/random-uuid) (shared/now-ms)
             , &unit
           :examples $ []
-          :schema $ quote $ Fn schema/ResolvedOp (-> Unit)
+          :schema $ quote $ Fn schema/ResolvedOp (-> Unit) (:features :state)
         'get-tab-from-url $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-tab-from-url ()
             let
@@ -195,7 +195,7 @@
               , config/interval replace-url render-app! report-error!
             , &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi :state)
         'on-change! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-change! (reel previous) (render-app!)
             when
@@ -208,11 +208,11 @@
                 runtime/select-tab! tab
             , &unit
           :examples $ []
-          :schema $ quote $ Fn (typed/State schema/Op schema/Store) (typed/State schema/Op schema/Store) (-> Unit)
+          :schema $ quote $ Fn (typed/State schema/Op schema/Store) (typed/State schema/Op schema/Store) (-> Unit) (:features :state)
         'on-control! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-control! (control) (dispatch-resolved! control) &unit
           :examples $ []
-          :schema $ quote $ Fn typed/Control (-> Unit)
+          :schema $ quote $ Fn typed/Control (-> Unit) (:features :state)
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if (js-nullish? build-errors)
@@ -225,7 +225,7 @@
               hud! |error build-errors
             , &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi :state)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
             render-with!
@@ -233,7 +233,7 @@
               fn () $ comp-container @*reel on-control!
               , dispatch!
           :examples $ []
-          :schema $ quote $ Fn (-> Unit)
+          :schema $ quote $ Fn (-> Unit) (:features :state)
         'replace-url $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn replace-url (url)
             if (.some? config/resource-base-url)
@@ -246,7 +246,7 @@
         'report-error! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn report-error! (message) (eprintln message) (hud! |error message) (render-app!) &unit
           :examples $ []
-          :schema $ quote $ Fn String (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn String (-> Unit) (:features :io :js-ffi :state)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.main
           :require
