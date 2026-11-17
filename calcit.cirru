@@ -24,6 +24,7 @@
           :schema $ quote $ Fn (typed/State schema/Op schema/Store)
             Fn typed/Control $ -> Unit
             -> respo.schema/Component
+            :features :state
         'comp-nav $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-nav (store)
             let
@@ -192,7 +193,9 @@
             println "|Running mode:" $ if config/dev? |dev |release
             runtime/initialize!
               to-string $ current-tab
-              , config/interval replace-url render-app! report-error!
+              , config/interval replace-url
+                fn () $ render-app!
+                fn (msg) (report-error! msg)
             , &unit
           :examples $ []
           :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi :state)
@@ -208,7 +211,7 @@
                 runtime/select-tab! tab
             , &unit
           :examples $ []
-          :schema $ quote $ Fn (typed/State schema/Op schema/Store) (typed/State schema/Op schema/Store) (-> Unit) (:features :state)
+          :schema $ quote $ Fn (typed/State schema/Op schema/Store) (typed/State schema/Op schema/Store) (-> Unit) (:features :io :state)
         'on-control! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-control! (control) (dispatch-resolved! control) &unit
           :examples $ []
@@ -225,15 +228,15 @@
               hud! |error build-errors
             , &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi :state)
+          :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi :state)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
             render-with!
               .unwrap $ dom/query-selector |.app
-              fn () $ comp-container @*reel on-control!
+              fn () $ comp-container @*reel $ fn (op) (on-control! op)
               , dispatch!
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :state)
+          :schema $ quote $ Fn (-> Unit) (:features :io :state)
         'replace-url $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn replace-url (url)
             if (.some? config/resource-base-url)
