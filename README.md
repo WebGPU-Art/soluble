@@ -47,10 +47,10 @@ TypeScript/WGSL 渲染层、原图片资源 URL 和手柄行为不因 CDN 前缀
 TypeScript/WGSL 前端构建通过；五个 Calcit 模块经 Caps strict 与工具链校验。
 保留原全部门禁，不新增强转或放宽业务类型。npm 安装统一等待一小时，不保留旧 procs 豁免。
 
-隔离本地构建已确认 Stars、Rings、Image、Twin Pulse 实际 WebGPU 出帧，
+此前 0.32.1 迁移的隔离本地构建曾确认 Stars、Rings、Image、Twin Pulse 实际 WebGPU 出帧，
 五组标签导航的 URL 切换及 Rings 刷新恢复通过。首次加载曾出现一次纹理 Failed to fetch，
 刷新后恢复；九个原 URL 当前 HTTP 200 且允许跨域，但不据此承诺未来外部资源可用性。
-未逐一验收全部 59 个场景、文件导入或物理手柄。构建保留原大包提示。
+本次正式依赖更新未重新验收真实 WebGPU 出帧、场景、文件导入或物理手柄；以上结果仅作历史记录。构建保留原大包提示。
 原开放回调与封闭 renderer 合同的编译器关系已补充至
 [Calcit #2499](https://github.com/calcit-lang/calcit/issues/2499#issuecomment-6555174221)，
 不为本项目增加编译器迁移特判。
