@@ -6,8 +6,8 @@ Live demo https://r.tiye.me/Triadica/soluble/ .
 
 使用配对的正式 Calcit / @calcit/procs 0.44.0、Node.js 24 和 Yarn 4.18.0，
 不应混用旧 alpha 编译器与正式 runtime。
-Respo 0.19.12、Reel 0.11.4、UI 0.15.6 和 js-ffi 0.2.18 使用精确正式版本。
-UI 的发布依赖图使用 Router 0.12.10，Vite 固定 8.3.3。
+Respo 0.19.13、Reel 0.11.5、UI 0.15.7 和 js-ffi 0.2.19 使用精确正式版本。
+UI 的发布依赖图使用 Router 0.12.11，Vite 固定 8.3.3。
 请重新安装完整图并重建，UI 基础样式升级可能影响外观，不承诺逐像素相同。
 导航显隐和开发面板使用 `Option`，状态路径使用 Respo 的 `CoordKey`。URL 仍使用原标签 ID。前端重建后可沿用原链接。 标签点击使用具名 `Op`，应用派发使用 `Op | reel.typed/Control`。 应用分发与 Reel 控制分别走具名回调，旧匿名 Reel 控制随 0.11.0 退役。
 
@@ -47,10 +47,10 @@ TypeScript/WGSL 渲染层、原图片资源 URL 和手柄行为不因 CDN 前缀
 TypeScript/WGSL 前端构建通过；五个 Calcit 模块经 Caps strict 与工具链校验。
 保留原全部门禁，不新增强转或放宽业务类型。npm 安装统一等待一小时，不保留旧 procs 豁免。
 
-隔离本地构建已确认 Stars、Rings、Image、Twin Pulse 实际 WebGPU 出帧，
+此前 0.32.1 迁移的隔离本地构建曾确认 Stars、Rings、Image、Twin Pulse 实际 WebGPU 出帧，
 五组标签导航的 URL 切换及 Rings 刷新恢复通过。首次加载曾出现一次纹理 Failed to fetch，
 刷新后恢复；九个原 URL 当前 HTTP 200 且允许跨域，但不据此承诺未来外部资源可用性。
-未逐一验收全部 59 个场景、文件导入或物理手柄。构建保留原大包提示。
+本次正式依赖更新未重新验收真实 WebGPU 出帧、场景、文件导入或物理手柄；以上结果仅作历史记录。构建保留原大包提示。
 原开放回调与封闭 renderer 合同的编译器关系已补充至
 [Calcit #2499](https://github.com/calcit-lang/calcit/issues/2499#issuecomment-6555174221)，
 不为本项目增加编译器迁移特判。
