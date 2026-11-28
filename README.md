@@ -4,7 +4,7 @@ Live demo https://r.tiye.me/Triadica/soluble/ .
 
 ### 开发与部署
 
-使用配对的正式 Calcit / @calcit/procs 0.47.1、Node.js 24 和 Yarn 4.18.0，
+使用配对的正式 Calcit / @calcit/procs 0.48.0、Node.js 24 和 Yarn 4.18.0，
 不应混用旧 alpha 编译器与正式 runtime。
 Respo 0.20.1、Reel 0.11.11、UI 0.16.7 和 js-ffi 0.2.26 使用精确正式版本。
 UI 的发布依赖图使用 Router 0.12.19，Vite 固定 8.3.3。
